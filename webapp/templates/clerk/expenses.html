@@ -21,8 +21,6 @@
           </div>
         </form>
         {% if orders %}
-          <form id="form" method="POST" action="">
-            {{ form1.csrf_token }}
             <div class="table-responsive-sm">
               <table id="inventory-table" class="table table-hover">
                 <thead>
@@ -40,9 +38,7 @@
                 <tbody>
                   {% for order in orders %}
                   <tr>
-                    <td>
-                      ID{{ order.id }}{{ form.order_id(class="form-control", value=order.id) }}
-                    </td>
+                    <td>ID{{ order.id }}</td>
                     <td>
                       {{ order.user.company_name | capitalize }}
                     </td>
@@ -107,12 +103,11 @@
               {% if order_window %}
                 
               {% else %}
-              <div class="text-center fw-bold">
-                <h5 class="text-danger">Цонх хаагдсан байна</h5>
-              </div>
+                <div class="text-center fw-bold">
+                  <h5 class="text-danger">Цонх хаагдсан байна</h5>
+                </div>
               {% endif %}
             </div>
-          </form>
         {% else %}
           <div class="mt-5">
             {% for unassigned_order in unassigned_orders %}

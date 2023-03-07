@@ -1,0 +1,46 @@
+/* <script>
+        function handleDrop(e) { // this / e.target is current target element.
+
+            if (e.stopPropagation) {
+                e.stopPropagation(); // stops the browser from redirecting.
+            }
+
+            // Don't do anything if dropping the same column we're dragging.
+            if (dragSrc != this) {
+                // Set the source column's HTML to the HTML of the column we dropped on.
+                dragSrc.innerHTML = this.innerHTML;
+
+                // Set the distination cell to the transfer data from the source
+                this.innerHTML = e.dataTransfer.getData('text/html');
+
+                // Get the row index of the source cell
+                var rowIndex = dragSrc.parentNode.rowIndex;
+
+                // Update the order IDs array
+                var order = table.row(rowIndex).data();
+                var orderId = order.id; // Assuming that the order ID is in a column named 'id'
+                var index = orderIds.indexOf(orderId);
+                orderIds.splice(index, 1); // Remove the order ID from its current position in the array
+                orderIds.splice(this.parentNode.rowIndex, 0, orderId); // Insert the order ID at the new position in the array
+
+                // Make an AJAX request to update the order on the server
+                $.ajax({
+                    url: '/update_order',
+                    type: 'POST',
+                    data: {order_ids: orderIds},
+                    success: function(data) {
+                        console.log('Order IDs updated on server:', orderIds);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('Error updating order IDs on server:', textStatus, errorThrown);
+                    }
+                });
+            }
+
+            // Invalidate the src cell and dst cell to have DT update its cache then draw
+            table.cell(dragSrc).invalidate();
+            table.cell(this).invalidate().draw(false);
+
+            return false;
+            }
+    </script> */

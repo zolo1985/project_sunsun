@@ -3,7 +3,7 @@ from wtforms import StringField, PasswordField, SubmitField, HiddenField, Select
 from wtforms.validators import Length, Email, ValidationError, InputRequired, Optional, NumberRange, InputRequired, Regexp
 from webapp.database import Connection
 from webapp import models
-from datetime import datetime
+from datetime import datetime, timedelta
 import re
 import pytz
 
@@ -80,7 +80,8 @@ class OrderEditForm(FlaskForm):
     submit = SubmitField('Төлөв өөрчлөх')
 
     def validate_date(self, postphoned_date):
-        if postphoned_date.data < datetime.now(pytz.timezone("Asia/Ulaanbaatar")).date():
+        tomorrow = datetime.now(pytz.timezone("Asia/Ulaanbaatar")).date() + timedelta(days=1)
+        if postphoned_date.data < tomorrow:
             raise ValidationError("Өнөөдрөөс өмнөх өдөр байх боломжгүй!")
 
 

@@ -1,0 +1,133 @@
+{% extends "layout.html" %}
+{% block main %}
+    <!-- orderS DETAIL-->
+    <div class="container-fluid mt-5" style="width: 80%;">
+        <div class="row">
+            <div class="col-sm-12 mb-5">
+                <h3 class="display-6 mb-4">Ажил ID: {{ order.id }}</h3>
+                <br>
+                    <form id="form" method="POST" action="">
+                        {{ form.csrf_token }}
+                        <div class="table-responsive-sm">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr class="bg-grad">
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Байгууллага</th>
+                                        <th scope="col">Хаяг/Утас</th>
+                                        <th scope="col">Бараа/Тоо ширхэг</th>
+                                        <th scope="col">Бүс</th>
+                                        <th scope="col">Жолооч</th>
+                                        <th scope="col">Дүн</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td scope="row"></td>
+                                        <td>{{ order.user.company_name | capitalize }}</td>
+                                        <td>
+                                            <p class="display-8">
+                                                {% if order.addresses.city is not none %}, {{ order.addresses.city }}{% endif %}{% if order.addresses.district is not none %}{{ order.addresses.district }}{% endif %}{% if order.addresses.khoroo is not none %}, {{ order.addresses.khoroo }}-р хороо{% endif %}{% if order.addresses.aimag is not none %}{{ order.addresses.aimag }}{% endif %}{% if order.addresses.address is not none %}, {{ order.addresses.address }}{% endif %}{% if order.addresses.phone is not none %}, {{ order.addresses.phone }}{% endif %}{% if order.addresses.phone_more is not none %}, {{ order.addresses.phone_more }}{% endif %}
+                                            </p>
+                                        </td>
+                                        <td>
+                                            {% if order.user.has_role('supplier1') %}
+                                                {% for order_detail in order.delivery_details %}
+                                                    <p>
+                                                        {% if order_detail.products.name %}{{ order_detail.products.name }}{% endif %}{% if order_detail.products.color %}, {{ order_detail.products.color }}{% endif %}{% if order_detail.products.size %}, {{ order_detail.products.size }}{% endif %}{% if order_detail.products.type %}, {{ order_detail.products.type }}{% endif %}{% if order_detail.quantity %} - {{ order_detail.quantity }} ширхэг. {% endif %}{% if order_detail.products.price %} нэгж үнэ: {{ (order_detail.products.price)  | round | int | numberformat }}₮{% endif%}
+                                                    </p>
+                                                {% endfor %}
+                                            {% elif order.user.has_role('supplier2') %}
+                                                <p>{{ order.addresses.phone }}</p>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if order.region is none %}
+                                                Байхгүй
+                                            {% else %}
+                                                {{ order.region }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {{ order.driver.lastname[0] | capitalize }}. {{ order.driver.firstname }}
+                                        </td>
+                                        <td>
+                                            {{ order.total_amount  | round | int | numberformat }}₮
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="container mt-5">
+                                <div class="row">
+                                    <div class="form-group">
+                                        {{ form.driver_comment.label(class="form-control-label display-8 text-dark") }}
+                                        {% if form.driver_comment.errors %}
+                                            {{ form.driver_comment(class="form-control is-invalid") }}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.driver_comment.errors %}
+                                                    <span>{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ form.driver_comment(class="form-control", style="min-height: 105px;") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form.received_amount.label(class="form-control-label display-8 text-dark") }}
+                                        {% if form.received_amount.errors %}
+                                            {{ form.received_amount(class="form-control is-invalid") }}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.received_amount.errors %}
+                                                    <span>{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ form.received_amount(class="form-control") }}
+                                        {% endif %}
+                                    </div>
+                                    <div id="submitButton" class="float-end">
+                                        {{ form.submit(class="btn btn-outline-success") }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END order DETAIL -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body display-8 fw-bold" id="modal-message">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Хаах</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $('#submit').click(function () {
+            var receivedAmount = document.getElementById("received_amount").value
+            var orderAmount = "{{ order.total_amount}}"
+            if (orderAmount != receivedAmount) {
+                $('#exampleModalLabel').text("АНХААР");
+                $('#messageModal .modal-body').text("Дүн таарахгүй байна!");
+                $('#messageModal').modal('show');
+                return false;
+            } else {
+                return true;
+            }
+        });
+    </script>
+{% endblock main %}

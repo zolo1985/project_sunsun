@@ -1,0 +1,99 @@
+{% extends "layout.html" %}
+{% block main %}
+    <div class="container-fluid mt-5" style="width: 80%;">
+        <div class="row">
+            <div class="col-sm-12 mb-5">
+                <h3 class="custom-header mb-4">Ажил ID: {{ order.id }}</h3>
+                <br>
+                    <form id="form" method="POST" action="">
+                        {{ form.csrf_token }}
+                        <div class="table-responsive-sm">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr class="bg-grad">
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Байгууллага</th>
+                                        <th scope="col">Төлөв</th>
+                                        <th scope="col">Хүргэх огноо</th>
+                                        <th scope="col">Хаяг/Утас</th>
+                                        <th scope="col">Бараа/Тоо ширхэг</th>
+                                        <th scope="col">Бүс</th>
+                                        <th scope="col">Жолооч</th>
+                                        <th scope="col">Дүн</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>ID{{ order.id }}</td>
+                                        <td>{{ order.user.company_name | capitalize }}</td>
+                                        <td>
+                                            {% if order.status == "assigned" %}
+                                                <p class="text-success">Хувиарлагдсан</p>
+                                            {% elif order.status == "completed" %}
+                                                <p class="text-success">Хүргэсэн</p>
+                                            {% elif order.status == "cancelled" %}
+                                                <p class="text-danger">Цуцалсан</p>
+                                                <p>Коммент: {{ order.driver_comment }}</p>
+                                            {% elif order.status == "postphoned" %}
+                                                <p class="text-info">Хойшлуулсан</p>
+                                                <p>хойшлуулсан огноо: {{ order.postphoned_date }}</p>
+                                                <p>Коммент: {{ order.driver_comment }}</p>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ order.delivery_date.strftime('%Y-%m-%d') }}</td>
+                                        <td>
+                                            <p class="display-8">
+                                                {% if order.addresses.city is not none %}, {{ order.addresses.city }}{% endif %}{% if order.addresses.district is not none %}{{ order.addresses.district }}{% endif %}{% if order.addresses.khoroo is not none %}, {{ order.addresses.khoroo }}-р хороо{% endif %}{% if order.addresses.aimag is not none %}{{ order.addresses.aimag }}{% endif %}{% if order.addresses.address is not none %}, {{ order.addresses.address }}{% endif %}{% if order.addresses.phone is not none %}, {{ order.addresses.phone }}{% endif %}{% if order.addresses.phone_more is not none %}, {{ order.addresses.phone_more }}{% endif %}
+                                            </p>
+                                        </td>
+                                        <td>
+                                            {% if order.user.has_role('supplier1') %}
+                                                {% for order_detail in order.delivery_details %}
+                                                    <p>
+                                                        {% if order_detail.products.name %}{{ order_detail.products.name }}{% endif %}{% if order_detail.products.color %}, {{ order_detail.products.color }}{% endif %}{% if order_detail.products.size %}, {{ order_detail.products.size }}{% endif %}{% if order_detail.products.type %}, {{ order_detail.products.type }}{% endif %}{% if order_detail.quantity %} - {{ order_detail.quantity }} ширхэг. {% endif %}{% if order_detail.products.price %} нэгж үнэ: {{ (order_detail.products.price)  | round | int | numberformat }}₮{% endif%}
+                                                    </p>
+                                                {% endfor %}
+                                            {% elif order.user.has_role('supplier2') %}
+                                                <p>{{ order.addresses.phone }}</p>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if order.region is none %}
+                                                Байхгүй
+                                            {% else %}
+                                                {{ order.region }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {{ order.driver.lastname[0] | capitalize }}. {{ order.driver.firstname }}
+                                        </td>
+                                        <td>
+                                            {{ order.total_amount  | round | int | numberformat }}₮
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="float-end">
+                                {% if order.status == "completed" %}
+                                {% elif order.status == "cancelled" %}
+                                {% elif order.status == "postphoned" %}
+                                {% elif order.status == "started" %}
+                                    <div class="mt-3 mb-5" style="min-width: 150px;">
+                                        {{ form.current_status(class="form-control") }}
+                                    </div>
+                                    {{ form.submit(class="btn btn-outline-success m-0") }}
+                                {% elif order.status == "assigned" %}
+                                    <div class="mt-3 mb-5" style="min-width: 150px;">
+                                        {{ form.current_status(class="form-control") }}
+                                    </div>
+                                    {{ form.submit(class="btn btn-outline-success m-0") }}
+                                {% endif%}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END order DETAIL -->
+{% endblock main %}

@@ -135,34 +135,23 @@ def order_completed():
     if not order:
         return jsonify(msg="Хүргэлт олдсонгүй", response = False), 400
 
+    if order.status != "assigned":
+        return jsonify(msg="Өөрчлөх боломжгүй байна", response = False), 400
+
     if order.status == "completed" and order.is_delivered == True:
         return jsonify(msg="Хүргэлт хүргэгдсэн байна.", response = True), 200
     else:
-        if order.supplier_type == "stored":
-            order.status = "completed"
-            order.is_delivered = True
-            if len(body["driver_comment"]) > 5:
-                order.driver_comment = body["driver_comment"]
-            order.delivery_attempts = order.delivery_attempts + 1
-            order.delivered_date = cur_date
+        order.status = "completed"
+        order.is_delivered = True
+        if len(body["driver_comment"]) > 5:
+            order.driver_comment = body["driver_comment"]
+        order.delivery_attempts = order.delivery_attempts + 1
+        order.delivered_date = cur_date
 
-            if order.is_postphoned:
-                    if order.postphoned_date > cur_date:
-                        order.postphoned_date = cur_date
-                        order.delivery_date = cur_date
-
-        elif order.supplier_type == "unstored":
-            order.status = "completed"
-            order.is_delivered = True
-            if len(body["driver_comment"]) > 5:
-                order.driver_comment = body["driver_comment"]
-            order.delivery_attempts = order.delivery_attempts + 1
-            order.delivered_date = cur_date
-
-            if order.is_postphoned:
-                    if order.postphoned_date > cur_date:
-                        order.postphoned_date = cur_date
-                        order.delivery_date = cur_date
+        if order.is_postphoned:
+            if order.postphoned_date.date() > cur_date.date():
+                order.postphoned_date = cur_date
+                order.delivery_date = cur_date
 
         payment_detail = models.PaymentDetail()
         payment_detail.total_amount = int(body["total_amount"])
@@ -200,33 +189,23 @@ def order_cancelled():
         connection.close()
         return jsonify(msg="Хүргэлт олдсонгүй", response = False), 400
 
+    if order.status != "assigned":
+        return jsonify(msg="Өөрчлөх боломжгүй байна", response = False), 400
+
     if order.status == "cancelled":
         return jsonify(msg="Хүргэлт цуцлагдсан байна.", response = True), 200
     else:
         try:
-            if order.supplier_type == "stored":
-                order.status = "cancelled"
-                order.is_cancelled = True
-                order.is_delivered = False
-                order.driver_comment = body["driver_comment"]
-                order.delivery_attempts = order.delivery_attempts + 1
+            order.status = "cancelled"
+            order.is_cancelled = True
+            order.is_delivered = False
+            order.driver_comment = body["driver_comment"]
+            order.delivery_attempts = order.delivery_attempts + 1
 
-                if order.is_postphoned:
-                    if order.postphoned_date > cur_date:
-                        order.postphoned_date = cur_date
-                        order.delivery_date = cur_date
-
-            elif order.supplier_type == "unstored":
-                order.status = "cancelled"
-                order.is_cancelled = True
-                order.is_delivered = False
-                order.driver_comment = body["driver_comment"]
-                order.delivery_attempts = order.delivery_attempts + 1
-
-                if order.is_postphoned:
-                    if order.postphoned_date > cur_date:
-                        order.postphoned_date = cur_date
-                        order.delivery_date = cur_date
+            if order.is_postphoned:
+                if order.postphoned_date.date() > cur_date.date():
+                    order.postphoned_date = cur_date
+                    order.delivery_date = cur_date
 
             job_history = models.DriverOrderHistory()
             job_history.created_date = cur_date
@@ -261,45 +240,29 @@ def order_postphoned():
     order = connection.query(models.Delivery).filter(models.Delivery.id==int(body["order_id"])).first()
 
     if not order:
-        connection.close()
         return jsonify(msg="Хүргэлт олдсонгүй", response = False), 400
 
-    if order.status == "unassigned" and order.is_postphoned == True:
-        connection.close()
-        return jsonify(msg="Хүргэлт хойшлогдлоо.", response = True), 200
-    else:
+    if order.status != "assigned":
+        return jsonify(msg="Өөрчлөх боломжгүй байна", response = False), 400
+
+    try:
         dt_naive = datetime.strptime(body["postphoned_date"], '%Y-%m-%d')
         timezone = pytz.timezone('Asia/Ulaanbaatar')
         dt_aware = timezone.localize(dt_naive)
 
-        if order.supplier_type == "stored":
-            order.status = "unassigned"
-            order.postphoned_driver_id = current_user.id
-            order.driver_comment = body["driver_comment"]
-            order.is_postphoned = True
-            order.is_delivered = False
-            order.delivery_attempts = order.delivery_attempts + 1
-            order.is_received_from_clerk = False
-            order.is_driver_received = False
-            order.assigned_driver_id = None
-            order.postphoned_date = dt_aware
-            order.delivery_date = dt_aware
-
-        elif order.supplier_type == "unstored":
-            order.status = "unassigned"
-            order.postphoned_driver_id = current_user.id
-            order.driver_comment = body["driver_comment"]
-            order.is_postphoned = True
-            order.is_delivered = False
-            order.delivery_attempts = order.delivery_attempts + 1
-            order.is_received_from_clerk = False
-            order.is_driver_received = False
-            order.assigned_driver_id = None
-            order.postphoned_date = dt_aware
-            order.delivery_date = dt_aware
+        order.status = "unassigned"
+        order.postphoned_driver_id = current_user.id
+        order.driver_comment = body["driver_comment"]
+        order.is_postphoned = True
+        order.is_delivered = False
+        order.delivery_attempts = order.delivery_attempts + 1
+        order.is_received_from_clerk = False
+        order.is_driver_received = False
+        order.assigned_driver_id = None
+        order.postphoned_date = dt_aware
+        order.delivery_date = dt_aware
 
         job_history = models.DriverOrderHistory()
-        job_history.created_date = datetime.now(pytz.timezone("Asia/Ulaanbaatar"))
         job_history.status = "postphoned"
         job_history.driver_id = current_user.id
         job_history.type = "delivery"
@@ -313,14 +276,13 @@ def order_postphoned():
 
         connection.add(driver_return)
         connection.add(job_history)
-
-        try:
-            connection.commit()
-        except Exception:
-            connection.rollback()
-            return jsonify(msg="Алдаа гарлаа", response = False), 400
-        else:
-            return jsonify(msg="Хүргэлт хойшлогдлоо.", response = True), 200
+    
+        connection.commit()
+    except Exception:
+        connection.rollback()
+        return jsonify(msg="Алдаа гарлаа", response = False), 400
+    else:
+        return jsonify(msg="Хүргэлт хойшлогдлоо.", response = True), 200
 
 
 @orders_api.route('/api/orders/histories', methods = ["GET", "POST"])

@@ -1,0 +1,237 @@
+{% extends "layout.html" %}
+{% block main %}
+    <!-- Products -->
+    <div class="container-fluid mt-5 min-vh-100" style="width: 80%;">
+        <div class="row">
+            <div class="col-sm-12 mb-5">
+                <h3 class="display-6 mb-4">Нийт хүргэлт</h3>
+                    <div class="table-responsive-sm">
+                        <table id="inventory-table" class="table table-hover display">
+                            <thead>
+                                <tr class="bg-grad">
+                                    <th scope="col" class="bg-grad">#</th>
+                                    <th scope="col" class="bg-grad">Харилцагч</th>
+                                    <th scope="col" class="bg-grad">Төлөв</th>
+                                    <th scope="col" class="bg-grad">Хүргэх огноо</th>
+                                    <th scope="col" class="bg-grad">Хаяг/Утас</th>
+                                    <th scope="col" class="bg-grad">Бараа/Тоо ширхэг</th>
+                                    <th scope="col" class="bg-grad">Дүн</th>
+                                    <th scope="col" class="bg-grad">Нягтлангаас хүлээж авсан</th>
+                                    <th scope="col" class="bg-grad"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                                    <tr>
+                                        <td scope="row">
+                                            <p>ID{{ order.id }}</p>
+                                        </td>
+                                        <td>
+                                            <p>{{ order.user.company_name | capitalize }}</p>
+                                        </td>
+                                        <td>
+                                            {% if order.status == "assigned" %}
+                                                <p class="text-success fw-bold">Хувиарлагдсан</p>
+                                            {% elif order.status == "started" %}
+                                                <p class="fw-bold" style="color: coral;">Эхлүүлсэн</p>
+                                            {% elif order.status == "completed" %}
+                                                <p class="text-success fw-bold">Хүргэсэн</p>
+                                            {% elif order.status == "cancelled" %}
+                                                <p class="text-danger fw-bold">Цуцалсан</p>
+                                                <p>Коммент:
+                                                    {{ order.driver_comment }}</p>
+                                            {% elif order.status == "postphoned" %}
+                                                <p class="text-info fw-bold">Хойшлуулсан</p>
+                                                <p>хойшлуулсан огноо:
+                                                    {{ order.postphoned_date }}</p>
+                                                <p>Коммент:
+                                                    {{ order.driver_comment }}</p>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <p class="text-nowrap">{{ order.delivery_date.strftime('%Y-%m-%d') }}</p>
+                                        </td>
+                                        <td>
+                                            <p class="display-8">
+                                                {% if order.addresses.city is not none %}, {{ order.addresses.city }}{% endif %}{% if order.addresses.district is not none %}{{ order.addresses.district }}{% endif %}{% if order.addresses.khoroo is not none %}, {{ order.addresses.khoroo }}-р хороо{% endif %}{% if order.addresses.aimag is not none %}{{ order.addresses.aimag }}{% endif %}{% if order.addresses.address is not none %}, {{ order.addresses.address }}{% endif %}{% if order.addresses.phone is not none %}, {{ order.addresses.phone }}{% endif %}{% if order.addresses.phone_more is not none %}, {{ order.addresses.phone_more }}{% endif %}
+                                            </p>
+                                        </td>
+                                        <td>
+                                            {% if order.user.has_role('supplier1') %}
+                                                {% for order_detail in order.delivery_details %}
+                                                    <p>
+                                                        {% if order_detail.products.name %}{{ order_detail.products.name }}{% endif %}{% if order_detail.products.color %}, {{ order_detail.products.color }}{% endif %}{% if order_detail.products.size %}, {{ order_detail.products.size }}{% endif %}{% if order_detail.products.type %}, {{ order_detail.products.type }}{% endif %}{% if order_detail.quantity %} - {{ order_detail.quantity }} ширхэг. {% endif %}{% if order_detail.products.price %} нэгж үнэ: {{ (order_detail.products.price)  | round | int | numberformat }}₮{% endif%}
+                                                    </p>
+                                                {% endfor %}
+                                            {% elif order.user.has_role('supplier2') %}
+                                                <p>{{ order.addresses.phone }}</p>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <p>{{ order.total_amount  | round | int | numberformat }}₮</p>
+                                        </td>
+                                        <td>
+                                            {% if order.is_received_from_clerk %}
+                                                <p>Тийм</p>
+                                            {% else %}
+                                                <p>Үгүй</p>
+                                                <a class="btn btn-outline-success" href="{{ url_for('driver_order.driver_order_receive', order_id=order.id) }}">Хүлээж авах</a>
+                                            {% endif %}
+                                        </td>
+                                        <td>{% if order.is_received_from_clerk %}
+                                                <a class="btn btn-outline-success" href="{{ url_for('driver_order.driver_order_detail', order_id=order.id) }}">Төлөв өөрчлөх</a>
+                                            {% else %}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END Products -->
+    <script>
+        $(document).ready(function () {
+            var dragSrc = null; // Globally track source cell
+            var cells = null; // All cells in table
+
+            var table = $('#inventory-table').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'csvHtml5',
+                        text: '<a class="btn btn-outline-secondary m-2" style="float: left;">CSV файл татах</a>',
+                        tag: 'span',
+                        exportOptions: {
+                            modifier: {
+                                search: 'none'
+                            }
+                        }
+                    }, {
+                        extend: 'print',
+                        text: '<a class="btn btn-outline-secondary m-2" style="float: left;">Хэвлэх</a>',
+                        tag: 'span',
+                        exportOptions: {
+                            modifier: {
+                                search: 'none'
+                            }
+                        }
+                    }, {
+                        extend: 'excelHtml5',
+                        text: 'Excel',
+                        text: '<a class="btn btn-outline-secondary m-2" style="float: left;">XLS файл татах</a>',
+                        tag: 'span',
+                        exportOptions: {
+                            modifier: {
+                                search: 'none'
+                            }
+                        }
+                    },
+                ],
+                "language": {
+                    "lengthMenu": "_MENU_ эгнээ харах",
+                    "zeroRecords": "Дата алга",
+                    "info": "_PAGES_ хуудаснаас _PAGE_-р хуудас. Нийт: _TOTAL_ хүргэлт",
+                    "infoEmpty": "",
+                    sSearch: "Шүүх",
+                    "paginate": {
+                        "previous": "өмнөх",
+                        "next": "дараа"
+                    }
+
+                },
+                pageLength: 100,
+                columnDefs: [
+                    {
+                        targets: 0,
+
+                        // Set HTML5 draggable for all cells
+                        createdCell: function (td, cellData, rowData, row, col) {
+                            $(td).attr('draggable', 'true');
+                        }
+                    }
+                ],
+                drawCallback: function () { // Apply HTML5 drag and drop listeners to all cells
+                    cells = document.querySelectorAll('#inventory-table td');
+                    [].forEach.call(cells, function (cell) {
+                        cell.addEventListener('dragstart', handleDragStart, false);
+                        cell.addEventListener('dragenter', handleDragEnter, false)
+                        cell.addEventListener('dragover', handleDragOver, false);
+                        cell.addEventListener('dragleave', handleDragLeave, false);
+                        cell.addEventListener('drop', handleDrop, false);
+                        cell.addEventListener('dragend', handleDragEnd, false);
+                    });
+                }
+            });
+
+
+            function handleDragStart(e) {
+                this.style.opacity = '0.4'; // this / e.target is the source node.
+                dragSrc = this;
+                // Keep track of source cell
+
+                // Allow moves
+                e.dataTransfer.effectAllowed = 'move';
+
+                // Get the cell data and store in the transfer data object
+                e.dataTransfer.setData('text/html', this.innerHTML);
+            }
+
+            function handleDragOver(e) {
+                if (e.preventDefault) {
+                    e.preventDefault(); // Necessary. Allows us to drop.
+                }
+
+                // Allow moves
+                e.dataTransfer.dropEffect = 'move'; // See the section on the DataTransfer object.
+
+                return false;
+            }
+
+            function handleDragEnter(e) {
+                // this / e.target is the current hover target.
+
+                // Apply drop zone visual
+                this.classList.add('over');
+            }
+
+            function handleDragLeave(e) {
+                // this / e.target is previous target element.
+
+                // Remove drop zone visual
+                this.classList.remove('over');
+            }
+
+            function handleDrop(e) { // this / e.target is current target element.
+
+                if (e.stopPropagation) {
+                    e.stopPropagation(); // stops the browser from redirecting.
+                }
+
+                // Don't do anything if dropping the same column we're dragging.
+                if (dragSrc != this) { // Set the source column's HTML to the HTML of the column we dropped on.
+                    dragSrc.innerHTML = this.innerHTML;
+
+                    // Set the distination cell to the transfer data from the source
+                    this.innerHTML = e.dataTransfer.getData('text/html');
+
+                    // Invalidate the src cell and dst cell to have DT update its cache then draw
+                    table.cell(dragSrc).invalidate();
+                    table.cell(this).invalidate().draw(false);
+                }
+
+                return false;
+            }
+
+            function handleDragEnd(e) { // this/e.target is the source node.
+                this.style.opacity = '1.0';
+                [].forEach.call(cells, function (cell) { // Make sure to remove drop zone visual class
+                    cell.classList.remove('over');
+                });
+            }
+        });
+    </script>
+{% endblock main %}

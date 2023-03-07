@@ -62,7 +62,7 @@ def manager_orders():
     connection = Connection()
     cur_date = datetime.now(pytz.timezone("Asia/Ulaanbaatar"))
     # current_date = func.date(func.convert_tz(func.now(), '+00:00', '+08:00'))
-    current_date = func.date(datetime.now(pytz.timezone("Asia/Ulaanbaatar")))
+    current_date = func.date(cur_date)
 
     orders = connection.query(models.Delivery).filter(or_(func.date(models.Delivery.delivery_date) == current_date, (func.date(models.Delivery.postphoned_date) == current_date), (func.date(models.Delivery.created_date) == current_date) & (models.Delivery.is_postphoned == True))).all()
 
@@ -147,6 +147,7 @@ def manager_order_detail(order_id):
     form.aimag.choices = [(aimag) for aimag in initial_aimags]
     form.aimag.choices.insert(0,'Аймаг сонгох')
     order = connection.query(models.Delivery).filter_by(id=order_id).first()
+    cur_date = datetime.now(pytz.timezone("Asia/Ulaanbaatar"))
 
     if order is None:
         flash('Хүргэлт олдсонгүй', 'danger')
@@ -200,10 +201,8 @@ def manager_order_detail(order_id):
                     order.delivered_date = datetime.now(pytz.timezone("Asia/Ulaanbaatar"))
 
                     if order.is_postphoned:
-                        timezone = pytz.timezone('Asia/Ulaanbaatar')
-                        dt_aware = timezone.localize(order.postphoned_date)
-                        if dt_aware > datetime.now(pytz.timezone("Asia/Ulaanbaatar")):
-                            order.postphoned_date = datetime.now(pytz.timezone("Asia/Ulaanbaatar"))
+                        if order.postphoned_date.date() > cur_date.date():
+                            order.postphoned_date = cur_date
 
                     payment_detail = models.PaymentDetail()
                     payment_detail.total_amount = order.total_amount
@@ -237,10 +236,8 @@ def manager_order_detail(order_id):
                         order.delivered_date = datetime.now(pytz.timezone("Asia/Ulaanbaatar"))
 
                         if order.is_postphoned:
-                            timezone = pytz.timezone('Asia/Ulaanbaatar')
-                            dt_aware = timezone.localize(order.postphoned_date)
-                            if dt_aware > datetime.now(pytz.timezone("Asia/Ulaanbaatar")):
-                                order.postphoned_date = datetime.now(pytz.timezone("Asia/Ulaanbaatar"))
+                            if order.postphoned_date.date() > cur_date.date():
+                                order.postphoned_date = cur_date
 
                         payment_detail = models.PaymentDetail()
                         payment_detail.total_amount = order.total_amount
@@ -267,10 +264,8 @@ def manager_order_detail(order_id):
                     #cancel the order and add inventory back to inventory
 
                     if order.is_postphoned:
-                        timezone = pytz.timezone('Asia/Ulaanbaatar')
-                        dt_aware = timezone.localize(order.postphoned_date)
-                        if dt_aware > datetime.now(pytz.timezone("Asia/Ulaanbaatar")):
-                            order.postphoned_date = datetime.now(pytz.timezone("Asia/Ulaanbaatar"))
+                        if order.postphoned_date.date() > cur_date.date():
+                            order.postphoned_date = cur_date
 
                     if order.status == "unassigned" and order.is_postphoned:
                         job_history = connection.query(models.DriverOrderHistory).filter(models.DriverOrderHistory.delivery_id==order.id, models.DriverOrderHistory.type=="delivery", models.DriverOrderHistory.status=="completed").first()
@@ -295,10 +290,8 @@ def manager_order_detail(order_id):
                     order.delivered_date = datetime.now(pytz.timezone("Asia/Ulaanbaatar"))
 
                     if order.is_postphoned:
-                        timezone = pytz.timezone('Asia/Ulaanbaatar')
-                        dt_aware = timezone.localize(order.postphoned_date)
-                        if dt_aware > datetime.now(pytz.timezone("Asia/Ulaanbaatar")):
-                            order.postphoned_date = datetime.now(pytz.timezone("Asia/Ulaanbaatar"))
+                        if order.postphoned_date.date() > cur_date.date():
+                            order.postphoned_date = cur_date
 
                     payment_detail = models.PaymentDetail()
                     payment_detail.total_amount = order.total_amount
@@ -341,11 +334,9 @@ def manager_order_detail(order_id):
                         order.driver_comment = "Менежер өөрчилсөн"
                         order.delivered_date = None
 
-                        if order.is_postphoned:
-                            timezone = pytz.timezone('Asia/Ulaanbaatar')
-                            dt_aware = timezone.localize(order.postphoned_date)
-                            if dt_aware > datetime.now(pytz.timezone("Asia/Ulaanbaatar")):
-                                order.postphoned_date = datetime.now(pytz.timezone("Asia/Ulaanbaatar"))
+                        if order.is_postphoned:                            
+                            if order.postphoned_date.date() > cur_date.date():
+                                order.postphoned_date = cur_date
 
                         if order.is_driver_received:
                             job_history = connection.query(models.DriverOrderHistory).filter(models.DriverOrderHistory.delivery_id==order.id, models.DriverOrderHistory.type=="delivery", models.DriverOrderHistory.status=="completed").first()

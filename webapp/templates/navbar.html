@@ -203,7 +203,15 @@
                             <a class="nav-link" href="{{ url_for('manager_search.search') }}"> <i class="fas fa-search fs-6"></i> Хайх</a>
                         </li>
                     {% elif current_user.has_role('driver') %}
-
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('driver_order.driver_orders') }}">Хүргэлтүүд</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Хүргэлтийн түүх</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Данс</a>
+                        </li>
                     {% elif current_user.has_role('accountant') %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('accountant_dashboard.accountant_dashboard') }}">Самбар</a>

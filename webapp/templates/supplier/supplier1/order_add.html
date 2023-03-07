@@ -185,6 +185,25 @@
         </form>
     </div>
 </section>
+  
+<!-- Modal -->
+<div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body display-8 fw-bold" id="modal-message">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Хаах</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <table style="display: none;">
     <tbody id="tr-placeholder">
         <tr>
@@ -206,42 +225,6 @@
         </tr>
     </tbody>
 </table>
-  
-<!-- Modal -->
-<div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body display-8 fw-bold" id="modal-message">
-                ...
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Хаах</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-        <div class="modal-header bg-grad">
-            <h5 class="modal-title text-white" id="confirmModalLabel">Хүлээлгэж өгөх</h5>
-            <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <p class="display-8">Та итгэлтэй байна уу?</p>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Үгүй</button>
-            <button type="button" class="btn btn-primary" id="confirmModalYes">Тйим</button>
-        </div>
-        </div>
-    </div>
-</div>
 
 <!-- END ORDERS ADD -->
 <script type="text/javascript">
@@ -392,11 +375,6 @@
             }
         }
     });
-
-    $('#confirmModal .btn-confirm').click(function() {
-        $('#confirmModal').modal('hide');
-        $('form').submit(); // submit the form
-    });
 </script>
 <script>
     function findRow(data) {
@@ -406,7 +384,7 @@
     }
 </script>
 <script>
-    $(window).on('load', function(){
+    $(window).on('load', function() {
         document.getElementById('calculateTotal').value = 0;
     });
 </script>

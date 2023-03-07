@@ -5,7 +5,7 @@ from webapp.database import Connection
 from webapp import models
 from datetime import datetime, time
 from sqlalchemy import func
-from .forms import FiltersForm, DriverOrders, FilterDateForm
+from .forms import FiltersForm, FilterDateForm
 import pytz
 from webapp.utils import is_time_between
 
@@ -30,44 +30,19 @@ def clerk_driver_orders():
 
     unassigned_orders = connection.execute("SELECT count(delivery.id) as total_count, CONCAT(driver.lastname, ' ', driver.firstname) as driver_name FROM sunsundatabase1.delivery as delivery join sunsundatabase1.user as driver on delivery.assigned_driver_id=driver.id WHERE DATE(delivery.delivery_date) =:cur_date and delivery.is_delivered=false and delivery.status='assigned' and delivery.is_received_from_clerk=false group by delivery.assigned_driver_id, driver.id;", {"cur_date": cur_date.date()}).all()
 
-    form1 = DriverOrders()
-
-    order_window = is_time_between(time(6,30), time(16,55))
+    order_window = is_time_between(time(6,30), time(3,55))
 
     if form.drivers.data is not None and form.validate():
         if form.drivers.data!="0":
             user = connection.query(models.User).filter(models.User.id==form.drivers.data).first()
             if user is not None:
                 orders = connection.query(models.Delivery).filter(models.Delivery.status=="assigned").filter(models.Delivery.assigned_driver_id==user.id).all()
-            return render_template('/clerk/expenses.html', form=form, orders=orders, form1=form1, order_window=order_window)
+            return render_template('/clerk/expenses.html', form=form, orders=orders, order_window=order_window)
         else:
             unassigned_orders = connection.execute("SELECT count(delivery.id) as total_count, CONCAT(driver.lastname, ' ', driver.firstname) as driver_name FROM sunsundatabase1.delivery as delivery join sunsundatabase1.user as driver on delivery.assigned_driver_id=driver.id WHERE DATE(delivery.delivery_date) =:cur_date and delivery.is_delivered=false and delivery.status='assigned' and delivery.is_received_from_clerk=false group by delivery.assigned_driver_id, driver.id;", {"cur_date": cur_date.date()}).all()
-            return render_template('/clerk/expenses.html', form=form, form1=form1, unassigned_orders=unassigned_orders, order_window=order_window)
+            return render_template('/clerk/expenses.html', form=form, unassigned_orders=unassigned_orders, order_window=order_window)
 
-    if form1.validate_on_submit():
-        line_order_id = request.form.getlist("order_id")
-
-        for i, order_id in enumerate(line_order_id):
-            order = connection.query(models.Delivery).get(order_id)
-
-            if order.is_driver_received==False:
-                try:
-                    order.received_from_clerk_id = current_user.id
-                    order.is_driver_received = True
-                    order.received_from_clerk_date = datetime.now(pytz.timezone("Asia/Ulaanbaatar"))
-                    connection.commit()
-                except Exception as ex:
-                    flash('Алдаа гарлаа', 'danger')
-                    connection.rollback()
-                    connection.close()
-                    return redirect(url_for('clerk_expense.clerk_driver_orders'))
-            else:
-                continue
-            
-        flash('Бараа хүлээлгэж өглөө', 'success')
-        return redirect(url_for('clerk_expense.clerk_driver_orders'))
-
-    return render_template('/clerk/expenses.html', form=form, orders=orders, form1=form1, unassigned_orders=unassigned_orders, order_window=order_window)
+    return render_template('/clerk/expenses.html', form=form, orders=orders, unassigned_orders=unassigned_orders, order_window=order_window)
 
 
 @clerk_expense_blueprint.route('/clerk/return-task/expenses', methods=['GET','POST'])
@@ -86,7 +61,6 @@ def clerk_driver_return_task_orders():
 
     if form.drivers.data is not None and form.validate():
         if form.drivers.data != "0":
-            print(form.drivers.data)
             user = connection.query(models.User).filter(models.User.id==form.drivers.data).first()
             if user is not None:
                 return_tasks = connection.query(models.ReturnTask).filter(models.ReturnTask.is_ready==True, models.ReturnTask.assigned_driver_id==user.id).all()
@@ -110,44 +84,23 @@ def clerk_driver_order():
     if order_to_expense is None:
         return jsonify({"response": False, "msg": "Хүргэлт олдсонгүй!"}), 400
 
+    if order_to_expense.status != "assigned":
+        return jsonify({"response": False, "msg": "Алдаа гарлаа!"}), 400
+
     if order_to_expense.is_driver_received==True:
         return jsonify({"response": False, "msg": "Жолооч авсан байна!"}), 400
 
-    if order_to_expense.supplier_type=="stored":
-        try:
-            # if order_to_expense.is_postphoned is True:
-            #     for detail in order_to_expense.delivery_details:
-            #         product = connection.query(models.Product).filter(models.Product.id == int(detail.products.id)).first()
-                    # product.inventory.subtract_items(int(detail.quantity))
+    try:
+        order_to_expense.received_from_clerk_id = current_user.id
+        order_to_expense.is_driver_received = True
+        order_to_expense.received_from_clerk_date = datetime.now(pytz.timezone("Asia/Ulaanbaatar"))
 
-                    # inventory_transaction = connection.query(models.InventoryTransaction).filter(models.InventoryTransaction.delivery_id==detail.delivery_id, models.InventoryTransaction.inventory_id==product.inventory.id).first()
-                    # inventory_transaction.quantity = inventory_transaction.quantity + detail.quantity
-
-            order_to_expense.received_from_clerk_id = current_user.id
-            order_to_expense.is_driver_received = True
-            order_to_expense.received_from_clerk_date = datetime.now(pytz.timezone("Asia/Ulaanbaatar"))
-
-            connection.commit()
-        except Exception:
-            connection.rollback()
-            return jsonify({"response": False, "msg": "Алдаа гарлаа!"}), 400
-        else:
-            return jsonify({"response": True, "msg": "Хүлээлгэж өглөө"}), 200
-
-    elif order_to_expense.supplier_type=="unstored":
-        try:
-            order_to_expense.received_from_clerk_id = current_user.id
-            order_to_expense.is_driver_received = True
-            order_to_expense.received_from_clerk_date = datetime.now(pytz.timezone("Asia/Ulaanbaatar"))
-
-            connection.commit()
-        except Exception:
-            connection.rollback()
-            return jsonify({"response": False, "msg": "Алдаа гарлаа!"}), 400
-        else:
-            return jsonify({"response": True, "msg": "Хүлээлгэж өглөө"}), 200
+        connection.commit()
+    except Exception:
+        connection.rollback()
+        return jsonify({"response": False, "msg": "Алдаа гарлаа!"}), 400
     else:
-        return jsonify({"response": False, "msg": "Хүргэлт алдаатай байна!"}), 400
+        return jsonify({"response": True, "msg": "Хүлээлгэж өглөө"}), 200
 
 
 @clerk_expense_blueprint.route('/clerk/expense/return-task', methods=['GET', 'POST'])
@@ -189,7 +142,6 @@ def clerk_expense_return_task():
             return jsonify({"response": True, "msg": "Хүлээлгэж өглөө"}), 200
     else:
         return jsonify({"response": False, "msg": "Хүргэлт алдаатай байна!"}), 400
-
 
 
 @clerk_expense_blueprint.route('/clerk/warehouse/expenses', methods=['GET'])

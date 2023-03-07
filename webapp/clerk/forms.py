@@ -10,10 +10,6 @@ class FiltersForm(FlaskForm):
     submit = SubmitField('Сонгох')
 
 
-class DriverOrders(FlaskForm):
-    submit = SubmitField('Бүх хүргэлтийг хүлээлгэж өгөх')
-
-
 class ReceiveInventoryForm(FlaskForm):
     pickup_task_id = HiddenField()
     date = DateField('Он сар', validators=[Optional()])
