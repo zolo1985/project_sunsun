@@ -31,7 +31,7 @@ def accountant_payments():
     # selected_date_add_time_replace = datetime_object.replace(hour=17, minute=0)
     # selected_date_time_minus_1day = selected_date_add_time_replace - timedelta(days=1)
 
-    unprocessed_orders = connection.execute("SELECT count(delivery.id) as total_count, CONCAT(driver.lastname, ' ', driver.firstname) as driver_name FROM sunsundatabase2.delivery as delivery join sunsundatabase2.user as driver on delivery.assigned_driver_id=driver.id WHERE delivery.is_processed_by_accountant=false and delivery.is_delivered=true and delivery.status='completed' group by delivery.assigned_driver_id;").all()
+    unprocessed_orders = connection.execute("SELECT count(delivery.id) as total_count, CONCAT(driver.lastname, ' ', driver.firstname) as driver_name FROM sunsundatabase1.delivery as delivery join sunsundatabase1.user as driver on delivery.assigned_driver_id=driver.id WHERE delivery.is_processed_by_accountant=false and delivery.is_delivered=true and delivery.status='completed' group by delivery.assigned_driver_id;").all()
 
     form1 = ReceivePaymentForm()
 
@@ -183,7 +183,7 @@ def accountant_payments_two_weeks():
             daily_data = []
             days_data = []
             for i in rrule(DAILY , dtstart=datetime.strptime(f'{current_date.year}-{current_date.month}-{start_day}', '%Y-%m-%d'), until=datetime.strptime(f'{current_date.year}-{current_date.month}-{end_day}', '%Y-%m-%d')):
-                day_info = connection.execute('SELECT COALESCE(sum(payment.total_amount),0) as total_amount, COALESCE(sum(payment.remaining_amount),0) as remaining_amount FROM sunsundatabase2.payment as payment where payment.driver_id=:driver_id and DATE(payment.date_of_payment)=:day;', {"day": i.date(), "driver_id": driver.id}).first()
+                day_info = connection.execute('SELECT COALESCE(sum(payment.total_amount),0) as total_amount, COALESCE(sum(payment.remaining_amount),0) as remaining_amount FROM sunsundatabase1.payment as payment where payment.driver_id=:driver_id and DATE(payment.date_of_payment)=:day;', {"day": i.date(), "driver_id": driver.id}).first()
                 day_format = (i.day, int(day_info.total_amount) if day_info is not None else 0, int(day_info.remaining_amount) if day_info is not None else 0)
                 daily_data.append(day_format)
                 days_data.append(i.day)
@@ -210,7 +210,7 @@ def accountant_payments_two_weeks():
             daily_data = []
             days_data = []
             for i in rrule(DAILY , dtstart=datetime.strptime(f'{form.select_date.data.year}-{form.select_date.data.month}-{start_day}', '%Y-%m-%d'), until=datetime.strptime(f'{form.select_date.data.year}-{form.select_date.data.month}-{end_day}', '%Y-%m-%d')):
-                day_info = connection.execute('SELECT COALESCE(sum(payment.total_amount),0) as total_amount, COALESCE(sum(payment.remaining_amount),0) as remaining_amount FROM sunsundatabase2.payment as payment where payment.driver_id=:driver_id and DATE(payment.date_of_payment)=:day;', {"day": i.date(), "driver_id": driver.id}).first()
+                day_info = connection.execute('SELECT COALESCE(sum(payment.total_amount),0) as total_amount, COALESCE(sum(payment.remaining_amount),0) as remaining_amount FROM sunsundatabase1.payment as payment where payment.driver_id=:driver_id and DATE(payment.date_of_payment)=:day;', {"day": i.date(), "driver_id": driver.id}).first()
                 day_format = (i.day, int(day_info.total_amount) if day_info is not None else 0, int(day_info.remaining_amount) if day_info is not None else 0)
                 daily_data.append(day_format)
                 days_data.append(i.day)

@@ -36,7 +36,7 @@ def manager_orders_stats():
         postphoned_rate=[]
 
         if form.select_option.data == "Өдөр":
-            daily_orders_chart_tuple = connection.execute("SELECT DAY(driver_order_history.created_date) as selected_day, COUNT(*) as daily_total, driver_order_history.status as order_status FROM sunsundatabase2.driver_order_history WHERE DATE(driver_order_history.created_date) =:selected_date and driver_order_history.type='delivery' GROUP BY DAY(driver_order_history.created_date), driver_order_history.status;", {"selected_date": form.date.data}).all()
+            daily_orders_chart_tuple = connection.execute("SELECT DAY(driver_order_history.created_date) as selected_day, COUNT(*) as daily_total, driver_order_history.status as order_status FROM sunsundatabase1.driver_order_history WHERE DATE(driver_order_history.created_date) =:selected_date and driver_order_history.type='delivery' GROUP BY DAY(driver_order_history.created_date), driver_order_history.status;", {"selected_date": form.date.data}).all()
             for i, result in enumerate(daily_orders_chart_tuple):
                 if result["order_status"] == "completed":
                     completed.append(result["daily_total"])
@@ -76,7 +76,7 @@ def manager_orders_stats():
             current_week = form.date.data.isocalendar()[1]
             current_period = connection.execute("SELECT CONCAT(Year(curdate()), '-01-01') + INTERVAL :week_number WEEK - INTERVAL WEEKDAY(CONCAT(Year(curdate()), '-01-01')) DAY as first_day_of_week, CONCAT(Year(curdate()), '-01-01') + INTERVAL :week_number WEEK - INTERVAL WEEKDAY(CONCAT(Year(curdate()), '-01-01')) - 6 DAY as last_day_of_week;", {"week_number": current_week}).first()
 
-            weekly_orders_chart_tuple = connection.execute("SELECT DATE(driver_order_history.created_date) as week_day, COUNT(*) as weekly_total, driver_order_history.status as order_status FROM sunsundatabase2.driver_order_history WHERE (driver_order_history.created_date BETWEEN DATE(:first_day) AND DATE(:last_day)) and driver_order_history.type='delivery' GROUP BY DATE(driver_order_history.created_date), driver_order_history.status;", {"first_day": current_period.first_day_of_week, "last_day": current_period.last_day_of_week}).all()
+            weekly_orders_chart_tuple = connection.execute("SELECT DATE(driver_order_history.created_date) as week_day, COUNT(*) as weekly_total, driver_order_history.status as order_status FROM sunsundatabase1.driver_order_history WHERE (driver_order_history.created_date BETWEEN DATE(:first_day) AND DATE(:last_day)) and driver_order_history.type='delivery' GROUP BY DATE(driver_order_history.created_date), driver_order_history.status;", {"first_day": current_period.first_day_of_week, "last_day": current_period.last_day_of_week}).all()
 
             for i in rrule(DAILY , dtstart=datetime.fromisoformat(current_period.first_day_of_week), until=datetime.fromisoformat(current_period.last_day_of_week)):
                 weekly_days.append(i.strftime('%Y-%m-%d'))
@@ -116,7 +116,7 @@ def manager_orders_stats():
 
             month_period = connection.execute("select date_sub(:selected_period, interval day(:selected_period)-1 day) as first_day_of_month, date_sub(date_add(:selected_period, interval 1 month), interval day(:selected_period) day) as last_day_of_month;", {"selected_period": form.date.data}).first()
 
-            monthly_orders_chart_tuple = connection.execute("SELECT DAY(driver_order_history.created_date) as month_day, COUNT(*) as monthly_total, driver_order_history.status as order_status FROM sunsundatabase2.driver_order_history WHERE (driver_order_history.created_date BETWEEN DATE(:first_day) AND DATE(:last_day)) and driver_order_history.type='delivery' GROUP BY DAY(driver_order_history.created_date), driver_order_history.status;", {"first_day": month_period.first_day_of_month, "last_day": month_period.last_day_of_month}).all()
+            monthly_orders_chart_tuple = connection.execute("SELECT DAY(driver_order_history.created_date) as month_day, COUNT(*) as monthly_total, driver_order_history.status as order_status FROM sunsundatabase1.driver_order_history WHERE (driver_order_history.created_date BETWEEN DATE(:first_day) AND DATE(:last_day)) and driver_order_history.type='delivery' GROUP BY DAY(driver_order_history.created_date), driver_order_history.status;", {"first_day": month_period.first_day_of_month, "last_day": month_period.last_day_of_month}).all()
 
             for i in rrule(DAILY , dtstart=datetime.fromisoformat(month_period.first_day_of_month), until=datetime.fromisoformat(month_period.last_day_of_month)):
                 monthly_days.append(i.day)
@@ -155,7 +155,7 @@ def manager_orders_stats():
 
         elif form.select_option.data == "Жил":
             
-            monthly_orders_chart_tuple = connection.execute("SELECT MONTH(driver_order_history.created_date) as month_number, COUNT(*) as monthly_total, driver_order_history.status as order_status FROM sunsundatabase2.driver_order_history WHERE driver_order_history.created_date <= NOW() AND driver_order_history.created_date >= Date_add(Now(),interval - 12 month) and driver_order_history.type='delivery' GROUP BY YEAR(driver_order_history.created_date), MONTH(driver_order_history.created_date), driver_order_history.status;").all()
+            monthly_orders_chart_tuple = connection.execute("SELECT MONTH(driver_order_history.created_date) as month_number, COUNT(*) as monthly_total, driver_order_history.status as order_status FROM sunsundatabase1.driver_order_history WHERE driver_order_history.created_date <= NOW() AND driver_order_history.created_date >= Date_add(Now(),interval - 12 month) and driver_order_history.type='delivery' GROUP BY YEAR(driver_order_history.created_date), MONTH(driver_order_history.created_date), driver_order_history.status;").all()
 
             for i in range(12):
                 completed.insert(i, 0)
@@ -223,7 +223,7 @@ def manager_drivers_stats():
     if form.validate_on_submit():
 
         if form.select_option.data=="Өдөр":
-            daily_orders_chart_tuple = connection.execute("SELECT DAY(driver_order_history.created_date) as selected_day, COUNT(*) as daily_total, driver_order_history.status as order_status FROM sunsundatabase2.driver_order_history WHERE DATE(driver_order_history.created_date) =:selected_date and driver_order_history.type='delivery' and driver_order_history.driver_id=:driver_id GROUP BY DAY(driver_order_history.created_date), driver_order_history.status;", {"selected_date": form.date.data, "driver_id": form.select_driver.data}).all()
+            daily_orders_chart_tuple = connection.execute("SELECT DAY(driver_order_history.created_date) as selected_day, COUNT(*) as daily_total, driver_order_history.status as order_status FROM sunsundatabase1.driver_order_history WHERE DATE(driver_order_history.created_date) =:selected_date and driver_order_history.type='delivery' and driver_order_history.driver_id=:driver_id GROUP BY DAY(driver_order_history.created_date), driver_order_history.status;", {"selected_date": form.date.data, "driver_id": form.select_driver.data}).all()
             for i, result in enumerate(daily_orders_chart_tuple):
                 if result["order_status"] == "completed":
                     completed.append(result["daily_total"])
@@ -261,7 +261,7 @@ def manager_drivers_stats():
             current_week = form.date.data.isocalendar()[1]
             current_period = connection.execute("SELECT CONCAT(Year(curdate()), '-01-01') + INTERVAL :week_number WEEK - INTERVAL WEEKDAY(CONCAT(Year(curdate()), '-01-01')) DAY as first_day_of_week, CONCAT(Year(curdate()), '-01-01') + INTERVAL :week_number WEEK - INTERVAL WEEKDAY(CONCAT(Year(curdate()), '-01-01')) - 6 DAY as last_day_of_week;", {"week_number": current_week}).first()
 
-            weekly_orders_chart_tuple = connection.execute("SELECT DATE(driver_order_history.created_date) as week_day, COUNT(*) as weekly_total, driver_order_history.status as order_status FROM sunsundatabase2.driver_order_history WHERE (driver_order_history.created_date BETWEEN DATE(:first_day) AND DATE(:last_day)) and driver_order_history.type='delivery' and driver_order_history.driver_id=:driver_id GROUP BY DATE(driver_order_history.created_date), driver_order_history.status;", {"first_day": current_period.first_day_of_week, "last_day": current_period.last_day_of_week, "driver_id": form.select_driver.data}).all()
+            weekly_orders_chart_tuple = connection.execute("SELECT DATE(driver_order_history.created_date) as week_day, COUNT(*) as weekly_total, driver_order_history.status as order_status FROM sunsundatabase1.driver_order_history WHERE (driver_order_history.created_date BETWEEN DATE(:first_day) AND DATE(:last_day)) and driver_order_history.type='delivery' and driver_order_history.driver_id=:driver_id GROUP BY DATE(driver_order_history.created_date), driver_order_history.status;", {"first_day": current_period.first_day_of_week, "last_day": current_period.last_day_of_week, "driver_id": form.select_driver.data}).all()
 
             for i in rrule(DAILY , dtstart=datetime.fromisoformat(current_period.first_day_of_week), until=datetime.fromisoformat(current_period.last_day_of_week)):
                 weekly_days.append(i.strftime('%Y-%m-%d'))
@@ -300,7 +300,7 @@ def manager_drivers_stats():
         elif form.select_option.data=="Сар":
             month_period = connection.execute("select date_sub(:selected_period, interval day(:selected_period)-1 day) as first_day_of_month, date_sub(date_add(:selected_period, interval 1 month), interval day(:selected_period) day) as last_day_of_month;", {"selected_period": form.date.data}).first()
 
-            monthly_orders_chart_tuple = connection.execute("SELECT DAY(driver_order_history.created_date) as month_day, COUNT(*) as monthly_total, driver_order_history.status as order_status FROM sunsundatabase2.driver_order_history WHERE (driver_order_history.created_date BETWEEN DATE(:first_day) AND DATE(:last_day)) and driver_order_history.type='delivery' and driver_order_history.driver_id=:driver_id GROUP BY DAY(driver_order_history.created_date), driver_order_history.status;", {"first_day": month_period.first_day_of_month, "last_day": month_period.last_day_of_month, "driver_id": form.select_driver.data}).all()
+            monthly_orders_chart_tuple = connection.execute("SELECT DAY(driver_order_history.created_date) as month_day, COUNT(*) as monthly_total, driver_order_history.status as order_status FROM sunsundatabase1.driver_order_history WHERE (driver_order_history.created_date BETWEEN DATE(:first_day) AND DATE(:last_day)) and driver_order_history.type='delivery' and driver_order_history.driver_id=:driver_id GROUP BY DAY(driver_order_history.created_date), driver_order_history.status;", {"first_day": month_period.first_day_of_month, "last_day": month_period.last_day_of_month, "driver_id": form.select_driver.data}).all()
 
             for i in rrule(DAILY , dtstart=datetime.fromisoformat(month_period.first_day_of_month), until=datetime.fromisoformat(month_period.last_day_of_month)):
                 monthly_days.append(i.day)
@@ -337,7 +337,7 @@ def manager_drivers_stats():
             return render_template('/manager/stats/monthly_stats.html', data1=completed, data2=cancelled, data3=postphoned, data4=monthly_days, form=form, selected_date=form.date.data.month, completed_rate=completed_rate, cancelled_rate=cancelled_rate, postphoned_rate=postphoned_rate)
 
         elif form.select_option.data == "Жил":
-            monthly_orders_chart_tuple = connection.execute("SELECT MONTH(driver_order_history.created_date) as month_number, COUNT(*) as monthly_total, driver_order_history.status as order_status FROM sunsundatabase2.driver_order_history WHERE driver_order_history.created_date <= NOW() AND driver_order_history.created_date >= Date_add(Now(),interval - 12 month) and driver_order_history.type='delivery' and driver_order_history.driver_id=:driver_id GROUP BY YEAR(driver_order_history.created_date), MONTH(driver_order_history.created_date), driver_order_history.status;", {"driver_id": form.select_driver.data}).all()
+            monthly_orders_chart_tuple = connection.execute("SELECT MONTH(driver_order_history.created_date) as month_number, COUNT(*) as monthly_total, driver_order_history.status as order_status FROM sunsundatabase1.driver_order_history WHERE driver_order_history.created_date <= NOW() AND driver_order_history.created_date >= Date_add(Now(),interval - 12 month) and driver_order_history.type='delivery' and driver_order_history.driver_id=:driver_id GROUP BY YEAR(driver_order_history.created_date), MONTH(driver_order_history.created_date), driver_order_history.status;", {"driver_id": form.select_driver.data}).all()
 
             for i in range(12):
                 completed.insert(i, 0)
@@ -402,7 +402,7 @@ def manager_suppliers_stats():
     if form.validate_on_submit():
 
         if form.select_option.data=="Өдөр":
-            daily_orders_chart_tuple = connection.execute("SELECT DAY(driver_order_history.created_date) as selected_day, COUNT(*) as daily_total, driver_order_history.status as order_status FROM sunsundatabase2.driver_order_history WHERE DATE(driver_order_history.created_date) =:selected_date and driver_order_history.type='delivery' and driver_order_history.supplier_name=:supplier_name GROUP BY DAY(driver_order_history.created_date), driver_order_history.status;", {"selected_date": form.date.data, "supplier_name": form.select_supplier.data}).all()
+            daily_orders_chart_tuple = connection.execute("SELECT DAY(driver_order_history.created_date) as selected_day, COUNT(*) as daily_total, driver_order_history.status as order_status FROM sunsundatabase1.driver_order_history WHERE DATE(driver_order_history.created_date) =:selected_date and driver_order_history.type='delivery' and driver_order_history.supplier_name=:supplier_name GROUP BY DAY(driver_order_history.created_date), driver_order_history.status;", {"selected_date": form.date.data, "supplier_name": form.select_supplier.data}).all()
             for i, result in enumerate(daily_orders_chart_tuple):
                 if result["order_status"] == "completed":
                     completed.append(result["daily_total"])
@@ -440,7 +440,7 @@ def manager_suppliers_stats():
             current_week = form.date.data.isocalendar()[1]
             current_period = connection.execute("SELECT CONCAT(Year(curdate()), '-01-01') + INTERVAL :week_number WEEK - INTERVAL WEEKDAY(CONCAT(Year(curdate()), '-01-01')) DAY as first_day_of_week, CONCAT(Year(curdate()), '-01-01') + INTERVAL :week_number WEEK - INTERVAL WEEKDAY(CONCAT(Year(curdate()), '-01-01')) - 6 DAY as last_day_of_week;", {"week_number": current_week}).first()
 
-            weekly_orders_chart_tuple = connection.execute("SELECT DATE(driver_order_history.created_date) as week_day, COUNT(*) as weekly_total, driver_order_history.status as order_status FROM sunsundatabase2.driver_order_history WHERE (driver_order_history.created_date BETWEEN DATE(:first_day) AND DATE(:last_day)) and driver_order_history.type='delivery' and driver_order_history.supplier_name=:supplier_name GROUP BY DATE(driver_order_history.created_date), driver_order_history.status;", {"first_day": current_period.first_day_of_week, "last_day": current_period.last_day_of_week, "supplier_name": form.select_supplier.data}).all()
+            weekly_orders_chart_tuple = connection.execute("SELECT DATE(driver_order_history.created_date) as week_day, COUNT(*) as weekly_total, driver_order_history.status as order_status FROM sunsundatabase1.driver_order_history WHERE (driver_order_history.created_date BETWEEN DATE(:first_day) AND DATE(:last_day)) and driver_order_history.type='delivery' and driver_order_history.supplier_name=:supplier_name GROUP BY DATE(driver_order_history.created_date), driver_order_history.status;", {"first_day": current_period.first_day_of_week, "last_day": current_period.last_day_of_week, "supplier_name": form.select_supplier.data}).all()
 
             for i in rrule(DAILY , dtstart=datetime.fromisoformat(current_period.first_day_of_week), until=datetime.fromisoformat(current_period.last_day_of_week)):
                 weekly_days.append(i.strftime('%Y-%m-%d'))
@@ -479,7 +479,7 @@ def manager_suppliers_stats():
         elif form.select_option.data=="Сар":
             month_period = connection.execute("select date_sub(:selected_period, interval day(:selected_period)-1 day) as first_day_of_month, date_sub(date_add(:selected_period, interval 1 month), interval day(:selected_period) day) as last_day_of_month;", {"selected_period": form.date.data}).first()
 
-            monthly_orders_chart_tuple = connection.execute("SELECT DAY(driver_order_history.created_date) as month_day, COUNT(*) as monthly_total, driver_order_history.status as order_status FROM sunsundatabase2.driver_order_history WHERE (driver_order_history.created_date BETWEEN DATE(:first_day) AND DATE(:last_day)) and driver_order_history.type='delivery' and driver_order_history.supplier_name=:supplier_name GROUP BY DAY(driver_order_history.created_date), driver_order_history.status;", {"first_day": month_period.first_day_of_month, "last_day": month_period.last_day_of_month, "supplier_name": form.select_supplier.data}).all()
+            monthly_orders_chart_tuple = connection.execute("SELECT DAY(driver_order_history.created_date) as month_day, COUNT(*) as monthly_total, driver_order_history.status as order_status FROM sunsundatabase1.driver_order_history WHERE (driver_order_history.created_date BETWEEN DATE(:first_day) AND DATE(:last_day)) and driver_order_history.type='delivery' and driver_order_history.supplier_name=:supplier_name GROUP BY DAY(driver_order_history.created_date), driver_order_history.status;", {"first_day": month_period.first_day_of_month, "last_day": month_period.last_day_of_month, "supplier_name": form.select_supplier.data}).all()
 
             for i in rrule(DAILY , dtstart=datetime.fromisoformat(month_period.first_day_of_month), until=datetime.fromisoformat(month_period.last_day_of_month)):
                 monthly_days.append(i.day)
@@ -516,7 +516,7 @@ def manager_suppliers_stats():
             return render_template('/manager/stats/monthly_stats.html', data1=completed, data2=cancelled, data3=postphoned, data4=monthly_days, form=form, selected_date=form.date.data.month, completed_rate=completed_rate, cancelled_rate=cancelled_rate, postphoned_rate=postphoned_rate)
 
         elif form.select_option.data == "Жил":
-            monthly_orders_chart_tuple = connection.execute("SELECT MONTH(driver_order_history.created_date) as month_number, COUNT(*) as monthly_total, driver_order_history.status as order_status FROM sunsundatabase2.driver_order_history WHERE driver_order_history.created_date <= NOW() AND driver_order_history.created_date >= Date_add(Now(),interval - 12 month) and driver_order_history.type='delivery' and driver_order_history.supplier_name=:supplier_name GROUP BY YEAR(driver_order_history.created_date), MONTH(driver_order_history.created_date), driver_order_history.status;", {"supplier_name": form.select_supplier.data}).all()
+            monthly_orders_chart_tuple = connection.execute("SELECT MONTH(driver_order_history.created_date) as month_number, COUNT(*) as monthly_total, driver_order_history.status as order_status FROM sunsundatabase1.driver_order_history WHERE driver_order_history.created_date <= NOW() AND driver_order_history.created_date >= Date_add(Now(),interval - 12 month) and driver_order_history.type='delivery' and driver_order_history.supplier_name=:supplier_name GROUP BY YEAR(driver_order_history.created_date), MONTH(driver_order_history.created_date), driver_order_history.status;", {"supplier_name": form.select_supplier.data}).all()
 
             for i in range(12):
                 completed.insert(i, 0)

@@ -218,8 +218,8 @@ def generate_supplier1_products():
     
 def reset_database_data():
     connection = Connection()
-    connection.execute("DROP DATABASE sunsundatabase2")
-    connection.execute("CREATE DATABASE sunsundatabase2 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
+    connection.execute("DROP DATABASE sunsundatabase1")
+    connection.execute("CREATE DATABASE sunsundatabase1 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
     connection.close()
 
 def register(app):

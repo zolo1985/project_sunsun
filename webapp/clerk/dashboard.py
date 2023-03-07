@@ -20,7 +20,7 @@ def clerk_dashboard():
 
     driver_pickups = connection.query(models.PickupTask).filter(models.PickupTask.is_driver_received==True, models.PickupTask.is_cancelled==False, models.PickupTask.is_completed==False).count()
     supplier_dropoffs = connection.query(models.SupplierDropoffTask).filter(models.SupplierDropoffTask.is_ready==True).count()
-    unprocessed_orders = connection.execute("SELECT count(delivery.id) as total_count FROM sunsundatabase2.delivery as delivery join sunsundatabase2.user as driver on delivery.assigned_driver_id=driver.id WHERE DATE(delivery.delivery_date) =:cur_date and delivery.is_delivered=false and delivery.status='assigned' and delivery.is_received_from_clerk=false", {"cur_date": current_date.date()}).scalar()
+    unprocessed_orders = connection.execute("SELECT count(delivery.id) as total_count FROM sunsundatabase1.delivery as delivery join sunsundatabase1.user as driver on delivery.assigned_driver_id=driver.id WHERE DATE(delivery.delivery_date) =:cur_date and delivery.is_delivered=false and delivery.status='assigned' and delivery.is_received_from_clerk=false", {"cur_date": current_date.date()}).scalar()
     returns = connection.query(models.DriverReturn).filter(models.DriverReturn.is_returned==False).count()
     substracted_products = connection.query(models.DriverProductReturn).filter(models.DriverProductReturn.is_returned==False).count()
     unreturned_supplier2_orders = connection.query(models.UnstoredInventory).filter(models.UnstoredInventory.status==False, models.UnstoredInventory.is_returned_to_supplier==False).count()

@@ -452,7 +452,7 @@ def orders_current_list():
 @jwt_required()
 def driver_stats():
     connection = Connection()
-    current_month_driver_stats = connection.execute("select COUNT(*) as total, driver_order_history.status as status from sunsundatabase2.driver_order_history where (driver_order_history.created_date between  DATE_FORMAT(NOW() ,'%Y-%m-01') AND NOW()) and driver_order_history.type='delivery' and driver_order_history.driver_id=:driver_id GROUP BY YEAR(driver_order_history.created_date), driver_order_history.status;", {'driver_id': current_user.id}).all()
+    current_month_driver_stats = connection.execute("select COUNT(*) as total, driver_order_history.status as status from sunsundatabase1.driver_order_history where (driver_order_history.created_date between  DATE_FORMAT(NOW() ,'%Y-%m-01') AND NOW()) and driver_order_history.type='delivery' and driver_order_history.driver_id=:driver_id GROUP BY YEAR(driver_order_history.created_date), driver_order_history.status;", {'driver_id': current_user.id}).all()
 
     completed = 0
     postphoned = 0

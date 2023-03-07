@@ -28,7 +28,7 @@ def clerk_driver_orders():
     form.drivers.choices = [(driver.id, f'{driver.lastname[0].capitalize()}. {driver.firstname}') for driver in drivers]
     form.drivers.choices.insert(0,(0,'Жолооч сонгох'))
 
-    unassigned_orders = connection.execute("SELECT count(delivery.id) as total_count, CONCAT(driver.lastname, ' ', driver.firstname) as driver_name FROM sunsundatabase2.delivery as delivery join sunsundatabase2.user as driver on delivery.assigned_driver_id=driver.id WHERE DATE(delivery.delivery_date) =:cur_date and delivery.is_delivered=false and delivery.status='assigned' and delivery.is_received_from_clerk=false group by delivery.assigned_driver_id, driver.id;", {"cur_date": cur_date.date()}).all()
+    unassigned_orders = connection.execute("SELECT count(delivery.id) as total_count, CONCAT(driver.lastname, ' ', driver.firstname) as driver_name FROM sunsundatabase1.delivery as delivery join sunsundatabase1.user as driver on delivery.assigned_driver_id=driver.id WHERE DATE(delivery.delivery_date) =:cur_date and delivery.is_delivered=false and delivery.status='assigned' and delivery.is_received_from_clerk=false group by delivery.assigned_driver_id, driver.id;", {"cur_date": cur_date.date()}).all()
 
     form1 = DriverOrders()
 
@@ -41,7 +41,7 @@ def clerk_driver_orders():
                 orders = connection.query(models.Delivery).filter(models.Delivery.status=="assigned").filter(models.Delivery.assigned_driver_id==user.id).all()
             return render_template('/clerk/expenses.html', form=form, orders=orders, form1=form1, order_window=order_window)
         else:
-            unassigned_orders = connection.execute("SELECT count(delivery.id) as total_count, CONCAT(driver.lastname, ' ', driver.firstname) as driver_name FROM sunsundatabase2.delivery as delivery join sunsundatabase2.user as driver on delivery.assigned_driver_id=driver.id WHERE DATE(delivery.delivery_date) =:cur_date and delivery.is_delivered=false and delivery.status='assigned' and delivery.is_received_from_clerk=false group by delivery.assigned_driver_id, driver.id;", {"cur_date": cur_date.date()}).all()
+            unassigned_orders = connection.execute("SELECT count(delivery.id) as total_count, CONCAT(driver.lastname, ' ', driver.firstname) as driver_name FROM sunsundatabase1.delivery as delivery join sunsundatabase1.user as driver on delivery.assigned_driver_id=driver.id WHERE DATE(delivery.delivery_date) =:cur_date and delivery.is_delivered=false and delivery.status='assigned' and delivery.is_received_from_clerk=false group by delivery.assigned_driver_id, driver.id;", {"cur_date": cur_date.date()}).all()
             return render_template('/clerk/expenses.html', form=form, form1=form1, unassigned_orders=unassigned_orders, order_window=order_window)
 
     if form1.validate_on_submit():
@@ -77,7 +77,7 @@ def clerk_driver_return_task_orders():
     connection = Connection()
     return_tasks = []
 
-    unreceived_return_tasks = connection.execute("SELECT count(return_task.id) as total_count, CONCAT(driver.lastname, ' ', driver.firstname) as driver_name FROM sunsundatabase2.return_task as return_task join sunsundatabase2.user as driver on return_task.assigned_driver_id=driver.id WHERE return_task.is_completed=false and return_task.is_cancelled=false and return_task.is_driver_received=false group by return_task.assigned_driver_id, driver.id;").all()
+    unreceived_return_tasks = connection.execute("SELECT count(return_task.id) as total_count, CONCAT(driver.lastname, ' ', driver.firstname) as driver_name FROM sunsundatabase1.return_task as return_task join sunsundatabase1.user as driver on return_task.assigned_driver_id=driver.id WHERE return_task.is_completed=false and return_task.is_cancelled=false and return_task.is_driver_received=false group by return_task.assigned_driver_id, driver.id;").all()
     drivers = connection.query(models.User).filter(models.User.roles.any(models.Role.name=="driver")).filter(models.User.is_authorized==True).all()
 
     form = FiltersForm()
@@ -92,7 +92,7 @@ def clerk_driver_return_task_orders():
                 return_tasks = connection.query(models.ReturnTask).filter(models.ReturnTask.is_ready==True, models.ReturnTask.assigned_driver_id==user.id).all()
             return render_template('/clerk/return_task_expenses.html', form=form, return_tasks=return_tasks)
         else:
-            unreceived_return_tasks = connection.execute("SELECT count(return_task.id) as total_count, CONCAT(driver.lastname, ' ', driver.firstname) as driver_name FROM sunsundatabase2.return_task as return_task join sunsundatabase2.user as driver on return_task.assigned_driver_id=driver.id WHERE return_task.is_completed=false and return_task.is_cancelled=false and return_task.is_driver_received=false group by return_task.assigned_driver_id, driver.id;").all()
+            unreceived_return_tasks = connection.execute("SELECT count(return_task.id) as total_count, CONCAT(driver.lastname, ' ', driver.firstname) as driver_name FROM sunsundatabase1.return_task as return_task join sunsundatabase1.user as driver on return_task.assigned_driver_id=driver.id WHERE return_task.is_completed=false and return_task.is_cancelled=false and return_task.is_driver_received=false group by return_task.assigned_driver_id, driver.id;").all()
             return render_template('/clerk/return_task_expenses.html', form=form, unreceived_return_tasks=unreceived_return_tasks)
 
     return render_template('/clerk/return_task_expenses.html', form=form, return_tasks=return_tasks, unreceived_return_tasks=unreceived_return_tasks)
