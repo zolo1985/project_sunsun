@@ -1,0 +1,46 @@
+// 
+// reboot.scss
+// Extended from Bootstrap
+// 
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+a {
+  transition: $transition-base;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+video {
+  background-size: cover;
+  display: table-cell;
+  vertical-align: middle;
+  width: 100%;
+}
+
+iframe {
+  border: 0;
+}
+
+ul, ol, dl {
+  list-style-position: inside;
+  padding: 0;
+  margin: 0;
+}
+input,
+select,
+optgroup,
+textarea {
+  margin-bottom:20px;
+}
+
+*:focus {
+    outline: none !important;
+}

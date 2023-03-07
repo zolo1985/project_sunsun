@@ -1,0 +1,123 @@
+{% extends "layout.html" %}
+{% block main %}
+	<section class="process-advance">
+		<div class="container">
+			<h4 class="mt-5 mb-5 animate__animated animate__fadeInUp animate__delay-1s display-5 fw-bold">
+				<span class="first-letter">ҮН</span>ДСЭН ҮЙЛ АЖИЛЛАГАА</h4>
+			<h3 class="mb-5 animate__animated animate__fadeInUp animate__delay-2s">АГУУЛАХТАЙ ҮЙЛЧИЛГЭЭ</h3>
+			<div class="row">
+				<div class="col-sm-6 col-lg-2 text-center mb-4">
+					<div class="process-border"><img id="colorize-icons" src="{{ url_for('static', filename='images/icons/icon2.svg') }}" alt=""/></div>
+					<h5 class="my-3">1. Бараа татах үйлчилгээ</h5>
+					<p>Бараа татах үйлчилгээ /Таны барааг хаяг, тоо ширхэг, овор хэмжээ үйл хамааран очиж авна./</p>
+				</div>
+				<div class="col-sm-6 col-lg-2 text-center mb-4">
+					<div class="process-border"><img id="colorize-icons" src="{{ url_for('static', filename='images/icons/icon3.svg') }}" alt=""/></div>
+					<h5 class="my-3">2. Агуулах</h5>
+					<p>Агуулах /Хүргэлтэнд гарах барааг чанар стандартын шаардлага хангасан агуулахад хадгална./</p>
+				</div>
+
+				<div class="col-sm-6 col-lg-2 text-center mb-4">
+					<div class="process-border"><img id="colorize-icons" src="{{ url_for('static', filename='images/icons/icon1.svg') }}" alt=""/></div>
+					<h5 class="my-3">3. Ангилан ялгах үйлчилгээ</h5>
+					<p>Ангилан ялгах үйлчилгээ / Агуулах дээрэх барааш төрөл, тоо ширхэгийн дагуу ангилан бэлтгэж хүргэлтэнд гаргана./</p>
+				</div>
+				<div class="col-sm-6 col-lg-2 text-center mb-4">
+					<div class="process-border"><img id="colorize-icons" src="{{ url_for('static', filename='images/icons/icon5.svg') }}" alt=""/></div>
+					<h5 class="my-3">4. Хүргэх үйлчилгээ</h5>
+					<p>Хүргэх үйлчилгээ/Таны барааг мэргэшсэн хүргэлтийн ажилтан захиалагчийн хаягийн дагуу түргэн шуурхай хүргэнэ./</p>
+				</div>
+				<div class="col-sm-6 col-lg-2 text-center mb-4">
+					<div class="process-border"><img src="{{ url_for('static', filename='images/icons/icon6.svg') }}" style="height: 75px; width: 120px;" alt=""/></div>
+					<h5 class="my-3">5. Тооцоо цуглуулах үйлчилгээ</h5>
+					<p>Тооцоо цуглуулах үйлчилгээ/ Таны бараа бүтээгдэхүүнийг хүргэлтийн ажилтан захиалагчийн гарт хүргэж өгөн төлбөрийг авна./</p>
+				</div>
+				
+				<div class="col-sm-6 col-lg-2 text-center mb-4">
+					<div class="process-border"><img id="colorize-icons" src="{{ url_for('static', filename='images/icons/icon4.svg') }}" alt=""/></div>
+					<h5 class="my-3">6. Тайлан тооцоо гаргах үйлчилгээ</h5>
+					<p>Тайлан тооцоо гаргах үйлчилгээ/ Хүргэгдсэн барааны мэдээлэл, үлдэгдэл тоо ширхэгийг программд оруулан, тооцоог шилжүүлнэ/.</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="bg-parallax bg-overlay-dark-2" style="background:url(static/images/sunsun/8.jpg) no-repeat center center; background-size:cover; height: 400px;">
+		<div class="container">
+			<div class="row">
+
+			</div>
+		</div>
+	</section>
+
+	<section class="process-advance">
+        <div class="container">
+            <h3 class="mb-5 animate__animated animate__fadeInUp animate__delay-2s">АГУУЛАХГҮЙ ҮЙЛЧИЛГЭЭ</h3>
+            <div
+                class="row">
+                <div class="col-sm-6 col-lg-2 text-center mb-4">
+                    <div class="process-border"><img id="colorize-icons" src="{{ url_for('static', filename='images/icons/icon2.svg') }}" alt=""/></div>
+                    <h5 class="my-3">1. Бараа татах үйлчилгээ</h5>
+                    <p>Бараа татах үйлчилгээ /Таны барааг хаяг, тоо ширхэг, овор хэмжээ үйл хамааран очиж авна./</p>
+                </div>
+                <div class="col-sm-6 col-lg-2 text-center mb-4">
+                    <div class="process-border"><img id="colorize-icons" src="{{ url_for('static', filename='images/icons/icon1.svg') }}" alt=""/></div>
+                    <h5 class="my-3">2. Ангилан ялгах үйлчилгээ</h5>
+                    <p>Ангилан ялгах үйлчилгээ / Агуулах дээрэх барааш төрөл, тоо ширхэгийн дагуу ангилан бэлтгэж хүргэлтэнд гаргана./</p>
+                </div>
+                <div class="col-sm-6 col-lg-2 text-center mb-4">
+                    <div class="process-border"><img id="colorize-icons" src="{{ url_for('static', filename='images/icons/icon5.svg') }}" alt=""/></div>
+                    <h5 class="my-3">3. Хүргэх үйлчилгээ</h5>
+                    <p>Хүргэх үйлчилгээ/Таны барааг мэргэшсэн хүргэлтийн ажилтан захиалагчийн хаягийн дагуу түргэн шуурхай хүргэнэ./</p>
+                </div>
+                <div class="col-sm-6 col-lg-2 text-center mb-4">
+                    <div class="process-border"><img src="{{ url_for('static', filename='images/icons/icon6.svg') }}" style="height: 75px; width: 120px;" alt=""/></div>
+                    <h5 class="my-3">4. Тооцоо цуглуулах үйлчилгээ</h5>
+                    <p>Тооцоо цуглуулах үйлчилгээ/ Таны бараа бүтээгдэхүүнийг хүргэлтийн ажилтан захиалагчийн гарт хүргэж өгөн төлбөрийг авна./</p>
+                </div>
+                <div class="col-sm-6 col-lg-2 text-center mb-4">
+                    <div class="process-border"><img id="colorize-icons" src="{{ url_for('static', filename='images/icons/icon4.svg') }}" alt=""/></div>
+                    <h5 class="my-3">5. Тайлан тооцоо гаргах үйлчилгээ</h5>
+                    <p>Тайлан тооцоо гаргах үйлчилгээ/ Хүргэгдсэн барааны мэдээлэл, үлдэгдэл тоо ширхэгийг программд оруулан, тооцоог шилжүүлнэ/.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+	<section class="bg-parallax bg-overlay-dark-2" style="background:url(static/images/sunsun/4.jpg) no-repeat center center; background-size:cover; height: 400px;">
+		<div class="container">
+			<div class="row">
+
+			</div>
+		</div>
+	</section>
+
+	<section class="process-advance">
+		<div class="container mb-5">
+			<h4 class="mb-5 animate__animated animate__fadeInUp animate__delay-1s display-5 fw-bold"><span class="first-letter">БҮ</span>СЧЛЭЛИЙН ЗУРАГ</h4>
+			<h3 class="mb-5 animate__animated animate__fadeInUp animate__delay-2s">1. УЛААНБААТАР ХОТЫН <span class="text-primary-1 fw-bold">A</span> БОЛОН <span class="text-primary-1 fw-bold">B</span> БҮСЧЛЭЛИЙН ЗУРАГ</h3>
+			<img class="rounded-img mb-5" src="{{ url_for('static', filename='images/sunsun/img42.jpg')}}" alt="">
+		</div>
+		<div class="container mt-5">
+			<h3 class="mb-5 animate__animated animate__fadeInUp animate__delay-2s">2. ОРОН НУТГИЙН АЧАА ТЭЭВРИЙН ХЭРЭГСЭЛД ДАЙХ ҮЙЛЧИЛГЭЭ</h3>	
+			<div class="row">
+				<div class="col-md-6 col-6">
+					<div class="text-center">
+						<img id="info-icons" src="{{ url_for('static', filename='images/icons/icon11.svg') }}" alt=""/>
+						<h2 class="display-5 fw-bold mt-2 mb-0 purecounter text-primary-1">9</h2>
+						<p class="mb-0 text-primary-1">Дүүрэг</p>
+					</div>
+				</div>
+				<div class="col-md-6 col-6 mb-4 mb-sm-0">
+					<div class="text-center">
+						<img id="info-icons" src="{{ url_for('static', filename='images/icons/icon12.svg') }}" alt=""/>
+						<h2 class="display-5 fw-bold mt-2 mb-0 purecounter text-primary-1">21</h2>
+						<p class="mb-0 text-primary-1">Аймаг</p>
+					</div>
+				</div>	
+
+			</div>	
+		</div>
+	</section>
+
+{% endblock main %}

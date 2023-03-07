@@ -1,0 +1,158 @@
+// 
+// progress.scss
+// Extended from Bootstrap
+// 
+
+// 
+// Bootstrap Overrides and Additional style for theme
+//
+
+.progress-item {
+  overflow: hidden;
+  p {
+    margin: 10px 0 8px;
+  }
+  .progress {
+    background: $gray-200;
+    border-radius: $border-radius;
+    box-shadow: none;
+    height: 10px;
+    margin-bottom: 8px;
+    overflow: visible;
+  }
+  .progress-bar {
+    background-color: $primary;
+    border-radius: $border-radius;
+    box-shadow: none;
+    position: relative;
+  }
+  .progress-percent {
+    color: $gray-600;
+    font-weight: $font-weight-bold;
+    line-height: 24px;
+    position: absolute;
+    right: 0;
+    top: -28px;
+    font-size: 12px;
+  }
+}
+
+/*Progress gradient*/
+.progress-grad .progress-bar {
+    background: linear-gradient(150deg, $grad-start 0%, $grad-end 100%);
+  }
+.progress-dark-grad .progress-bar {
+    background: linear-gradient(150deg, $gray-800 0%, lighten($gray-800, 20%) 100%);
+  }
+
+/*Progress dark*/
+.progress-dark .progress-bar {
+  background: $gray-800;
+}
+
+/*Progress square*/
+.progress-square {
+  .progress-bar, .progress {
+    border-radius: 0px;
+  }
+}
+
+/*Progress percent*/
+.percent-bg .progress-percent {
+  background: $gray-800;
+  padding: 2px 5px;
+  border-radius: 2px;
+  color: $white;
+  line-height: 16px;
+  position: absolute;
+  right: 0;
+  top: -25px;
+  font-size: 12px;
+  &:before {
+    border-top-color: $gray-800;
+    border-width: 5px;
+    left: 50%;
+    margin-left: -5px;
+  }
+  &:after, &:before {
+    top: 100%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+  }
+  &:after {
+    border-top-color: $gray-800;
+    border-width: 4px;
+    left: 50%;
+    margin-left: -4px;
+  }
+}
+
+/*percent light*/
+.percent-light  .progress-percent {
+  background: $gray-200;
+  color: $gray-600;
+  &:before, &:after {
+    border-top-color: $gray-200;
+  }
+}
+
+/*Progress size*/
+.progress-xs .progress {
+    height: 3px;
+  }
+.progress-sm .progress {
+    height: 5px;
+  }
+.progress-md .progress {
+    height: 10px;
+  }
+.progress-lg .progress {
+    height: 16px;
+  }
+.progress-xl .progress {
+    height: 20px;
+  }
+
+
+/*progress-text-in*/
+.progress-text-in .progress-item {
+  .progress {
+    height: 24px;
+    .progress-percent {
+      color: $white;
+      padding-right: 5px;
+      top: 0px;
+    }
+  }
+  p {
+    font-size: $font-size-xs;
+    margin: 0;
+    position: absolute;
+    z-index: 1;
+    color: $white;
+    top: 2px;
+    left: 5px;
+  }
+  position: relative;
+  margin-top: 10px;
+}
+
+.progress-text-in .progress-bar:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 999999;
+  opacity: 0.1;
+  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  background-image: linear-gradient(45deg, rgba(255, 255, 255, 1) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 1) 75%, transparent 75%, transparent);
+  -webkit-background-size: 22px 22px;
+  background-size: 22px 22px;
+}

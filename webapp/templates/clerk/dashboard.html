@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+{% block main %}
+<div class="preloader">
+  <img src="{{ url_for('static', filename='images/preloader.svg') }}" alt="Pre-loader" />
+</div>
+<section>
+  <div class="container-fluid min-vh-100" style="width: 80%;">
+    <div class="row">
+      {% if driver_pickups > 0 %}
+        <div class="col-sm-12 display-8">
+            <a class="btn btn-lg btn-outline-danger" href="{{ url_for('clerk_receive.clerk_receive_pickup_inventories') }}">Жолоочоос авах {{ driver_pickups }} таталт байна</a>
+        </div>
+      {% endif %}
+      
+      {% if supplier_dropoffs > 0 %}
+        <div class="col-sm-12">
+            <a class="btn btn-lg btn-outline-danger" href="{{ url_for('clerk_receive.clerk_receive_dropoff_inventories') }}">Харилцагчаас авах бараанууд {{ supplier_dropoffs }} байна</a>
+        </div>
+      {% endif %}
+
+      {% if unprocessed_orders %}
+        <div class="col-sm-12">
+            <a class="btn btn-lg btn-outline-danger" href="{{ url_for('clerk_expense.clerk_driver_orders') }}">Жолоочид хүлээлгэж өгөх {{ unprocessed_orders }} хүргэлт байна</a>
+        </div>
+      {% endif%}
+
+      {% if returns %}
+        <div class="col-sm-12">
+            <a class="btn btn-lg btn-outline-danger" href="{{ url_for('clerk_returns.clerk_driver_returns') }}">Жолоочоос авах {{ returns }} буцаалт байна</a>
+        </div>
+      {% endif%}
+
+      {% if substracted_products %}
+        <div class="col-sm-12">
+            <a class="btn btn-lg btn-outline-danger" href="{{ url_for('clerk_returns.clerk_driver_returns') }}">Жолоочоос авах {{ substracted_products }} хасагдсан бараа байна</a>
+        </div>
+      {% endif%}
+      
+      {% if unreturned_supplier2_orders %}
+        <div class="col-sm-12">
+            <a class="btn btn-lg btn-outline-danger" href="{{ url_for('clerk_inventory.clerk_unstored_inventories') }}">Агуулахгүй харилцагчийн буцаагдаагүй {{ unreturned_supplier2_orders }} бараа байна</a>
+        </div>
+      {% endif%}
+
+      {% if warehouse_sales %}
+        <div class="col-sm-12">
+            <a class="btn btn-lg btn-outline-danger" href="{{ url_for('clerk_expense.clerk_warehouse_expenses') }}">Агуулахаас хүлээлгэж өгөх {{ warehouse_sales }} ажил байна</a>
+        </div>
+      {% endif%}
+
+      {% if unprocessed_return_tasks %}
+        <div class="col-sm-12">
+            <a class="btn btn-lg btn-outline-danger" href="{{ url_for('clerk_expense.clerk_driver_return_task_orders') }}">Харилцагчид буцаах {{ unprocessed_return_tasks }} ажил байна</a>
+        </div>
+      {% endif%}
+    </div>
+  </div>
+</section>
+{% endblock main %}

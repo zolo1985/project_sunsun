@@ -1,0 +1,121 @@
+/* ===================================
+        Theme utilities
+====================================== */
+
+/*font family*/
+.body-font {
+  font-family: $font-family-base !important;
+}
+.title-font {
+  font-family: $font-family-heading !important;
+}
+.alt-font {
+  font-family: $font-family-alt !important; 
+}
+
+.lead {
+  line-height: 30px;
+}
+
+/*shadow*/
+.shadow-hover {
+  transition: $transition-base;
+  &:hover {
+    box-shadow: 0px 0px 50px rgba(83, 88, 93, .10);
+  }
+}
+
+/*border and border radius*/
+.border-dotted {
+  border-style: dotted !important;
+  border-width: 2px !important;
+}
+.border-dashed {
+  border-style: dashed !important;
+  border-width: 2px !important;
+}
+@include media-breakpoint-up(sm) {
+  .primary-border-start-dotted {
+    border-left: dashed 1px $primary;
+  }
+}
+/*Height*/
+.vh-sm-100 {
+  height: 100vh;
+}
+@include media-breakpoint-down(sm) {
+  .vh-sm-100 {
+    height: auto;
+  }
+  .vh-md-50 {
+    height: 50vh;
+  }
+}
+
+/*rotate*/
+.rotate-270 {
+  transform: rotate(270deg);
+}
+
+// Filter
+.grayscale {
+  filter: grayscale(100%);
+  transition: all .6s ease;
+  &:hover {
+    filter: none;
+    -webkit-filter: grayscale(0%);
+  }
+}
+
+/*On hover*/
+.zoom-on-hover {
+  transform: scale(1);
+  &:hover {
+    transform: scale(1.2);
+  }
+}
+.up-on-hover {
+  &:hover {
+    transform: translateY(-10px);
+  }
+}
+.primary-hover {
+  a {
+    color: $gray-600;
+    &:hover {
+      color: $primary !important;
+    }
+  }
+}
+a.primary-hover {
+  color: $gray-600;
+  &:hover {
+    color: $primary !important;
+  }
+}
+
+.primary-hover {
+  li {
+    color: $gray-600;
+    &:hover {
+      color: $primary !important;
+    }
+  }
+}
+
+/*SVG fill colors*/
+.fill-grad-start {
+  stop-color: $grad-start;
+}
+.fill-grad-end {
+  stop-color: $grad-end;
+}
+.fill-white {
+  fill: $white;
+}
+.fill-light {
+  fill: $gray-100;
+}
+.fill-dark {
+  fill: $gray-800;
+}

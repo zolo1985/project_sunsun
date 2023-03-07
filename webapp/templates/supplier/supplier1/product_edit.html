@@ -1,0 +1,151 @@
+{% extends "layout.html" %}
+{% block main %}
+    <!-- Product Add -->
+    <section>
+        <div class="container">
+            <div class="row">
+                <form id="form" method="POST" action="" enctype="multipart/form-data">
+                    {{ form.csrf_token }}
+                    <div class="col-sm-12 mb-5">
+                        <h3 class="display-6 mb-4">Бараа засах</h3>
+                        <div class="table-responsive-sm">
+                            <table class="table table-hover" id="lines">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="bg-grad">Нэр</th>
+                                        <th scope="col" class="bg-grad">Өнгө</th>
+                                        <th scope="col" class="bg-grad">Хэмжээ</th>
+                                        <th scope="col" class="bg-grad">Төрөл</th>
+                                        <th scope="col" class="bg-grad">Үнэ</th>
+                                        <th scope="col" class="bg-grad">Бусад</th>
+                                        <th scope="col" class="bg-grad">Хэрэглэх заавар</th>
+                                    </tr>
+                                </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="form-group">
+                                                    {% if form.name.errors %}
+                                                    {{ form.name(class="form-control is-invalid") }}
+                                                    <div class="invalid-feedback">
+                                                        {% for error in form.name.errors %}
+                                                        <span>{{ error }}</span>
+                                                        {% endfor %}
+                                                    </div>
+                                                    {% else %}
+                                                    {{ form.name(class="form-control") }}
+                                                    {% endif %}
+                                                </div>
+                                                <div class="form-group p-0 m-0" style="width: 200px">
+                                                    {{ form.image.label(class="form-control-label") }}
+                                                    {{ form.image(class="form-control-file") }}
+                                                    {% if form.image.errors %}
+                                                        {% for error in form.image.errors %}
+                                                            <span class="text-danger">{{ error }}</span></br>
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group">
+                                                    {% if form.color.errors %}
+                                                        {{ form.color(class="form-control is-invalid") }}
+                                                        <div class="invalid-feedback">
+                                                            {% for error in form.color.errors %}
+                                                                <span>{{ error }}</span>
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% else %}
+                                                        {{ form.color(class="form-control") }}
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group">
+                                                    {% if form.size.errors %}
+                                                        {{ form.size(class="form-control is-invalid") }}
+                                                        <div class="invalid-feedback">
+                                                            {% for error in form.size.errors %}
+                                                                <span>{{ error }}</span>
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% else %}
+                                                        {{ form.size(class="form-control") }}
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group">
+                                                    {% if form.type.errors %}
+                                                        {{ form.type(class="form-control is-invalid") }}
+                                                        <div class="invalid-feedback">
+                                                            {% for error in form.type.errors %}
+                                                                <span>{{ error }}</span>
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% else %}
+                                                        {{ form.type(class="form-control") }}
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group">
+                                                    {% if form.price.errors %}
+                                                        {{ form.price(class="form-control is-invalid") }}
+                                                        <div class="invalid-feedback">
+                                                            {% for error in form.price.errors %}
+                                                                <span>{{ error }}</span>
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% else %}
+                                                        {{ form.price(class="form-control") }}
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group">
+                                                    {% if form.description.errors %}
+                                                        {{ form.description(class="form-control is-invalid") }}
+                                                        <div class="invalid-feedback">
+                                                            {% for error in form.description.errors %}
+                                                                <span>{{ error }}</span>
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% else %}
+                                                        {{ form.description(class="form-control") }}
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {% if form.usage_guide.errors %}
+                                                    {{ form.usage_guide(class="form-control is-invalid") }}
+                                                    <div class="invalid-feedback">
+                                                        {% for error in form.usage_guide.errors %}
+                                                            <span>{{ error }}</span>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form.usage_guide(class="form-control") }}
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group float-end">
+                        {{ form.submit(class="btn btn-outline-success") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    <!-- END Product Add -->
+    <script>
+        $("#form").submit(function () {
+            var loader = document.createElement("div");
+            $(loader).html('<div class="preloader"><img src="{{ url_for("static", filename="images/preloader.svg") }}" alt="Pre-loader"></div>');
+            $("body").append(loader);
+        });
+      </script>
+{% endblock main %}

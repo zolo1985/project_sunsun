@@ -1,0 +1,208 @@
+{% extends "layout.html" %}
+{% block main %}
+    <section>
+        <div class="container-fluid min-vh-100" style="width: 80%;">
+            <div class="row">
+                <div class="col-sm-12 mb-5">
+                    <h3 class="display-6 mb-4">Жолоочид хүлээлгэж өгөх</h3>
+                    <div class="table-responsive-sm">
+                        <table id="inventory-table" class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="bg-grad">PT</th>
+                                    <th scope="col" class="bg-grad">Төлөв</th>
+                                    <th scope="col" class="bg-grad">Авах Жолоочийн нэр</th>
+                                    <th scope="col" class="bg-grad">Үүсгэсэн огноо</th>
+                                    <th scope="col" class="bg-grad">Хүргэлтүүд</th>
+                                    <th scope="col" class="bg-grad"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pickup in pickups %}
+                                <tr>
+                                    <td scope="row">PT{{ pickup.id }}</td>
+                                    <td>
+                                        {% if pickup.is_ready and pickup.is_driver_received==false and pickup.assigned_driver_id is none %}
+                                            <p class="text-danger">Авах жолооч хувиарлахыг хүлээж байна.</p>
+                                        {% elif pickup.is_ready and pickup.is_driver_received==false and pickup.assigned_driver_id is not none %}
+                                            <p class="text-info">Жолооч очиж авна.</p>
+                                        {% elif pickup.is_ready==false and pickup.is_driver_received==true and pickup.assigned_driver_id is not none %}
+                                            <p class="text-success">Жолооч aвсан.</p>
+                                        {% elif pickup.is_completed==true %}
+                                            <p class="text-success">СҮН СҮН хүлээж авсан.</p>
+                                        {% elif pickup.is_cancelled==true %}
+                                            <p class="text-danger">Харилцагч цуцалсан. ({{ pickup.supplier.lastname[0] | capitalize }}. {{ pickup.supplier.firstname | capitalize }}. {{ pickup.modified_date }})</p>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if pickup.assigned_driver_id %}
+                                            <p>{{ pickup.driver.lastname[0] | capitalize }}. {{  pickup.driver.firstname | capitalize }}</p>
+                                        {% else %}
+                                            {% if pickup.is_ready %}
+                                            <p class="text-danger">Хувиарлагдаагүй байна</p>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ pickup.created_date }}</td>
+                                    <td>
+                                        {% for detail in pickup.pickup_task_details %}
+                                            {% if detail.destination_type == "local" %}
+                                                <p>{{ loop.index }}. {{ detail.phone }}, {{ detail.district }}, {{ detail.khoroo }}, {{ detail.address }}. <strong>Нийт дүн: {{ detail.total_amount }}</strong>
+                                                    {% if (pickup.pickup_task_details|length)>1 %}
+                                                        {% if pickup.status == "waiting" or pickup.status == "enroute" %}
+                                                            <a href="{{ url_for('supplier2_order.supplier2_order_edit', pickup_task_id=pickup.id, pickup_task_detail_id=detail.id) }}" style="color: rgb(0, 105, 185);">засах</a>
+                                                            <a href="{{ url_for('supplier2_order.supplier2_order_delete', pickup_task_id=pickup.id, pickup_task_detail_id=detail.id) }}" style="color: rgb(185, 9, 0);">хасах</a>
+                                                        {% endif %}
+                                                    {% else %}
+                                                    {% endif %}
+                                                </p>
+                                            {% elif detail.destination_type == "long" %}
+                                                <p>{{ loop.index }}. {{ detail.phone }}, {{ detail.aimag }}, {{ detail.address }}. <strong>Нийт дүн: {{ detail.total_amount }}</strong>
+                                                    {% if (pickup.pickup_task_details|length)>1 %}
+                                                        {% if pickup.status == "waiting" or pickup.status == "enroute" %}
+                                                            <a href="{{ url_for('supplier2_order.supplier2_order_edit', pickup_task_id=pickup.id, pickup_task_detail_id=detail.id) }}" style="color: rgb(0, 105, 185);">засах</a>
+                                                            <a href="{{ url_for('supplier2_order.supplier2_order_delete', pickup_task_id=pickup.id, pickup_task_detail_id=detail.id) }}" style="color: rgb(185, 9, 0);">хасах</a>
+                                                        {% endif %}
+                                                    {% else %}
+                                                    {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        {% if pickup.is_ready and pickup.assigned_driver_id is not none %}
+                                            <a id="confirm-pickup" class="btn btn-success" href="{{ url_for('supplier2_driver_pickup.supplier2_driver_pickups_confirmation', pickup_task_id=pickup.id) }}" data-pickup-id="{{ pickup.id }}">Жолоочид өгөх</a>
+                                        {% endif %}
+                                        {% if pickup.is_ready %}
+                                            <a id="cancel-pickup" class="btn btn-outline-danger" href="{{ url_for('supplier2_order.supplier2_order_cancel', pickup_task_id=pickup.id) }}"><i class="bi bi-x-circle-fill"></i></a>
+                                        {% elif pickup.is_cancelled %}
+
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header bg-grad">
+              <h5 class="modal-title text-white" id="confirmModalLabel">Хүлээлгэж өгөх</h5>
+              <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p class="display-8">Та итгэлтэй байна уу?</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Үгүй</button>
+              <button type="button" class="btn btn-primary" id="confirmModalYes">Тйим</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header bg-danger">
+              <h5 class="modal-title text-white" id="cancelModalLabel">Цуцлах</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p class="display-8">Та итгэлтэй байна уу?</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Үгүй</button>
+              <button type="button" class="btn btn-danger" id="cancelModalYes">Тйим</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <script>
+        $(document).ready(function() {
+          // show confirmation modal when confirm pickup link is clicked
+          $('#confirm-pickup').click(function(e) {
+            e.preventDefault();
+            $('#confirmModal').modal('show');
+          });
+          
+          // submit form when confirm button is clicked
+          $('#confirmModalYes').click(function() {
+            window.location.href = $('#confirm-pickup').attr('href');
+          });
+        });
+      </script>
+      <script>
+        $(document).ready(function() {
+          // show confirmation modal when cancel pickup link is clicked
+          $('#cancel-pickup').click(function(e) {
+            e.preventDefault();
+            $('#cancelModal').modal('show');
+          });
+          
+          // submit form when cancel button is clicked
+          $('#cancelModalYes').click(function() {
+            window.location.href = $('#cancel-pickup').attr('href');
+          });
+        });
+      </script>
+      <script>
+        $(document).ready(function () {
+          $("#inventory-table").DataTable({
+            dom: "Bfrtip",
+            buttons: [
+              {
+                extend: "csvHtml5",
+                text: "CSV файл татах",
+                text: '<a class="btn btn-outline-secondary m-2" style="float: left;">CSV файл татах</a>',
+                tag: "span",
+                exportOptions: {
+                  modifier: {
+                    search: "none",
+                  },
+                },
+              },
+              {
+                extend: "print",
+                text: "Хэвлэх",
+                text: '<a class="btn btn-outline-secondary m-2" style="float: left;">Хэвлэх</a>',
+                tag: "span",
+                exportOptions: {
+                  modifier: {
+                    search: "none",
+                  },
+                },
+              },
+              {
+                extend: "excelHtml5",
+                text: "Excel",
+                text: '<a class="btn btn-outline-secondary m-2" style="float: left;">XLS файл татах</a>',
+                tag: "span",
+                exportOptions: {
+                  modifier: {
+                    search: "none",
+                  },
+                },
+              },
+            ],
+            order: [[0, 'desc']],
+            pageLength: 10,
+            lengthMenu: [50, 100, 200, 500],
+            language: {
+              lengthMenu: "_MENU_ эгнээ харах",
+              zeroRecords: "Дата алга",
+              info: "_PAGES_ хуудаснаас _PAGE_-р хуудас. Нийт: _TOTAL_ хүргэлт",
+              infoEmpty: "",
+              sSearch: "Шүүх",
+              paginate: {
+                previous: "өмнөх",
+                next: "дараа",
+              },
+            },
+          });
+        });
+      </script>
+{% endblock main %}

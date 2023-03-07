@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block main %}
+<div class="preloader">
+  <img src="{{ url_for('static', filename='images/preloader.svg') }}" alt="Pre-loader" />
+</div>
+<section>
+  <div class="container-fluid min-vh-100" style="width: 80%;">
+    <div class="row">
+      {% if unprocessed_orders %}
+        <div class="col-sm-12 mb-5">
+          <h3 class="display-6 mb-4">Жолоочийн хийгдээгүй тооцоо</h3>
+          {% for unprocessed_order in unprocessed_orders %}
+              <a class="btn btn-outline-danger" href="{{ url_for('accountant_payment.accountant_payments') }}">{{ unprocessed_order.driver_name }}-д хийгдээгүй тооцоо {{ unprocessed_order.total_count }} байна.</a>
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% if unprocessed_warehouse_sales_count %}
+        <div class="col-sm-12 mb-5">
+          <h3 class="display-6 mb-4">Агуулахын хийгдээгүй тооцоо</h3>
+          <a class="btn btn-outline-danger" href="{{ url_for('accountant_payment.accountant_warehouse_sale_payments') }}">Агуулахаас тооцоо хийгдээгүй {{ unprocessed_warehouse_sales_count }} ажил байна</a>
+        </div>
+      {% endif %}
+      {% if not unprocessed_warehouse_sales_count and not unprocessed_orders%}
+        <div class="col-sm-12 mb-5">
+          <p class="display-6">Одоохондоо дата алга :)</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock main %}

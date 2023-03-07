@@ -1,0 +1,109 @@
+{% extends "layout.html" %} {% block main %}
+<!-- Products -->
+<section>
+  <div class="container min-vh-100">
+    <div class="row">
+      <div class="col-sm-12 mb-5">
+        <h3 class="display-6 mb-4">Таталт</h3>
+        <form id="form" method="POST" action="">
+          {{ form.csrf_token }}
+
+          <div class="table-responsive-sm">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col" class="bg-grad">Харилцагч</th>
+                  <th scope="col" class="bg-grad">Дэлгэрэнгүй</th>
+                  <th scope="col" class="bg-grad">Хүсэлт Үүсгэсэн Огноо</th>
+                  <th scope="col" class="bg-grad">Жолооч</th>
+                  <th scope="col" class="bg-grad">Төлөв</th>
+                </tr>
+              </thead>
+              {% if (pickup.status != "completed") and (pickup.status != "pickedup") %} {{ form.task_id(class="form-control", value=pickup.id) }} {% endif %}
+              <tbody>
+                <tr>
+                  <td>
+                    <p>{{ pickup.supplier.company_name | capitalize}}</p>
+                  </td>
+                  <td>
+                    {% if pickup.supplier.has_role('supplier1')%}
+                      {% for pickup_detail in pickup.pickup_task_details %}
+                        <p>
+                          {% if pickup_detail.product.name %}{{ pickup_detail.product.name }}{% endif %}{% if pickup_detail.product.color %}, {{ pickup_detail.product.color }}{% endif %}{% if pickup_detail.product.size %}, {{ pickup_detail.product.size }}{% endif %}{% if pickup_detail.product.type %}, {{ pickup_detail.product.type }}{% endif %}{% if pickup_detail.quantity %} - <strong>{{ pickup_detail.quantity }} ширхэг.</strong>{% endif %}
+                        </p>
+                      {% endfor %}
+                    {% elif pickup.supplier.has_role('supplier2')%}
+                      {% for pickup_detail in pickup.pickup_task_details %}
+                          {% if pickup_detail.destination_type == "local" %}
+                              <p>
+                                {{ loop.index }}. {{ pickup_detail.phone }}, {{ pickup_detail.district }}, {{ pickup_detail.khoroo }}, {{ pickup_detail.address }}. <strong>Нийт дүн: {{ pickup_detail.total_amount }}</strong>
+                              </p>
+                          {% elif pickup_detail.destination_type == "long" %}
+                              <p>
+                                {{ loop.index }}. {{ pickup_detail.phone }}, {{ pickup_detail.aimag }}, {{ pickup_detail.address }}. <strong>Нийт дүн: {{ pickup_detail.total_amount }}</strong>
+                              </p>
+                          {% endif %}
+                      {% endfor %}
+                    {% endif %}
+                  </td>
+                  <td>
+                    <p>{{ pickup.created_date }}</p>
+                  </td>
+                  <td>
+                    {% if pickup.assigned_driver_id is not none %}
+                      <p>{{ pickup.driver.lastname[0] | capitalize }}. {{ pickup.driver.firstname | capitalize }}</p>
+                    {% else %}
+                      <p class="text-danger">Жолооч хувиарлагдаагүй байна.</p>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <div class="form-group">
+                      {% if (pickup.is_ready==true) %}
+                        {{ form.select_day.label(class="form-control-label") }} {% if form.select_day.errors %} {{ form.select_day(class="form-control is-invalid") }}
+                          <div class="invalid-feedback">
+                            {% for error in form.select_day.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                          </div>
+                        {% else %}
+                          {{ form.select_day(class="form-control") }}
+                        {% endif %}
+                      {% endif %}
+                    </div>
+                    <div class="form-group">
+                      {% if (pickup.is_ready==true) %}
+                        {{ form.select_drivers.label(class="form-control-label") }} {% if form.select_drivers.errors %} {{ form.select_drivers(class="form-control is-invalid") }}
+                          <div class="invalid-feedback">
+                            {% for error in form.select_drivers.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                          </div>
+                        {% else %}
+                          {{ form.select_drivers(class="form-control") }}
+                        {% endif %}
+                      {% else %}
+                        
+                      {% endif %}
+                    </div>
+                    
+                    {% if (pickup.is_ready==true) %}
+                      <div class="form-group float-end mt-5">{{ form.submit(class="btn btn-outline-success") }}</div>
+                    {% else %}
+                      {% if pickup.is_completed %}
+                        <p class="text-success">Хүргэгдсэн</p>
+                      {% elif pickup.is_cancelled %}
+                        <p class="text-danger">Цуцлагдсан</p>
+                      {% endif %}
+                    {% endif %}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- END Products -->
+{% endblock main %}

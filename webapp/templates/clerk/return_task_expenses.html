@@ -1,0 +1,206 @@
+{% extends "layout.html" %}
+{% block main %}
+<section>
+  <div class="container-fluid min-vh-100" style="width: 80%;">
+    <div class="row">
+      <div class="col-sm-12 mb-5">
+        <h3 class="display-6 mb-4">Жолоочид буцаалт хүлээлгэж өгөх</h3>
+        <form id="form" method="POST" action="">
+            {{ form.csrf_token }}
+            <div class="row g-2">
+                <div class="col-md-3">
+                    {{ form.drivers.label(class="form-control-label") }} {% if form.drivers.errors %} {{ form.drivers(class="form-control is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.drivers.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.drivers(class="form-control") }}
+                    {% endif %}
+                </div>
+                <div class="col-md-3 align-self-center">
+                    {{ form.submit(class="btn btn-outline-success m-0") }}
+                </div>
+            </div>
+        </form>
+        {% if return_tasks %}
+          <div class="table-responsive-sm">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col" class="bg-grad-custom">Харилцагч</th>
+                  <th scope="col" class="bg-grad-custom">Дэлгэрэнгүй</th>
+                  <th scope="col" class="bg-grad-custom">Хүсэлт Үүсгэсэн Огноо</th>
+                  <th scope="col" class="bg-grad-custom">Жолооч</th>
+                  <th scope="col" class="bg-grad-custom">Төлөв</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for return_task in return_tasks %}
+                  <tr>
+                    <td>
+                      <p>{{ return_task.supplier.company_name }}</p>
+                    </td>
+                    <td>
+                      {% if return_task.supplier.has_role('supplier1')%}
+                        {% for return_detail in return_task.return_task_details %}
+                          <p>
+                            {% if return_detail.product.name %}{{ return_detail.product.name }}{% endif %}{% if return_detail.product.color %}, {{ return_detail.product.color }}{% endif %}{% if return_detail.product.size %}, {{ return_detail.product.size }}{% endif %}{% if return_detail.product.type %}, {{ return_detail.product.type }}{% endif %}{% if return_detail.quantity %} - <strong>{{ return_detail.quantity }} ширхэг.</strong>{% endif %}
+                          </p>
+                        {% endfor %}
+                      {% elif return_task.supplier.has_role('supplier2')%}
+                        {% for return_detail in return_task.return_task_details %}
+                              <p>{{ return_detail.phone }}</p>
+                        {% endfor %}
+                      {% endif %}
+                    </td>
+                    <td>
+                      <p>{{ return_task.created_date }}</p>
+                    </td>
+                    <td>
+                      {% if return_task.assigned_driver_id is not none %}
+                        <p>{{ return_task.driver.lastname[0] | capitalize }}. {{ return_task.driver.lastname }}</p>
+                      {% else %}
+                        <p class="text-danger">Жолооч хувиарлагдаагүй байна.</p>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if return_task.is_driver_received %}
+                        {{ return_task.clerk.lastname[0] | capitalize }}. {{ return_task.clerk.lastname }}. ({{ return_task.received_from_clerk_date }})
+                      {% else %}
+                        <a class="give-order btn btn-outline-success" href="#" data-return-task-id="{{ return_task.id }}">Хүлээлгэж өгөх</a>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="mt-5">
+            {% for unreceived_return_tasks in unreceived_return_tasks %}
+              <p class="text-danger" style="font-size: 18px">{{ unreceived_return_tasks.driver_name }}-д хүлээлгэж өгөөгүй {{ unreceived_return_tasks.total_count }} ширхэг буцаалт байна.</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="confirmGiveModal" tabindex="-1" role="dialog" aria-labelledby="inventory-tableModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="inventory-tableModalLabel">Хүлээлгэж өгөх</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        Та итгэлтэй байна уу?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Үгүй</button>
+        <button type="button" class="btn btn-primary" id="confirmGiveModalYes">Тйим</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function () {
+    $("#inventory-table").DataTable({
+      dom: "Bfrtip",
+      buttons: [
+        {
+          extend: "csvHtml5",
+          text: "CSV файл татах",
+          text: '<a class="btn btn-outline-secondary m-2" style="float: left;">CSV файл татах</a>',
+          tag: "span",
+          exportOptions: {
+            modifier: {
+              search: "none",
+            },
+          },
+        },
+        {
+          extend: "print",
+          text: "Хэвлэх",
+          text: '<a class="btn btn-outline-secondary m-2" style="float: left;">Хэвлэх</a>',
+          tag: "span",
+          exportOptions: {
+            modifier: {
+              search: "none",
+            },
+          },
+        },
+        {
+          extend: "excelHtml5",
+          text: "Excel",
+          text: '<a class="btn btn-outline-secondary m-2" style="float: left;">XLS файл татах</a>',
+          tag: "span",
+          exportOptions: {
+            modifier: {
+              search: "none",
+            },
+          },
+        },
+      ],
+      paging: false,
+      columnDefs: [
+        {
+          orderData: [0, 1],
+        },
+      ],
+      pageLength: 50,
+      lengthMenu: [50, 100, 200, 500],
+      language: {
+        lengthMenu: "_MENU_ эгнээ харах",
+        zeroRecords: "Дата алга",
+        info: "_PAGES_ хуудаснаас _PAGE_-р хуудас. Нийт: _TOTAL_ хүргэлт",
+        infoEmpty: "",
+        sSearch: "Шүүх",
+        paginate: {
+          previous: "өмнөх",
+          next: "дараа",
+        },
+      },
+    });
+  });
+</script>
+<script>
+  $(document).ready(function() {
+    $('.give-order').click(function() {
+      var returnTaskId = $(this).data('return-task-id');
+      var elem = this;
+      $('#confirmGiveModal').modal('show');
+      $('#confirmGiveModalYes').click(function() {
+        sendReturnTaskId(returnTaskId, elem);
+      });
+    });
+  
+    function sendReturnTaskId(returnTaskId, elem) {
+      $('#confirmGiveModal').modal('hide');
+      $(elem).hide();
+      $('.loading').show();
+      $.ajax({
+        type: 'POST',
+        url: '/clerk/expense/return-task',
+        contentType: 'application/json',
+        data: JSON.stringify({return_task_id: returnTaskId}),
+        success: function(response) {
+          $('.loading').hide();
+          $(elem).replaceWith('<p class="fw-bold text-success">' + response["msg"] + '</p>');
+        },
+        error: function(xhr, status, error) {
+          $('.loading').hide();
+          var responseMessage = 'Failed';
+          if (xhr.status === 400) {
+              responseMessage = xhr.responseJSON.msg;
+          }
+          $(elem).replaceWith('<p>' + responseMessage + '</p>');
+        }
+      });
+    }
+  });
+</script>
+{% endblock main %}

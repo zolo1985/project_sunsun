@@ -1,0 +1,158 @@
+{% extends "layout.html" %}
+{% block main %}
+    <!-- PROFILE -->
+    <section>
+        <div class="container min-vh-100">
+            <div class="row">
+                <div class="col">
+                    <!-- Chart START -->
+                    <div class="card border h-100">
+                        <!-- Card header -->
+                        <div class="card-header border-bottom d-flex justify-content-between align-items-center p-3">
+                            <h5 class="card-header-title mb-0">Хэрэглэгч</h5>
+                        </div>
+
+                        <!-- Card body -->
+                        <div class="card-body">
+                            <div class="d-sm-flex justify-content-sm-between align-items-center mb-4">
+                                <!-- Avatar detail -->
+                                <div class="d-flex align-items-center">
+                                    <!-- Avatar -->
+                                    <div class="" style="width: 100px;">
+                                        {% if current_user.avatar_id is none %}
+                                            <img class="avatar-img rounded-circle border border-white border-3 shadow" src="{{url_for('static', filename='images/placeholder.jpg')}}" alt="">
+                                        {% else %}
+                                            <img class="avatar-img rounded-circle border border-white border-3 shadow" src="{{ url_for('account_util.artwork', artwork=current_user.avatar_id) }}" alt="">
+                                        {% endif %}
+                                    </div>
+                                    <!-- Info -->
+                                    <div class="ms-3">
+                                        <h5 class="mb-0">{{ current_user.firstname  | capitalize }}</h5>
+                                        {% if current_user.has_role('admin') %}
+                                            <span>Овог Нэр:</span>
+                                            <span class="h6 mb-0">{{ current_user.lastname  | capitalize }} {{ current_user.firstname  | capitalize }}</span>
+                                            <h3 class="mb-0">admin</h3>
+                                        {% elif current_user.has_role('manager') %}
+                                            <span>Овог Нэр:</span>
+                                            <span class="h6 mb-0">{{ current_user.lastname  | capitalize }} {{ current_user.firstname  | capitalize }}</span>
+                                            <h3 class="mb-0">Менежер</h3>
+                                        {% elif current_user.has_role('supplier1') %}
+                                            <span>Овог Нэр:</span>
+                                            <span class="h6 mb-0">{{ current_user.lastname  | capitalize }} {{ current_user.firstname  | capitalize }}</span>
+                                            <h3 class="mb-0">Харилцагч</h3>
+                                        {% elif current_user.has_role('supplier2') %}
+                                            <span>Овог Нэр:</span>
+                                            <span class="h6 mb-0">{{ current_user.lastname  | capitalize }} {{ current_user.firstname  | capitalize }}</span>
+                                            <h3 class="mb-0">Харилцагч</h3>
+                                        {% elif current_user.has_role('clerk') %}
+                                            <span>Овог Нэр:</span>
+                                            <span class="h6 mb-0">{{ current_user.lastname  | capitalize }} {{ current_user.firstname  | capitalize }}</span>
+                                            <h3 class="mb-0">Нярав</h3>
+                                        {% elif current_user.has_role('driver') %}
+                                            <span>Овог Нэр:</span>
+                                            <span class="h6 mb-0">{{ current_user.lastname  | capitalize }} {{ current_user.firstname  | capitalize }}</span>
+                                            <h3 class="mb-0">Жолооч</h3>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Information START -->
+                            <div class="row">
+                                <!-- Information item -->
+                                <div class="col-md-6">
+                                    <ul
+                                        class="list-group list-group-borderless">
+                                        <!-- Email ID -->
+                                        <li class="list-group-item">
+                                            <span>Имэйл:</span>
+                                            <span class="h6 mb-0">{{ current_user.email }}</span>
+                                        </li>
+                                        <!-- Mobile Number -->
+                                        <li class="list-group-item">
+                                            <span>Утас:</span>
+                                            <span class="h6 mb-0">{{ current_user.phone }}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <!-- Information item -->
+                                <div class="col-md-6">
+                                    <ul
+                                        class="list-group list-group-borderless">
+                                        <!-- Joining Date -->
+                                        <li class="list-group-item">
+                                            <span>Бүртгүүлсэн огноо:</span>
+                                            <span class="h6 mb-0">{{ current_user.created_date }}</span>
+                                        </li>
+                                        <!-- Verification -->
+                                        <li class="list-group-item">
+                                            <span>Данс:</span>
+                                            <span class="h6 mb-0">
+                                                {% if current_user.status=="verified" %}Баталгаажсан{% else %}Баталгаажаагүй
+                                                {% endif %}
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- Information END -->
+
+                            <h5 class="mt-5 mb-0">Нууц үг өөрчлөх</h5>
+                            <div class="container mt-3">
+                                <form id="form" method="POST" action="">
+                                    {{ form.user_id(class="form-control", value=current_user_id.id) }}
+                                    {{ form.csrf_token }}
+                                        <div class="mb-3">
+                                            {{ form.current_password.label(class="form-control-label") }}
+                                            {% if form.current_password.errors %}
+                                                {{ form.current_password(class="form-control is-invalid") }}
+                                                <div class="invalid-feedback">
+                                                    {% for error in form.current_password.errors %}
+                                                        <span>{{ error }}</span>
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                {{ form.current_password(class="form-control") }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="mb-3">
+                                            {{ form.password.label(class="form-control-label") }}
+                                            {% if form.password.errors %}
+                                                {{ form.password(class="form-control is-invalid") }}
+                                                <div class="invalid-feedback">
+                                                    {% for error in form.password.errors %}
+                                                        <span>{{ error }}</span>
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                {{ form.password(class="form-control") }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="mb-3">
+                                            {{ form.confirm_password.label(class="form-control-label") }}
+                                            {% if form.confirm_password.errors %}
+                                                {{ form.confirm_password(class="form-control is-invalid") }}
+                                                <div class="invalid-feedback">
+                                                    {% for error in form.confirm_password.errors %}
+                                                        <span>{{ error }}</span>
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                {{ form.confirm_password(class="form-control") }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="mb-3 align-self-center">
+                                            {{ form.submit(class="btn btn-outline-success m-0") }}
+                                        </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Chart END -->
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END PROFILE -->
+{% endblock main %}

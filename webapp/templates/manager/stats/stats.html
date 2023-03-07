@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block main %}
+    <!-- Products -->
+    <section>
+        <div class="container-fluid min-vh-100" style="width: 80%;">
+            <div class="row">
+                <div class="col-sm-12 mb-5">
+                    <h3 class="display-6 mb-4">Хүргэлт статистик</h3>
+                    <form id="form" method="POST" action="">
+                        {{ form.csrf_token }}
+                        <div class="row g-2">
+                            <div class="col-md-3">
+                                {{ form.select_option.label(class="form-control-label") }}
+                                {% if form.select_option.errors %}
+                                    {{ form.select_option(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.select_option.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.select_option(class="form-control") }}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-3">
+                                {{ form.date.label(class="form-control-label") }}
+                                {% if form.date.errors %}
+                                    {{ form.date(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.date.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.date(class="form-control") }}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-3 align-self-center">
+                                    {{ form.submit(class="btn btn-outline-success m-0") }}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END Products -->
+{% endblock main %}

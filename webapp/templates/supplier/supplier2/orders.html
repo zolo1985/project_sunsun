@@ -1,0 +1,413 @@
+{% extends "layout.html" %}
+{% block main %}
+    <!-- ORDERS -->
+    <section>
+        <div class="container-fluid min-vh-100" style="width: 80%;">
+            <div class="row">
+                <h3 class="display-6 mb-4">Хүргэлтүүд</h3>
+                <form id="form" method="POST" action="">
+                    {{ form.csrf_token }}
+                    <div class="row g-2 mb-5">
+                        <div class="col-md-3">
+                            {{ form.date.label(class="form-control-label") }}
+                            {% if form.date.errors %}
+                                {{ form.date(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.date.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.date(class="form-control") }}
+                            {% endif %}
+                        </div>
+                        <div class="col-md-3 align-self-center">
+                            {{ form.submit(class="btn btn-outline-success m-0") }}
+                        </div>
+                    </div>
+                </form>
+                <div class="table-responsive-sm">
+                    <table id="inventory-table" class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="bg-grad">ID</th>
+                                <th scope="col" class="bg-grad">Төлөв</th>
+                                <th scope="col" class="bg-grad">Үүсгэсэн огноо</th>
+                                <th scope="col" class="bg-grad">Хаяг/Утас</th>
+                                <th scope="col" class="bg-grad">Дүн</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                                <tr>
+                                    <td>
+                                        <p>{{ order.id }}</p>
+                                    </td>
+                                    <td>
+                                        {% if order.show_status %}
+                                            {% if order.status == "unassigned" %}
+                                                {% if form.date.data is none %}
+                                                    {% if order.is_postphoned %}
+                                                        <p class="text-info fw-bold">хойшлуулсан</p>
+                                                        <p>
+                                                            <strong>хойшлуулсан огноо:</strong>
+                                                            {{ order.postphoned_date | datefilter }}</p>
+                                                        <p>
+                                                            {% if order.show_comment %}
+                                                                <strong>Коммент:</strong> {{ order.driver_comment }}
+                                                            {% else %}
+                                                            {% endif %}
+                                                        </p>
+                                                    {% else %}
+                                                        <p class="text-danger fw-bold">жолооч хувиарлагдаагүй байна</p>
+                                                    {% endif %}
+                                                {% else %}
+                                                    {% if form.date.data > cur_date.date() %}
+                                                        {% if order.is_postphoned %}
+                                                            <p class="text-danger fw-bold">жолооч хувиарлагдаагүй байна</p>
+                                                            <p class="text-info fw-bold">{{ order.created_date.strftime('%Y-%m-%d') }}
+                                                                нд хойшлогдсон
+                                                                {{ order.postphoned_date.strftime('%Y-%m-%d') }}
+                                                                нд хүргэгдэх хүргэлт</p>
+                                                        {% else %}
+                                                            <p class="text-danger fw-bold">жолооч хувиарлагдаагүй байна</p>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        {% if order.is_postphoned %}
+                                                            <p class="text-info fw-bold">хойшлуулсан</p>
+                                                            <p>
+                                                                <strong>хойшлуулсан огноо:</strong>
+                                                                {{ order.postphoned_date | datefilter }}</p>
+                                                            <p>
+                                                                {% if order.show_comment %}
+                                                                    <strong>Коммент:</strong> {{ order.driver_comment }}
+                                                                {% else %}
+                                                                {% endif %}
+                                                            </p>
+                                                        {% else %}
+                                                            <p class="text-danger fw-bold">жолооч хувиарлагдаагүй байна</p>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% elif order.status == "assigned" %}
+                                                {% if form.date.data is none %}
+                                                    {% if order.is_postphoned %}
+                                                        <p class="text-success fw-bold">жолооч хүргэлтэнд гарсан байна</p>
+                                                        <p>
+                                                            <strong>хойшлуулсан огноо:</strong>
+                                                            {{ order.postphoned_date | datefilter }}</p>
+                                                        <p>
+                                                            {% if order.show_comment %}
+                                                                <strong>Коммент:</strong> {{ order.driver_comment }}
+                                                            {% else %}
+                                                            {% endif %}
+                                                    {% else %}
+                                                        <p class="text-success fw-bold">жолооч хүргэлтэнд гарсан байна</p>
+                                                    {% endif %}
+                                                {% else %}
+                                                    {% if form.date.data > cur_date.date() %}
+                                                        {% if order.is_postphoned %}
+                                                            <p class="text-success fw-bold">жолооч хүргэлтэнд гарсан байна</p>
+                                                            <p class="text-info fw-bold">{{ order.created_date.strftime('%Y-%m-%d') }}
+                                                                нд хойшлогдсон
+                                                                {{ order.postphoned_date.strftime('%Y-%m-%d') }}
+                                                                нд хүргэгдэх хүргэлт</p>
+                                                        {% else %}
+                                                            <p class="text-success fw-bold">жолооч хүргэлтэнд гарсан байна</p>
+                                                        {% endif %}
+                                                    {% elif form.date.data == cur_date.date() %}
+                                                        {% if order.is_postphoned %}
+                                                            <p class="text-success fw-bold">жолооч хүргэлтэнд гарсан байна</p>
+                                                            <p>
+                                                                <strong>хойшлуулсан огноо:</strong>
+                                                                {{ order.postphoned_date | datefilter }}</p>
+                                                            <p>
+                                                                {% if order.show_comment %}
+                                                                    <strong>Коммент:</strong> {{ order.driver_comment }}
+                                                                {% else %}
+                                                                {% endif %}
+                                                        {% else %}
+                                                            <p class="text-success fw-bold">жолооч хүргэлтэнд гарсан байна</p>
+                                                        {% endif %}
+                                                    {% elif form.date.data < cur_date.date() %}
+                                                        {% if order.is_postphoned %}
+                                                            <p class="text-info fw-bold">хойшлуулсан</p>
+                                                            <p>
+                                                                <strong>хойшлуулсан огноо:</strong>
+                                                                {{ order.postphoned_date | datefilter }}</p>
+                                                            <p>
+                                                                {% if order.show_comment %}
+                                                                    <strong>Коммент:</strong> {{ order.driver_comment }}
+                                                                {% else %}
+                                                                {% endif %}
+                                                        {% else %}
+                                                            <p class="text-success fw-bold">жолооч хүргэлтэнд гарсан байна</p>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% elif order.status == "completed" %}
+                                                {% if form.date.data is none %}
+                                                    {% if order.is_postphoned %}
+                                                        <p class="text-success fw-bold">хойшилж хүргэгдсэн*</p>
+                                                        <p>
+                                                            <strong>хойшлуулсан огноо:</strong>
+                                                            {{ order.postphoned_date | datefilter }}</p>
+                                                        <p>
+                                                            {% if order.show_comment %}
+                                                                    <strong>Коммент:</strong> {{ order.driver_comment }}
+                                                                {% else %}
+                                                                {% endif %}
+                                                    {% else %}
+                                                        <p class="text-success fw-bold">хүргэгдсэн</p>
+                                                        <p>
+                                                            {% if order.show_comment %}
+                                                                {% if order.driver_comment is not none %}
+                                                                    <strong>Нэмэлт тэмдэглэгээ:</strong> {{ order.driver_comment }}
+                                                                {% endif %}
+                                                            {% else %}
+                                                            {% endif %}
+                                                        </p>
+                                                    {% endif %}
+                                                {% else %}
+                                                    {% if form.date.data > cur_date.date() %}
+                                                        {% if order.is_postphoned %}
+                                                            <p class="text-success fw-bold">хойшилж хүргэгдсэн*</p>
+                                                            <p class="text-info fw-bold">{{ order.created_date.strftime('%Y-%m-%d') }}
+                                                                нд хойшлогдсон
+                                                                {{ order.postphoned_date.strftime('%Y-%m-%d') }}
+                                                                нд хүргэгдэх хүргэлт</p>
+                                                        {% else %}
+                                                            <p class="text-success fw-bold">хүргэгдсэн</p>
+                                                        {% endif %}
+                                                    {% elif form.date.data == cur_date.date() %}
+                                                        {% if order.is_postphoned %}
+                                                            <p class="text-success fw-bold">хойшилж хүргэгдсэн*</p>
+                                                            <p>
+                                                                <strong>хойшлуулсан огноо:</strong>
+                                                                {{ order.postphoned_date | datefilter }}</p>
+                                                            <p>
+                                                                {% if order.show_comment %}
+                                                                    <strong>Коммент:</strong> {{ order.driver_comment }}
+                                                                {% else %}
+                                                                {% endif %}
+                                                        {% else %}
+                                                            <p class="text-success fw-bold">хүргэгдсэн</p>
+                                                            <p>
+                                                                {% if order.show_comment %}
+                                                                    {% if order.driver_comment is not none %}
+                                                                        <strong>Нэмэлт тэмдэглэгээ:</strong> {{ order.driver_comment }}
+                                                                    {% endif %}
+                                                                {% else %}
+                                                                {% endif %}
+                                                            </p>
+                                                        {% endif %}
+                                                    {% elif form.date.data < cur_date.date() %}
+                                                        {% if order.is_postphoned %}
+                                                            <p class="text-info fw-bold">хойшлуулсан</p>
+                                                            <p>
+                                                                <strong>хойшлуулсан огноо:</strong>
+                                                                {{ order.postphoned_date | datefilter }}</p>
+                                                            <p>
+                                                                {% if order.show_comment %}
+                                                                    <strong>Коммент:</strong> {{ order.driver_comment }}
+                                                                {% else %}
+                                                                {% endif %}
+                                                        {% else %}
+                                                            <p class="text-success fw-bold">хүргэгдсэн</p>
+                                                            <p>
+                                                                {% if order.show_comment %}
+                                                                    {% if order.driver_comment is not none %}
+                                                                        <strong>Нэмэлт тэмдэглэгээ:</strong> {{ order.driver_comment }}
+                                                                    {% endif %}
+                                                                {% else %}
+                                                                {% endif %}
+                                                            </p>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% elif order.status == "cancelled" %}
+                                                {% if form.date.data is none %}
+                                                    {% if order.is_postphoned %}
+                                                        <p class="text-danger fw-bold">хойшилж цуцлагдсан*</p>
+                                                        <p>
+                                                            {% if order.show_comment %}
+                                                                <strong>Коммент:</strong> {{ order.driver_comment }}
+                                                            {% else %}
+                                                            {% endif %}
+                                                        <p>
+                                                            <strong>хойшлуулсан огноо:</strong>
+                                                            {{ order.postphoned_date | datefilter }}</p>
+                                                    {% else %}
+                                                        <p class="text-danger fw-bold">цуцлагдсан</p>
+                                                        <p>
+                                                            {% if order.show_comment %}
+                                                                <strong>Коммент:</strong> {{ order.driver_comment }}
+                                                            {% else %}
+                                                            {% endif %}
+                                                        </p>
+                                                    {% endif %}
+                                                {% else %}
+                                                    {% if form.date.data > cur_date.date() %}
+                                                        {% if order.is_postphoned %}
+                                                            <p class="text-danger fw-bold">хойшилж цуцлагдсан*</p>
+                                                            <p>
+                                                                {% if order.show_comment %}
+                                                                    <strong>Коммент:</strong> {{ order.driver_comment }}
+                                                                {% else %}
+                                                                {% endif %}
+                                                            </p>
+                                                            <p class="text-info fw-bold">{{ order.created_date.strftime('%Y-%m-%d') }}
+                                                                нд хойшлогдсон
+                                                                {{ order.postphoned_date.strftime('%Y-%m-%d') }}
+                                                                нд хүргэгдэх хүргэлт</p>
+                                                        {% else %}
+                                                            <p class="text-danger fw-bold">цуцлагдсан</p>
+                                                            <p>
+                                                                {% if order.show_comment %}
+                                                                    <strong>Коммент:</strong> {{ order.driver_comment }}
+                                                                {% else %}
+                                                                {% endif %}
+                                                            </p>
+                                                        {% endif %}
+                                                    {% elif form.date.data == cur_date.date() %}
+                                                        {% if order.is_postphoned %}
+                                                            <p class="text-danger fw-bold">хойшилж цуцлагдсан*</p>
+                                                            <p>
+                                                                {% if order.show_comment %}
+                                                                    <strong>Коммент:</strong> {{ order.driver_comment }}
+                                                                {% else %}
+                                                                {% endif %}
+                                                            </p>
+                                                            <p>
+                                                                <strong>хойшлуулсан огноо:</strong>
+                                                                {{ order.postphoned_date | datefilter }}</p>
+                                                        {% else %}
+                                                            <p class="text-danger fw-bold">цуцлагдсан</p>
+                                                            <p>
+                                                                {% if order.show_comment %}
+                                                                    <strong>Коммент:</strong> {{ order.driver_comment }}
+                                                                {% else %}
+                                                                {% endif %}
+                                                            </p>
+                                                        {% endif %}
+                                                    {% elif form.date.data < cur_date.date() %}
+                                                        {% if order.is_postphoned %}
+                                                            <p class="text-info fw-bold">хойшлуулсан</p>
+                                                            <p>
+                                                                <strong>хойшлуулсан огноо:</strong>
+                                                                {{ order.postphoned_date | datefilter }}</p>
+                                                            <p>
+                                                                {% if order.show_comment %}
+                                                                    <strong>Коммент:</strong> {{ order.driver_comment }}
+                                                                {% else %}
+                                                                {% endif %}
+                                                            </p>
+                                                        {% else %}
+                                                            <p class="text-danger fw-bold">цуцлагдсан</p>
+                                                            <p>
+                                                                {% if order.show_comment %}
+                                                                    <strong>Коммент:</strong> {{ order.driver_comment }}
+                                                                {% else %}
+                                                                {% endif %}
+                                                            </p>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% elif order.status == "postphoned" %}
+                                                <p class="text-info fw-bold">хойшлуулсан</p>
+                                                <p>
+                                                    <strong>хойшлуулсан огноо:</strong>
+                                                    {{ order.postphoned_date }}</p>
+                                                <p>
+                                                    {% if order.show_comment %}
+                                                        <strong>Коммент:</strong> {{ order.driver_comment }}
+                                                    {% else %}
+                                                    {% endif %}
+                                                </p>
+                                            {% endif %}
+                                        {% else %}
+                                            <p class="text-info fw-bold">хүргэлт хувиарлагдсан байна</p>
+                                        {% endif %}
+                                        {% if order.is_manager_created %}
+                                            <p class="text-success fw-bold">*** СҮН СҮН агуулахаас үүсгэсэн ***</p>
+                                        {% endif%}
+                                    </td>
+                                    <td>{{ order.created_date }}</td>
+                                    <td>
+                                        {% if order.addresses.city is not none %}{{ order.addresses.city }}, {% endif %}{% if order.addresses.district is not none %}{{ order.addresses.district }}, {% endif %}{% if order.addresses.khoroo is not none %}{{ order.addresses.khoroo }}-р хороо, {% endif %}{% if order.addresses.aimag is not none %}{{ order.addresses.aimag }}, {% endif %}{{ order.addresses.address }} {{ order.addresses.phone }}{% if order.addresses.phone_more is not none %}, {{ order.addresses.phone_more }}{% endif %}
+                                    </td>
+                                    <td style=" text-align: end;">{{ order.total_amount  | round | int | numberformat }}₮</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END ORDERS -->
+    <script>
+        $(document).ready(function () {
+            $('#inventory-table').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'csvHtml5',
+                        text: 'CSV файл татах',
+                        text: '<a class="btn btn-outline-secondary m-2" style="float: left;">CSV файл татах</a>',
+                        tag: 'span',
+                        exportOptions: {
+                            modifier: {
+                                search: 'none'
+                            }
+                        }
+                    },
+                    {
+                        extend: 'print',
+                        text: 'Хэвлэх',
+                        text: '<a class="btn btn-outline-secondary m-2" style="float: left;">Хэвлэх</a>',
+                        tag: 'span',
+                        exportOptions: {
+                            modifier: {
+                                search: 'none'
+                            }
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel',
+                        text: '<a class="btn btn-outline-secondary m-2" style="float: left;">XLS файл татах</a>',
+                        tag: 'span',
+                        exportOptions: {
+                            modifier: {
+                                search: 'none'
+                            }
+                        }
+                    },
+                ],
+                "columnDefs": [
+                    {
+                        "orderData": [0, 1]
+                    },
+                ],
+                pageLength: 50,
+                order: [[1, 'asc']],
+                lengthMenu: [
+                    50, 100, 200, 500
+                ],
+                language: {
+                    lengthMenu: "_MENU_ эгнээ харах",
+                    zeroRecords: "Дата алга",
+                    info: "_PAGES_ хуудаснаас _PAGE_-р хуудас. Нийт: _TOTAL_",
+                    infoEmpty: "",
+                    sSearch: "Шүүх",
+                    paginate: {
+                    previous: "өмнөх",
+                    next: "дараа",
+                    },
+                },
+            });
+        });
+    </script>
+    <!-- END ORDERS -->
+{% endblock main %}

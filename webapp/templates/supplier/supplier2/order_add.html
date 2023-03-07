@@ -1,0 +1,397 @@
+{% extends "layout.html" %}
+{% block main %}
+<!-- ORDERS ADD -->
+<section>
+    <div class="container-fluid min-vh-100 mb-5 pb-5" style="width: 80%;">
+            <h3 class="display-6 mb-4">Шинэ Хүргэлт Үүсгэх</h3>
+            <form id="form" method="POST" action="">
+                {{ form.csrf_token }}
+                <div class="row">
+                    <div id="deliveryAddSection">
+                        <div class="col">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="Infos">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="bg-grad">Чиглэл</th>
+                                            <th scope="col" class="bg-grad">Хүргэлт</th>
+                                            <th scope="col" class="bg-grad"></th>
+                                            <th scope="col" class="bg-grad"></th>
+                                            <th scope="col" class="bg-grad"></th>
+                                            <th scope="col" class="bg-grad"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="main">
+                                        <tr>
+                                            <td>
+                                                <div id="orderTypeSection" class="col" style="display: block;">
+                                                    {% for subfield in form.order_type %}
+                                                        <p style="font-size: 15px; color: black; font-weight: 400;">{{ subfield(class="form-check-input m-0", onclick="checkDestination()") }} {{ subfield.label }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group">
+                                                    {{ form.phone.label(class="form-control-label") }}
+                                                    {% if form.phone.errors %}
+                                                        {{ form.phone(class="form-control is-invalid") }}
+                                                        <div class="invalid-feedback">
+                                                            {% for error in form.phone.errors %}
+                                                                <span>{{ error }}</span>
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% else %}
+                                                        {{ form.phone(class="form-control") }}
+                                                    {% endif %}
+                                                </div>
+                                                <div class="form-group">
+                                                    {{ form.phone_more.label(class="form-control-label") }}
+                                                    {% if form.phone_more.errors %}
+                                                        {{ form.phone_more(class="form-control is-invalid") }}
+                                                        <div class="invalid-feedback">
+                                                            {% for error in form.phone_more.errors %}
+                                                                <span>{{ error }}</span>
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% else %}
+                                                        {{ form.phone_more(class="form-control") }}
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div id="local">
+                                                    {{ form.district.label(class="form-control-label") }}
+                                                    {% if form.district.errors %}
+                                                        {{ form.district(class="form-control is-invalid m-0") }}
+                                                        <div class="invalid-feedback">
+                                                            {% for error in form.district.errors %}
+                                                                <span>{{ error }}</span>
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% else %}
+                                                        {{ form.district(class="form-control") }}
+                                                    {% endif %}
+    
+                                                    {{ form.khoroo.label(class="form-control-label") }}
+                                                    {% if form.khoroo.errors %}
+                                                        {{ form.khoroo(class="form-control is-invalid m-0") }}
+                                                        <div class="invalid-feedback">
+                                                            {% for error in form.khoroo.errors %}
+                                                                <span>{{ error }}</span>
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% else %}
+                                                        {{ form.khoroo(class="form-control") }}
+                                                    {% endif %}
+                                                </div>
+                                                <div id="long" style="display: none;">
+                                                    {{ form.aimag.label(class="form-control-label") }}
+                                                    {% if form.aimag.errors %}
+                                                        {{ form.aimag(class="form-control is-invalid m-0") }}
+                                                        <div class="invalid-feedback">
+                                                            {% for error in form.aimag.errors %}
+                                                                <span>{{ error }}</span>
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% else %}
+                                                        {{ form.aimag(class="form-control") }}
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div class="form-group">
+                                                    {{ form.address.label(class="form-control-label") }}
+                                                    {% if form.address.errors %}
+                                                        {{ form.address(class="form-control is-invalid") }}
+                                                        <div class="invalid-feedback">
+                                                            {% for error in form.address.errors %}
+                                                                <span>{{ error }}</span>
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% else %}
+                                                        {{ form.address(class="form-control", style="min-height: 105px;") }}
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group">
+                                                    {{ form.comment.label(class="form-control-label") }}
+                                                    {% if form.comment.errors %}
+                                                        {{ form.comment(class="form-control is-invalid") }}
+                                                        <div class="invalid-feedback">
+                                                            {% for error in form.comment.errors %}
+                                                                <span>{{ error }}</span>
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% else %}
+                                                        {{ form.comment(class="form-control", style="min-height: 105px;") }}
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div class="form-group">
+                                                    {{ form.total_amount.label(class="form-control-label") }}
+                                                    {% if form.total_amount.errors %}
+                                                        {{ form.total_amount(class="form-control is-invalid") }}
+                                                        <div class="invalid-feedback">
+                                                            {% for error in form.total_amount.errors %}
+                                                                <span>{{ error }}</span>
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% else %}
+                                                        {{ form.total_amount(class="form-control") }}
+                                                    {% endif %}
+                                                </div>
+                                                <div>
+                                                    <button type="button" class="btn btn-sm btn-info" onclick="addDelivery();">Нэмэх</button>
+                                                    <button type="button" class="btn btn-sm btn-danger" onclick="clearForms();">Цэвэрлэх</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container">
+                        <table class="table table-hover" id="lines">
+                            <thead>
+                                <tr>
+                                    <th style="display:none"></th>
+                                    <th scope="col" class="bg-grad">Утас</th>
+                                    <th scope="col" class="bg-grad">Нэмэлт Утас</th>
+                                    <th scope="col" class="bg-grad">Аймаг</th>
+                                    <th scope="col" class="bg-grad">Дүүрэг</th>
+                                    <th scope="col" class="bg-grad">Хороо</th>
+                                    <th scope="col" class="bg-grad">Хаяг</th>
+                                    <th scope="col" class="bg-grad">Коммент</th>
+                                    <th scope="col" class="bg-grad">Дүн</th>
+                                    <th scope="col" class="bg-grad">Хасах</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="submitButton" class="form-group pt-5 pb-5 float-end">
+                    {{ form.submit(class="btn btn-outline-success") }}
+                </div>
+                
+            </form>
+    </div>
+</section>
+<!-- END ORDERS ADD -->
+<!-- Modal -->
+<div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body display-8 fw-bold" id="modal-message">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Хаах</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function addDelivery() {
+        var phone = document.getElementById("phone").value;
+        var phone_more = document.getElementById("phone_more").value;
+        var district = document.getElementById("district").value;
+        var khoroo = document.getElementById("khoroo").value;
+        var aimag = document.getElementById("aimag").value;
+        var address = document.getElementById("address").value;
+        var total_amount = document.getElementById('total_amount').value;
+        var comment = document.getElementById('comment').value;
+        order_type = document.getElementById('order_type-0');
+
+        // if ($('#lines tbody tr').length == 0) {
+        //     $('#exampleModalLabel').text("АНХААР");
+        //     $('#messageModal .modal-body').text("Захиалга оруулаагүй байна!");
+        //     $('#messageModal').modal('show');
+        //     return false;
+        // } else {
+        //     return true;
+        // }
+
+        if (phone == null || phone == "") {
+            $('#exampleModalLabel').text("АНХААР");
+            $('#messageModal .modal-body').text("Утас оруулаагүй байна!");
+            $('#messageModal').modal('show');
+            return false;
+        } else if (address == null || address == "") {
+            $('#exampleModalLabel').text("АНХААР");
+            $('#messageModal .modal-body').text("Хаяг оруулаагүй байна!");
+            $('#messageModal').modal('show');
+            return false;
+        } else if (total_amount == null || total_amount == "") {
+            $('#exampleModalLabel').text("АНХААР");
+            $('#messageModal .modal-body').text("Дүн оруулаагүй байна!");
+            $('#messageModal').modal('show');
+            return false;
+        }
+
+        if (phone.length < 8) {
+            $('#exampleModalLabel').text("АНХААР");
+            $('#messageModal .modal-body').text("Утас буруу байна! 8 оронтой дугаар оруулна уу!");
+            $('#messageModal').modal('show');
+            return false;
+        } else if (phone.length === 8) {
+            const reg = new RegExp('^[0-9]+$');
+            if (!reg.test(phone)) {
+                $('#exampleModalLabel').text("АНХААР");
+                $('#messageModal .modal-body').text("Утас алдаатай байна. Зөвхөн тоо оруулна уу!");
+                $('#messageModal').modal('show');
+                return false;
+            }
+        }
+
+        if (order_type.checked) {
+            // local
+            if (district == "Дүүрэг сонгох" || khoroo == "Хороо сонгох") {
+                $('#exampleModalLabel').text("АНХААР");
+                $('#messageModal .modal-body').text("Дүүрэг, хороо сонгоогүй байна! Сонголтоо хийгээд үргэлжлүүлнэ үү!");
+                $('#messageModal').modal('show');
+                return false;
+            } else {
+                $('#lines').find('tbody').append($('#tr-placeholder tr:first').clone());
+                $('#lines').find('tbody tr:last input[name="order_type_value"]').val(order_type.checked);
+                $('#lines').find('tbody tr:last p[data-name="order_type_value"]').text(order_type.checked);
+                $('#lines').find('tbody tr:last input[name="phone_value"]').val(phone);
+                $('#lines').find('tbody tr:last p[data-name="phone_value"]').text(phone);
+                $('#lines').find('tbody tr:last input[name="phone_more_value"]').val(phone_more);
+                $('#lines').find('tbody tr:last p[data-name="phone_more_value"]').text(phone_more);
+                $('#lines').find('tbody tr:last input[name="district_value"]').val(district);
+                $('#lines').find('tbody tr:last p[data-name="district_value"]').text(district);
+                $('#lines').find('tbody tr:last input[name="khoroo_value"]').val(khoroo);
+                $('#lines').find('tbody tr:last p[data-name="khoroo_value"]').text(khoroo);
+                $('#lines').find('tbody tr:last input[name="address_value"]').val(address);
+                $('#lines').find('tbody tr:last p[data-name="address_value"]').text(address);
+                $('#lines').find('tbody tr:last input[name="comment_value"]').val(comment);
+                $('#lines').find('tbody tr:last p[data-name="comment_value"]').text(comment);
+                $('#lines').find('tbody tr:last input[name="total_amount_value"]').val(total_amount);
+                $('#lines').find('tbody tr:last p[data-name="total_amount_value"]').text(total_amount);
+                
+                return true;
+            }
+
+        } else {
+            // long
+            if (aimag == "Аймаг сонгох") {
+                $('#exampleModalLabel').text("АНХААР");
+                $('#messageModal .modal-body').text("Аймаг сонгоогүй байна! Сонголтоо хийгээд үргэлжлүүлнэ үү!");
+                $('#messageModal').modal('show');
+                return false;
+            } else {
+                $('#lines').find('tbody').append($('#tr-placeholder tr:first').clone());
+                $('#lines').find('tbody tr:last input[name="order_type_value"]').val(order_type.checked);
+                $('#lines').find('tbody tr:last p[data-name="order_type_value"]').text(order_type.checked);
+                $('#lines').find('tbody tr:last input[name="phone_value"]').val(phone);
+                $('#lines').find('tbody tr:last p[data-name="phone_value"]').text(phone);
+                $('#lines').find('tbody tr:last input[name="phone_more_value"]').val(phone_more);
+                $('#lines').find('tbody tr:last p[data-name="phone_more_value"]').text(phone_more);
+                $('#lines').find('tbody tr:last input[name="aimag_value"]').val(aimag);
+                $('#lines').find('tbody tr:last p[data-name="aimag_value"]').text(aimag);
+                $('#lines').find('tbody tr:last input[name="address_value"]').val(address);
+                $('#lines').find('tbody tr:last p[data-name="address_value"]').text(address);
+                $('#lines').find('tbody tr:last input[name="comment_value"]').val(comment);
+                $('#lines').find('tbody tr:last p[data-name="comment_value"]').text(comment);
+                $('#lines').find('tbody tr:last input[name="total_amount_value"]').val(total_amount);
+                $('#lines').find('tbody tr:last p[data-name="total_amount_value"]').text(total_amount);
+                return true;
+            }
+        }
+    }
+</script>
+<script>
+    function clearForms() {
+        document.getElementById("phone").value = "";
+        document.getElementById("phone_more").value = "";
+        document.getElementById("district").value = "Дүүрэг сонгох";
+        document.getElementById("khoroo").value = "Хороо сонгох";
+        document.getElementById("aimag").value = "Аймаг сонгох";
+        document.getElementById("address").value = "";
+        document.getElementById("comment").value = "";
+        document.getElementById('total_amount').value = "";
+    }
+</script>
+ <script>
+    function checkDestination() {
+        order_type = document.getElementById('order_type-0');
+
+        if (order_type.checked) {
+            document.getElementById('local').style.display = 'block';
+            document.getElementById('long').style.display = 'none';
+        } else {
+            document.getElementById('local').style.display = 'none';
+            document.getElementById('long').style.display = 'block';
+        }
+    }
+</script>
+ <script>
+     $('#submit').click(function() {
+        if ($('#lines tbody tr').length == 0) {
+            $('#exampleModalLabel').text("АНХААР");
+            $('#messageModal .modal-body').text("Захиалга оруулаагүй байна!");
+            $('#messageModal').modal('show');
+            return false;
+        } else {
+            return true;
+        }
+     });
+ </script>
+ <table style="display: none;">
+    <tbody id="tr-placeholder">
+        <tr>
+            <td style="display:none">
+                <input type="hidden" name="order_type_value" class="form-control" required>
+                <p data-name="order_type_value" style="font-size: 16px;"></p>
+            </td>
+            <td>
+                <input type="hidden" name="phone_value" class="form-control" required>
+                <p data-name="phone_value" style="font-size: 16px;"></p>
+            </td>
+            <td>
+                <input type="hidden" name="phone_more_value" class="form-control" required>
+                <p data-name="phone_more_value" style="font-size: 16px;"></p>
+            </td>
+            <td>
+                <input type="hidden" name="aimag_value" class="form-control" required>
+                <p data-name="aimag_value" style="font-size: 16px;"></p>
+            </td>
+            <td>
+                <input type="hidden" name="district_value" class="form-control" required>
+                <p data-name="district_value" style="font-size: 16px;"></p>
+            </td>
+            <td>
+                <input type="hidden" name="khoroo_value" class="form-control" required>
+                <p data-name="khoroo_value" style="font-size: 16px;"></p>
+            </td>
+            <td>
+                <input type="hidden" name="address_value" class="form-control" required>
+                <p data-name="address_value" style="font-size: 16px;"></p>
+            </td>
+            <td>
+                <input type="hidden" name="comment_value" class="form-control" required>
+                <p data-name="comment_value" style="font-size: 16px;"></p>
+            </td>
+            <td>
+                <input type="hidden" name="total_amount_value" class="form-control" required>
+                <p data-name="total_amount_value" style="font-size: 16px;"></p>
+            </td>
+
+            <td>
+                <button type="button" class="btn p-0 m-0" onclick="$(this).parent().parent().remove();"><i class="bi bi-x-circle"></i></button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+{% endblock main %}

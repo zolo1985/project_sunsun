@@ -1,0 +1,150 @@
+{% extends "layout.html" %}
+{% block main %}
+    <!-- ORDERS ADD -->
+    <section>
+        <div class="container">
+            <div class="row">
+                <form id="form" method="POST" action="" enctype="multipart/form-data">
+                    {{ form2.csrf_token }}
+                    <!-- Tab default -->
+                    <div class="col-sm-12 col-md-12">
+                        {% if order_window %}
+                            <div class="p-5 mb-5 rounded" style="background-color: rgb(255, 48, 48);">
+                                <h3 style="color: white; ">Өглөөний 10:30 минутаас хойш оруулсан хүргэлтүүд автоматаар маргаашийн хүргэлтэнд орохыг анхаарна уу!</h3>
+                            </div>
+                            {% else %}
+
+                        {% endif %}
+                        <h3 class="display-6 mb-4">Шинэ Хүргэлт Оруулах</h3>
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('supplier1_order.supplier1_order_add', destination='local') }}">
+                                    Улаанбаатар
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('supplier1_order.supplier1_order_add', destination='long') }}">
+                                    Орон нутаг
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="{{ url_for('supplier1_order.supplier1_order_add', destination='file') }}">
+                                    Файлаар(Excel)</a>
+                            </li>
+                        </ul>
+
+                        {% if insufficient_product_ids|length > 0 %}{% endif %}
+
+
+                        {% if orders|length > 0 %}
+                            <div class="table-responsive-sm">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="bg-grad">#</th>
+                                            <th scope="col" class="bg-grad">Утас</th>
+                                            <th scope="col" class="bg-grad">Дүүрэг/Хороо/Аймаг</th>
+                                            <th scope="col" class="bg-grad">Хаяг</th>
+                                            <th scope="col" class="bg-grad">Бараа/Тоо ширхэг</th>
+                                            <th scope="col" class="bg-grad">Авах дүн</th>
+                                            <th scope="col" class="bg-grad">Төлбөр</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for order in orders %}
+                                            <tr>
+                                                <td>{{ loop.index }}</td>
+                                                <td>{{ order["Утасны дугаар"] }}</td>
+                                                <td>
+                                                    {% if order["Захиалгын төрөл"] == "local" %}
+                                                        {{ order["Дүүрэг"] }},
+                                                        {{ order["Хороо"] }}-р хороо
+                                                    {% else %}
+                                                        {{ order["Аймаг"] }}
+                                                        аймаг
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{ order["Хаяг"] }}</td>
+
+                                                <td>
+                                                    {% for product in order["Бараа"] %}
+                                                        {% if product.split(".")[0] in insufficient_product_ids %}
+                                                            <p class="fw-bold text-danger">Бараа:
+                                                                {{ product.split(".")[1] }}
+                                                                {{ product.split(".")[2] }}
+                                                                {{ product.split(".")[3] }}</p>
+                                                            <p class="fw-bold text-danger">Үнэ: {{ product.split("₮")[-1].split(",")[0] }}₮, Тоо ширхэг:
+                                                                {{ product.split(",")[1] }}</p>
+                                                        {% else %}
+                                                            <p>Бараа:
+                                                                {{ product.split(".")[1] }}
+                                                                {{ product.split(".")[2] }}
+                                                                {{ product.split(".")[3] }}</p>
+                                                            <p>Үнэ: {{ product.split("₮")[-1].split(",")[0] }}₮, Тоо ширхэг:
+                                                                {{ product.split(",")[1] }}</p>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </td>
+                                                <td>{% set ns = namespace(foo=0) %}
+                                                    {% for product in order["Бараа"] %}
+                                                        {% set ns.foo = ns.foo + (product.split(",")[-1] | int) * (product.split("₮")[-1].split(",")[0] | int) %}
+                                                    {% endfor %}
+                                                    <p>{{ ns.foo }}₮</p>
+                                                </td>
+                                                <td>{{ order["Төлбөр"] }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="table-responsive-sm">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th style="font-size: 20px;">Нийт:
+                                                {{ orders | length }}</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="mt-5 mb-3">
+                                <a class="btn btn-outline-info" href="{{ url_for('supplier1_order.supplier1_order_excel_template') }}">Загвар хуулж авах</a>
+                            </div>
+                            <div class="form-group">
+                                <label class="text-success mb-1" for="excelFile">{{ form2.excel_file.label(class="form-control-label") }}</label>
+                                {% if form2.excel_file.errors %}
+                                    {{ form2.excel_file(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form2.excel_file.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form2.excel_file(class="form-control-file input-group") }}
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        {% if orders|length > 0 %}
+                            <div class="form-group float-end">
+                                {{ form3.csrf_token }}
+                                {{ form3.submit(class="btn btn-outline-success") }}
+                            </div>
+                        {% else %}
+                            <div class="form-group mt-5">
+                                {{ form2.preview_orders(class="btn btn-outline-success") }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    <!-- END ORDERS ADD -->
+    <script>
+        document.getElementById('fileInput').onchange = function () {
+            alert('Selected file: ' + this.value);
+        };
+    </script>
+{% endblock main %}

@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+{% block main %}
+
+    <section class="p-0 d-flex align-items-center">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 col-md-5 col-lg-4 d-md-flex align-items-center bg-grad vh-sm-100">
+                    <div class="w-100 p-3 p-lg-5 all-text-white">
+                        <div class="justify-content-center align-self-center" style="max-width: 50%;">
+                            <img
+                                class="navbar-brand-item" src="{{ url_for('static', filename='logos/logo_white.svg') }}" alt="Logo"><!-- SVG Logo End -->
+                            </div>
+                            <h3 class="fw-light mt-3">Таны бизнесийн найдвартай түнш</h3>
+                            <ul class="list-group list-group-borderless mt-4">
+                                <li class="list-group-item text-white fw-bold" style="font-size: 18px;">
+                                    <i class="fa fa-check"></i>Хурд</li>
+                                <li class="list-group-item text-white fw-bold" style="font-size: 18px;">
+                                    <i class="fa fa-check"></i>Итгэл</li>
+                                <li class="list-group-item text-white fw-bold" style="font-size: 18px;">
+                                    <i class="fa fa-check"></i>Сэтгэл ханамж</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-7 col-xl-8 mx-auto my-5">
+                        <div class="row h-100">
+                            <div class="col-12 col-md-10 col-lg-5 text-start mx-auto d-flex align-items-center">
+                                <div class="w-100">
+                                    <form id="form" method="POST" action="">
+                                        {{ form.csrf_token }}
+                                        <fieldset class="form-group">
+                                            <legend class="border-bottom mb-4 text-dark">Нууц үг өөрчлөх?</legend>
+                                            <p class="display-7">Нууц үгээ өөрчлөхийг хүсвэл бүртгэлтэй и-мэйл хаягаа оруулна уу!</p>
+                                            <div class="form-group">
+                                                {{ form.email.label(class="form-control-label text-dark") }}
+                                                {% if form.email.errors %}
+                                                    {{ form.email(class="form-control is-invalid") }}
+                                                    <div class="invalid-feedback">
+                                                        {% for error in form.email.errors %}
+                                                            <span>{{ error }}</span>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form.email(class="form-control") }}
+                                                {% endif %}
+                                            </div>
+                                        </fieldset>
+
+                                        <div class="form-group">
+                                            {{ form.submit(class="btn btn-outline-success") }}
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        $("#form").submit(function () {
+            var loader = document.createElement("div");
+            $(loader).html('<div class="preloader"><img src="        {{ url_for("static", filename="images/preloader.svg") }}" alt="Pre-loader"></div>');
+            $("body").append(loader);
+        });
+    </script>
+{% endblock main %}

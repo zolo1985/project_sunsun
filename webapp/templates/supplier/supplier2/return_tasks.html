@@ -1,0 +1,133 @@
+{% extends "layout.html" %}
+{% block main %}
+    <!-- ORDERS -->
+    <section>
+        <div class="container-fluid min-vh-100" style="width: 80%;">
+            <div class="row">
+                <div class="col-sm-12 mb-5">
+                    <h3 class="display-6 mb-4">Буцаагдсан</h3>
+                    <div class="table-responsive-sm">
+                        <table id="example" class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="bg-grad">RT</th>
+                                    <th scope="col" class="bg-grad">Бараа</th>
+                                    <th scope="col" class="bg-grad">Жолооч</th>
+                                    <th scope="col" class="bg-grad">Төлөв</th>
+                                    <th scope="col" class="bg-grad"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for return_task in return_tasks %}
+                                    <tr>
+                                        <td scope="row">RT{{ return_task.id }}</td>
+                                        <td>
+                                            {% for return_task_detail in return_task.return_task_details %}
+                                                <p>{{ return_task_detail.phone }}</p>
+                                            {% endfor %}
+                                        </td>
+                                        <td>
+                                            {% if return_task.assigned_driver_id is none %}
+                                                <p class="text-danger">жолооч хувиарлагдаагүй байна</p>
+                                            {% else %}
+                                                <p>{{ return_task.driver.firstname }}</p>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if return_task.is_completed %}
+                                                <p class="text-success">Харилцагч aвсан</p>
+                                            {% else %}
+                                                {% if return_task.is_driver_received %}
+                                                    <p class="text-success">Жолооч барааг агуулахаас авсан байна. Хүргэхээр гарсан байна</p>
+                                                {% else %}
+                                                    <p class="text-danger">Жолооч барааг агуулахаас аваагүй байна</p>
+                                                {% endif %}
+                                                <p class="text-danger">Харилцагч хүлээж аваагүй</p>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if return_task.is_completed %}
+                                                <p>Хүлээж авсан огноо ({{ return_task.supplier_received_date }})</p>
+                                            {% else %}
+                                                {% if return_task.assigned_driver_id is none %}
+                                                    
+                                                {% else %}
+                                                    {% if return_task.is_driver_received %}
+                                                        <a class="btn btn-outline-success" href="{{ url_for('supplier2_return_task.supplier2_return_task_receive', return_task_id=return_task.id)}}">Хүлээж авах</a>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END ORDERS -->
+    <script>
+        $(document).ready(function () {
+            $('#example').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'csvHtml5',
+                        text: 'CSV файл татах',
+                        text: '<a class="btn btn-outline-secondary m-2" style="float: left;">CSV файл татах</a>',
+                        tag: 'span',
+                        exportOptions: {
+                            modifier: {
+                                search: 'none'
+                            }
+                        }
+                    },
+                    {
+                        extend: 'print',
+                        text: 'Хэвлэх',
+                        text: '<a class="btn btn-outline-secondary m-2" style="float: left;">Хэвлэх</a>',
+                        tag: 'span',
+                        exportOptions: {
+                            modifier: {
+                                search: 'none'
+                            }
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel',
+                        text: '<a class="btn btn-outline-secondary m-2" style="float: left;">XLS файл татах</a>',
+                        tag: 'span',
+                        exportOptions: {
+                            modifier: {
+                                search: 'none'
+                            }
+                        }
+                    },
+                ],
+                "columnDefs": [
+                    {
+                        "orderData": [0, 1]
+                    },
+                ],
+                pageLength: 50,
+                lengthMenu: [
+                    50, 100, 200, 500
+                ],
+                language: {
+                    lengthMenu: "_MENU_ эгнээ харах",
+                    zeroRecords: "Дата алга",
+                    info: "_PAGES_ хуудаснаас _PAGE_-р хуудас. Нийт: _TOTAL_",
+                    infoEmpty: "",
+                    sSearch: "Шүүх",
+                    paginate: {
+                    previous: "өмнөх",
+                    next: "дараа",
+                    },
+                },
+            });
+        });
+    </script>
+{% endblock main %}

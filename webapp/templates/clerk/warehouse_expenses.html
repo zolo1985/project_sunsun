@@ -1,0 +1,118 @@
+{% extends "layout.html" %} {% block main %}
+<!-- Products -->
+<section>
+  <div class="container-fluid min-vh-100" style="width: 80%;">
+    <div class="row">
+      <div class="col-sm-12 mb-5">
+        <h3 class="display-6 mb-4">Агуулахаас зарлага</h3>
+          <div class="table-responsive-sm">
+            <table id="inventory-table" class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col" class="bg-grad">WS</th>
+                  <th scope="col" class="bg-grad">Харилцагч</th>
+                  <th scope="col" class="bg-grad">Бараа</th>
+                  <th scope="col" class="bg-grad">Нийт дүн</th>
+                  <th scope="col" class="bg-grad">Төлөв</th>
+                  <th scope="col" class="bg-grad">Тооцоо</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for warehouse_sale in warehouse_sales %}
+                <tr>
+                  <td>WS{{ warehouse_sale.id }}</td>
+                  <td>
+                      <p>{{ warehouse_sale.supplier.company_name | capitalize }}</p>
+                      <p>{{ warehouse_sale.comment }}</p>
+                      <p>{{ warehouse_sale.manager.lastname[0] | capitalize }}. {{ warehouse_sale.manager.firstname | capitalize }}</p>
+                  </td>
+                  <td>
+                    {% if warehouse_sale.supplier.has_role('supplier1') %}
+                        {% for order_detail in warehouse_sale.warehouse_sale_details %}
+                            <p>
+                              {% if order_detail.products.name %}{{ order_detail.products.name }}{% endif %}{% if order_detail.products.color %}, {{ order_detail.products.color }}{% endif %}{% if order_detail.products.size %}, {{ order_detail.products.size }}{% endif %}{% if order_detail.products.type %}, {{ order_detail.products.type }}{% endif %}{% if order_detail.quantity %} - {{ order_detail.quantity }} ширхэг. {% endif %}{% if order_detail.products.price %} нэгж үнэ: {{ (order_detail.products.price)  | round | int | numberformat }}₮{% endif%}
+                            </p>
+                        {% endfor %}
+                    {% elif warehouse_sale.supplier.has_role('supplier2') %}
+                        {{ order.addresses.phone }}
+                    {% endif %}
+                  </td>
+                  <td>{{ warehouse_sale.total_amount | numberformat }}₮</td>
+                  <td>{% if warehouse_sale.is_ready %}
+                        <a class="btn btn-outline-success" href="{{ url_for('clerk_expense.clerk_warehouse_expense', warehouse_sale_id=warehouse_sale.id)}}">Хүлээлгэж өгөх</a>
+                      {% else %} 
+                        {{ warehouse_sale.clerk.lastname[0] | capitalize }}. {{ warehouse_sale.clerk.firstname | capitalize }}  ({{ warehouse_sale.received_from_clerk_date }})
+                      {% endif %}
+                  </td>
+                  <td>
+                    {% if warehouse_sale.is_processed_by_accountant %}
+                        <p>Тооцоо хийгдсэн</p>
+                    {% else %}
+                        <p>Тооцоо хийгдээгүй</p>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- END Products -->
+<script>
+  $(document).ready(function () {
+    $("#inventory-table").DataTable({
+      dom: "Bfrtip",
+      buttons: [
+        {
+          extend: "csvHtml5",
+          text: '<a class="btn btn-outline-secondary m-2" style="float: left;">CSV файл татах</a>',
+          tag: "span",
+          exportOptions: {
+            modifier: {
+              search: "none",
+            },
+          },
+        },
+        {
+          extend: "print",
+          text: '<a class="btn btn-outline-secondary m-2" style="float: left;">Хэвлэх</a>',
+          tag: "span",
+          exportOptions: {
+            modifier: {
+              search: "none",
+            },
+          },
+        },
+        {
+          extend: "excelHtml5",
+          text: "Excel",
+          text: '<a class="btn btn-outline-secondary m-2" style="float: left;">XLS файл татах</a>',
+          tag: "span",
+          exportOptions: {
+            modifier: {
+              search: "none",
+            },
+          },
+        },
+      ],
+      order: [[7, 'desc']],
+      pageLength: 50,
+      lengthMenu: [50, 100, 200, 500],
+      language: {
+        lengthMenu: "_MENU_ эгнээ харах",
+        zeroRecords: "Дата алга",
+        info: "_PAGES_ хуудаснаас _PAGE_-р хуудас. Нийт: _TOTAL_",
+        infoEmpty: "",
+        sSearch: "Шүүх",
+        paginate: {
+          previous: "өмнөх",
+          next: "дараа",
+        },
+      },
+    });
+  });
+</script>
+{% endblock main %}

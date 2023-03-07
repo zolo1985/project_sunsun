@@ -1,0 +1,71 @@
+<footer class="footer bg-light pt-6 all-text-black">
+    <div class="footer-content pb-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="widget address">
+                        <h6 class="fw-bold">Мэдээлэл</h6>
+                        <ul class="list-group list-group-borderless">
+                            <li class="d-flex"><i class="me-3 display-8 ti-map-alt text-primary"></i><p><strong>Хаяг: </strong> Баянзурх дүүрэг, 25-р хороо, Манлайбаатар Дамдинсүрэнгийн гудамж A104-22 тоот.</p></li>
+                            <li class="d-flex"><i class="me-3 display-8 ti-headphone-alt text-primary"></i><p><strong>Утас: </strong> 75777222</p></li>
+                            <li class="d-flex"><i class="me-3 display-8 ti-email text-primary"></i><p><strong>Цахим хаяг: </strong> info@sunsun.mn</p></li>
+                            <li class="d-flex"><i class="me-3 display-8 ti-time text-primary"></i>
+                                <p><strong>Цагийн хуваарь: </strong> Даваа - Баасан: <strong>09:00 - 18:00</strong> <br>Бямба & Нямд:<strong>09:00 - 17:00</strong></p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="widget">
+                        <h6 class="fw-bold">Бусад</h6>
+                        <ul class="list-group list-group-borderless" style="list-style-type: none;">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('main.about_us') }}">Бидний тухай</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('main.contact_us') }}">Холбоо барих</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('main.jobs') }}">Ажлын байр</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('main.home') }}">Үндсэн</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col">
+                            <a href="https://apps.apple.com/us/app/%D1%81%D2%AF%D0%BD-%D1%81%D2%AF%D0%BD/id1664075808"><img class="w-100" src="{{ url_for('static', filename='images/app-store.svg') }}" alt="app-store"></a>
+                        </div>
+                        <div class="col">
+                            <a href="https://play.google.com/store/apps/details?id=com.expanse.sunsun_mobile_app"><img class="w-100" src="{{ url_for('static', filename='images/google-play.svg') }}" alt="google-play"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="divider mt-3"></div>
+    <div class="footer-copyright py-3">
+        <div class="container">
+            <div
+                class="d-md-flex justify-content-between align-items-center py-3 text-center text-md-start">
+                <div class="copyright-text">
+                    <a href="#!">СҮН СҮН Экспресс</a> © 2023 Бүх эрх хуулиар хамгаалагдсан.
+                </div>
+                <div class="copyright-links primary-hover mt-3 mt-md-0">
+                    <ul class="list-inline">
+                        <li class="list-inline-item ps-2">
+                            <a class="list-group-item-action" href="{{ url_for('main.terms_and_conditions') }}">Үйлчилгээний нөхцөл.</a>
+                        </li>
+                        <li class="list-inline-item ps-2">
+                            <a class="list-group-item-action pe-0" href="{{ url_for('main.privacy') }}">Хэрэглэгчийн нууц</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+    

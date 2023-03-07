@@ -1,0 +1,60 @@
+// 
+// utilities.scss
+// Extended from Bootstrap
+// 
+
+
+$utilities: ();
+
+$utilities: map-merge(
+  (
+
+    // height
+    "height": (
+      property: height,
+      class: h,
+      responsive: true,
+      values: (
+        400: 400px,
+        450: 450px,
+        500: 500px,
+        600: 600px,
+        700: 700px,
+        800: 800px,
+        900: 900px,
+        100: 100%
+      )
+    ),
+
+    // z index
+    "z-index": (
+      property: z-index,
+      class: z-index,
+      values: (
+        0: 0,
+        9: 9,
+        99: 99,
+        n9: -9
+      )
+    ),
+
+    // Opacity
+    "opacity": (
+      property: opacity,
+      class: opacity,
+      values: (
+        0: 0,
+        1: 0.1,
+        2: 0.2,
+        3: 0.3,
+        4: 0.4,
+        5: 0.5,
+        6: 0.6,
+        7: 0.7,
+        8: 0.8,
+        9: 0.9
+      )
+    ),
+  ),
+  $utilities
+);

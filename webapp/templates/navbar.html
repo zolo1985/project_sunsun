@@ -1,0 +1,335 @@
+<header class="header-static navbar-light navbar-sticky">  
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            {% if current_user.is_authenticated %}
+            
+                {% if current_user.has_role('accountant') %}
+                    <a class="navbar-brand" href="{{ url_for('accountant_dashboard.accountant_dashboard') }}"><img class="navbar-brand-item" src="{{ url_for('static', filename='logos/logo.svg')}}" alt="Logo" /></a>
+                {% elif current_user.has_role('clerk') %}
+                    <a class="navbar-brand" href="{{ url_for('clerk_dashboard.clerk_dashboard') }}"><img class="navbar-brand-item" src="{{ url_for('static', filename='logos/logo.svg')}}" alt="Logo" /></a>
+                {% elif current_user.has_role('manager') %}
+                    <a class="navbar-brand" href="{{ url_for('manager_dashboard.manager_dashboard') }}"><img class="navbar-brand-item" src="{{ url_for('static', filename='logos/logo.svg')}}" alt="Logo" /></a>
+                {% elif current_user.has_role('supplier1') %}
+                    <a class="navbar-brand" href="{{ url_for('supplier1_dashboard.supplier1_dashboard') }}"><img class="navbar-brand-item" src="{{ url_for('static', filename='logos/logo.svg')}}" alt="Logo" /></a>
+                {% elif current_user.has_role('supplier2') %}
+                    <a class="navbar-brand" href="{{ url_for('supplier2_dashboard.supplier2_dashboard') }}"><img class="navbar-brand-item" src="{{ url_for('static', filename='logos/logo.svg')}}" alt="Logo" /></a>
+                {% else %}
+                    <a class="navbar-brand" href="{{ url_for('main.home') }}"><img class="navbar-brand-item" src="{{ url_for('static', filename='logos/logo.svg')}}" alt="Logo" /></a>
+                {% endif %}
+            {% else %}
+                <a class="navbar-brand" href="{{ url_for('main.home') }}"><img class="navbar-brand-item" src="{{ url_for('static', filename='logos/logo.svg')}}" alt="Logo" /></a>
+            {% endif %}
+            <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav navbar-nav-scroll navbar-nav-scroll ms-auto">
+                {% if current_user.is_authenticated %}
+                
+                    {% if current_user.has_role('supplier1') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('supplier1_dashboard.supplier1_dashboard') }}">Самбар</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="{{ url_for('supplier1_order.supplier1_orders') }}" id="demosMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Хүргэлт</a>
+                            <div class="dropdown-menu pb-3 pb-lg-0" aria-labelledby="demosMenu">
+                                <div class="d-block d-sm-flex">
+                                    <ul class="list-unstyled w-100 w-sm-50 pe-0 pe-lg-5">
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url_for('supplier1_order.supplier1_orders') }}">Хүргэлтүүд</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url_for('supplier1_order.supplier1_order_add') }}">Шинэ Хүргэлт үүсгэх</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="demosMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Орлого Зарлага</a>
+                            <div class="dropdown-menu pb-3 pb-lg-0" aria-labelledby="demosMenu">
+                                <div class="d-block d-sm-flex">
+                                    <ul class="list-unstyled w-100 w-sm-50 pe-0 pe-lg-5">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ url_for('supplier1_inventory.supplier1_inventory_add') }}">Бараа орлого</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ url_for('supplier1_expense.supplier1_expenses') }}">Бараа зарлага</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ url_for('supplier1_warehouse_sales.supplier1_warehouse_sales') }}">Агуулахаас борлуулалт</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ url_for('supplier1_inventory.supplier1_inventory_pickups_and_dropoffs') }}">Хүлээлгэж Өгөх</a>
+                                    </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="demosMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Агуулах</a>
+                            <div class="dropdown-menu pb-3 pb-lg-0" aria-labelledby="demosMenu">
+                                <div class="d-block d-sm-flex">
+                                    <ul class="list-unstyled w-100 w-sm-50 pe-0 pe-lg-5">
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url_for('supplier1_inventory.supplier1_inventories') }}">Агуулах</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url_for('supplier1_product.supplier1_products') }}">Агуулахад бүртгэлтэй бараа</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url_for('supplier1_product.supplier1_product_add') }}">Агуулахад бараа бүртгүүлэх</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('supplier1_calculation.supplier1_calculation_two_week') }}">Тооцоо</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('supplier1_profile.profile') }}">Данс</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('supplier1_search.search') }}"> <i class="fas fa-search fs-6"></i> Хайх</a>
+                        </li>
+                    {% elif current_user.has_role('supplier2') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('supplier2_dashboard.supplier2_dashboard') }}">Самбар</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="demosMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Хүргэлтүүд</a>
+                            <div class="dropdown-menu pb-3 pb-lg-0" aria-labelledby="demosMenu">
+                                <div class="d-block d-sm-flex">
+                                    <ul class="list-unstyled w-100 w-sm-50 pe-0 pe-lg-5">
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url_for('supplier2_order.supplier2_orders') }}">Хүргэлтүүд</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url_for('supplier2_order.supplier2_order_add') }}">Шинэ Хүргэлт Үүсгэх</a>
+                                        </li>
+                                    </ul>
+                                    <ul class="list-unstyled w-100 w-sm-50 pe-0 pe-lg-5">
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url_for('supplier2_driver_pickup.supplier2_driver_pickups') }}">Жолоочид Хүлээлгэж Өгөх</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url_for('supplier2_return_task.supplier2_return_tasks') }}">Буцаагдсан</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('supplier2_calculation.supplier2_calculation_two_week') }}">Тооцоо</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('supplier2_profile.profile') }}">Данс</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('supplier2_search.search') }}"> <i class="fas fa-search fs-6"></i> Хайх</a>
+                        </li>
+                    {% elif current_user.has_role('manager') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('manager_dashboard.manager_dashboard') }}">Самбар</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="demosMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Хүргэлт</a>
+                            <div class="dropdown-menu pb-3 pb-lg-0" aria-labelledby="demosMenu">
+                                <div class="d-block d-sm-flex">
+                                    <ul class="list-unstyled w-100 w-sm-50 pe-0 pe-lg-5">
+                                        <a class="dropdown-item" href="{{ url_for('manager_order.manager_orders') }}">Хүргэлтүүд</a>
+                                        <a class="dropdown-item" href="{{ url_for('manager_order.manager_order_assign_region') }}">Хүргэлт Хувиарлах</a>
+                                        <a class="dropdown-item" href="{{ url_for('manager_order.manager_commented_orders') }}">Төлөв, Коммент Нээх</a>
+                                    </ul>
+                                    <ul class="list-unstyled w-100 w-sm-50 pe-0 pe-lg-5">
+                                        <a class="dropdown-item" href="{{ url_for('manager_order.manager_order_add') }}">Хүргэлт/Агуулахаас Ажил Үүсгэх</a>
+                                        <a class="dropdown-item" href="{{ url_for('manager_order.manager_unassign_orders') }}">Хүргэлт Хувиарлалт Буцаах</a>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="demosMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Бараа</a>
+                            <div class="dropdown-menu pb-3 pb-lg-0" aria-labelledby="demosMenu">
+                                <div class="d-block d-sm-flex">
+                                    <ul class="list-unstyled w-100 w-sm-50 pe-0 pe-lg-5">
+                                        <a class="dropdown-item" href="{{ url_for('manager_pickup.manager_pickups') }}">Таталт</a>
+                                        <a class="dropdown-item" href="{{ url_for('manager_pickup.manager_pickups_history') }}">Таталтын түүх</a>
+                                    </ul>
+                                    <ul class="list-unstyled w-100 w-sm-50 pe-0 pe-lg-5">
+                                        <a class="dropdown-item" href="{{ url_for('manager_return_task.manager_return_tasks') }}">Буцаалт</a>
+                                        <a class="dropdown-item" href="{{ url_for('manager_return_task.manager_return_tasks_history') }}">Буцаалтын түүх</a>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="demosMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Жолооч</a>
+                            <div class="dropdown-menu pb-3 pb-lg-0" aria-labelledby="demosMenu">
+                                <div class="d-block d-sm-flex">
+                                    <ul class="list-unstyled w-100 w-sm-50 pe-0 pe-lg-5">
+                                        <a class="dropdown-item" href="{{ url_for('manager_order.manager_orders_drivers') }}">Хүргэлтийн эрэмбэ харах</a>
+                                        <a class="dropdown-item" href="{{ url_for('manager_order.manager_orders_drivers_histories') }}">Хүргэлтийн түүх</a>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="demosMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Статистик</a>
+                            <div class="dropdown-menu pb-3 pb-lg-0" aria-labelledby="demosMenu">
+                                <div class="d-block d-sm-flex">
+                                    <ul class="list-unstyled w-100 w-sm-50 pe-0 pe-lg-5">
+                                        <a class="dropdown-item" href="{{ url_for('manager_statistic.manager_orders_stats') }}">Нийт</a>
+                                        <a class="dropdown-item" href="{{ url_for('manager_statistic.manager_drivers_stats') }}">Жолооч</a>
+                                        <a class="dropdown-item" href="{{ url_for('manager_statistic.manager_suppliers_stats') }}">Харилцагч</a>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="demosMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Данс</a>
+                            <div class="dropdown-menu pb-3 pb-lg-0" aria-labelledby="demosMenu">
+                                <div class="d-block d-sm-flex">
+                                    <ul class="list-unstyled w-100 w-sm-50 pe-0 pe-lg-5">
+                                        <a class="dropdown-item" href="{{ url_for('manager_account.manager_accounts') }}">Данснууд</a>
+                                        <a class="dropdown-item" href="{{ url_for('manager_account.manager_add_account') }}">Шинэ данс</a>
+                                    </ul>
+                                    <ul class="list-unstyled w-100 w-sm-50 pe-0 pe-lg-5">
+                                        <a class="dropdown-item" href="{{ url_for('manager_profile.profile') }}">Хэрэглэгчийн Данс</a>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('manager_search.search') }}"> <i class="fas fa-search fs-6"></i> Хайх</a>
+                        </li>
+                    {% elif current_user.has_role('driver') %}
+
+                    {% elif current_user.has_role('accountant') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('accountant_dashboard.accountant_dashboard') }}">Самбар</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="demosMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Харилцагч</a>
+                            <div class="dropdown-menu pb-3 pb-lg-0" aria-labelledby="demosMenu">
+                                <div class="d-block d-sm-flex">
+                                <ul class="list-unstyled w-100 w-sm-50 pe-0 pe-lg-5">
+                                    <a class="dropdown-item" href="{{ url_for('accountant_supplier_calculation.accountant_supplier_calculation_daily') }}">Харилцагч Тооцоо (өдрөөр)</a>
+                                    <a class="dropdown-item" href="{{ url_for('accountant_supplier_calculation.accountant_supplier_calculation_two_week') }}#">Харилцагч Тооцоо (2 долоо хоног)</a>
+                                </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="demosMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Жолооч Тооцоо</a>
+                            <div class="dropdown-menu pb-3 pb-lg-0" aria-labelledby="demosMenu">
+                                <div class="d-block d-sm-flex">
+                                <ul class="list-unstyled w-100 w-sm-50 pe-0 pe-lg-5">
+                                    <a class="dropdown-item" href="{{ url_for('accountant_payment.accountant_payments') }}">Жолооч тооцоо Хийх</a>
+                                    <a class="dropdown-item" href="{{ url_for('accountant_payment.accountant_payments_daily') }}">Жолооч тооцооны түүх (өдрөөр)</a>
+                                    <a class="dropdown-item" href="{{ url_for('accountant_payment.accountant_payments_two_weeks') }}">Жолооч тооцооны түүх (2 долоо хоног)</a>
+                                    <a class="dropdown-item" href="{{ url_for('accountant_driver_salary.accountant_driver_salary') }}">Жолоочийн цалингийн тооцоо</a>
+                                </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="demosMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Агуулах Тооцоо</a>
+                            <div class="dropdown-menu pb-3 pb-lg-0" aria-labelledby="demosMenu">
+                                <div class="d-block d-sm-flex">
+                                <ul class="list-unstyled w-100 w-sm-50 pe-0 pe-lg-5">
+                                    <a class="dropdown-item" href="{{ url_for('accountant_payment.accountant_warehouse_sale_payments') }}">Агуулах тооцоо хийх</a>
+                                </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('accountant_profile.profile') }}">Данс</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('accountant_search.search') }}"> <i class="fas fa-search fs-6"></i> Хайх</a>
+                        </li>
+                    {% elif current_user.has_role('clerk') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('clerk_dashboard.clerk_dashboard') }}">Самбар</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="demosMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Хүлээж авах</a>
+                            <div class="dropdown-menu pb-3 pb-lg-0" aria-labelledby="demosMenu">
+                                <div class="d-block d-sm-flex">
+                                    <ul class="list-unstyled w-100 w-sm-50 pe-0 pe-lg-5">
+                                        <a class="dropdown-item" href="{{ url_for('clerk_receive.clerk_receive_pickup_inventories') }}">Жолоочоос Хүлээж авах</a>
+                                        <a class="dropdown-item" href="{{ url_for('clerk_receive.clerk_receive_dropoff_inventories') }}">Харилцагчаас Хүлээж авах</a>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="demosMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Хүлээлгэж өгөх</a>
+                            <div class="dropdown-menu pb-3 pb-lg-0" aria-labelledby="demosMenu">
+                                <div class="d-block d-sm-flex">
+                                    <ul class="list-unstyled w-100 w-sm-50 pe-0 pe-lg-5">
+                                        <a class="dropdown-item" href="{{ url_for('clerk_expense.clerk_driver_orders') }}">Бараа жолоочид хүлээлгэж өгөх</a>
+                                        <a class="dropdown-item" href="{{ url_for('clerk_expense.clerk_driver_return_task_orders') }}">Бараа буцаалт жолоочид хүлээлгэж өгөх</a>
+                                        <a class="dropdown-item" href="#">Түүх</a>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="demosMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Буцааж авах</a>
+                            <div class="dropdown-menu pb-3 pb-lg-0" aria-labelledby="demosMenu">
+                                <div class="d-block d-sm-flex">
+                                    <ul class="list-unstyled w-100 w-sm-50 pe-0 pe-lg-5">
+                                        <a class="dropdown-item" href="{{ url_for('clerk_returns.clerk_driver_returns') }}">Бараа буцааж авах</a>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="demosMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Агуулах</a>
+                            <div class="dropdown-menu pb-3 pb-lg-0" aria-labelledby="demosMenu">
+                                <div class="d-block d-sm-flex">
+                                    <ul class="list-unstyled w-100 w-sm-50 pe-0 pe-lg-5">
+                                        <a class="dropdown-item" href="{{ url_for('clerk_inventory.clerk_inventories') }}">Агуулахтай Харилцагч</a>
+                                        <a class="dropdown-item" href="{{ url_for('clerk_inventory.clerk_unstored_inventories') }}">Агуулахгүй Харилцагч</a>
+                                        <a class="dropdown-item" href="{{ url_for('clerk_expense.clerk_warehouse_expenses') }}">Агуулахаас хүлээлгэж өгөх</a>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('clerk_profile.profile') }}">Данс</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('clerk_search.search') }}"> <i class="fas fa-search fs-6"></i> Хайх</a>
+                        </li>
+                    {% elif current_user.has_role('admin') %}
+
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.signout') }}"><i class="fas fa-sign-out fs-6"></i> Гарах</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.home') }}">Үндсэн</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.about_us') }}">Бидний тухай</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.activity') }}">Үндсэн үйл ажиллагаа</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.jobs') }}">Ажлын байр</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.signin') }}"><i class="fa-solid fa-right-to-bracket"></i> Нэвтрэх</a>
+                    </li>
+                {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+  

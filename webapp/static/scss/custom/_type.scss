@@ -1,0 +1,61 @@
+//
+// Type overrides
+//
+
+.all-text-white *, .text-all-white *{
+  color: $white; 
+}
+.text-grad {
+  background: linear-gradient(150deg, $grad-start 0%, $grad-end 100%);
+  background-clip: text;
+  -WebKit-text-fill-color: transparent;
+  opacity: 1;
+  z-index: 9;
+}
+
+/* icon color */
+.icon-primary {
+  i {
+    &:before {
+      color: $primary;
+    }
+  }
+}
+.icon-black {
+  i {
+    &:before {
+      color: $black;
+    }
+  }
+}
+.icon-dark {
+  i {
+    &:before {
+      color: $gray-800;
+    }
+  }
+}
+.icon-light-gray {
+  i {
+    &:before {
+      color: $gray-600;
+    }
+  }
+}
+.icon-grad {
+  i {
+    &:before {
+      background: linear-gradient(150deg, $grad-start 0%, $grad-end 100%);
+      background-clip: text;
+      -WebKit-text-fill-color: transparent;
+    }
+  }
+}
+
+/* background color */
+.bg-grad{ 
+  background: linear-gradient(150deg, $grad-start 0%, $grad-end 100%);
+}
+.bg-dark-grad{
+  background: linear-gradient(150deg, $gray-800 0%, lighten($gray-800, 20%) 100%);
+}

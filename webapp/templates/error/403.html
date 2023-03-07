@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block main %}
+    <!-- **************** MAIN CONTENT START **************** -->
+    <!-- =======================
+    	Banner innerpage -->
+        <div class="text-center bg-overlay-dark-7 py-7" style="background:url(static/images/bg/04.jpg) no-repeat; background-size:cover; background-position: center center;"> <div class="container">
+            <div class="row all-text-white">
+                <div class="col-md-12 align-self-center">
+                    <h1 class="fw-bold">Та зөвшөөрөлгүй байна</h1>
+                    <h6 class="mb-5">Дансаа шалгана уу!</h6>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb justify-content-center">
+                            <li class="breadcrumb-item active">
+                                <a href="{{ url_for('main.home')}}"><i class="ti-home"></i>Үндсэн</a>
+                            </li>
+                            <li class="breadcrumb-item">Алдаа 403</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- =======================
+    	Banner innerpage -->
+
+    <!-- =======================
+    	403 error -->
+    <section class="error-page">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 mx-auto text-center">
+                    <h2 class="display-1 fw-bold text-grad">403!</h2>
+                    <h3 class="mb-4">Анхаар!</h3>
+                    <p>Хэрэглэгч нэвтрэх эрхгүй байна</p>
+                    <a class="btn btn-sm btn-outline-light" href="{{ url_for('main.home')}}">Буцах!</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- =======================
+    	403 error -->
+
+    <!-- **************** MAIN CONTENT END **************** -->
+{% endblock main %}

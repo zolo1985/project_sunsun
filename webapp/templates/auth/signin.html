@@ -1,0 +1,91 @@
+{% extends "layout.html" %}
+{% block main %}
+<!-- =======================
+	Sign in -->
+	<section class="p-0 d-flex align-items-center">
+		<div class="container-fluid">
+			<div class="row">
+				<!-- left -->
+				<div class="col-12 col-md-5 col-lg-4 d-md-flex align-items-center bg-grad vh-sm-100">
+					<div class="w-100 p-3 p-lg-5 all-text-white">
+						<div class="mb-5" style="max-width: 50%;">
+							<!-- SVG Logo Start -->
+							<img class="navbar-brand-item" src="{{ url_for('static', filename='logos/logo_white.svg')}}" alt="Logo" >
+							<!-- SVG Logo End -->
+						</div>
+						<h3 class="display-6 mt-3">Таны бизнесийн найдвартай түнш</h3>
+						<ul class="list-group list-group-borderless mt-4">
+							<li class="list-group-item text-white display-7"><i class="fa fa-check"></i> Хурд</li>
+							<li class="list-group-item text-white display-7"><i class="fa fa-check"></i> Итгэл</li>
+							<li class="list-group-item text-white display-7"><i class="fa fa-check"></i> Сэтгэл ханамж</li>
+						</ul>
+					</div>
+				</div>
+				<!-- Right -->
+				<div class="col-12 col-md-7 col-xl-8 mx-auto my-5">
+					<div class="row h-100">
+						<div class="col-12 col-md-10 col-lg-5 text-start mx-auto d-flex align-items-center">
+							<div class="w-100">
+                                <form id="form" method="POST" action="{{ url_for('auth.signin')}}">
+                                    {{ form.csrf_token }}
+                                    <fieldset class="form-group">
+                                        <h2 class="mb-3">Нэвтрэх</h2>
+                                        <div class="form-group">
+                                            {{ form.email.label(class="form-control-label") }}
+                                            {% if form.email.errors %}
+                                                {{ form.email(class="form-control is-invalid") }}
+                                                <div class="invalid-feedback p-0 m-0">
+                                                    {% for error in form.email.errors %}
+                                                        <span>{{ error }}</span>
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                {{ form.email(class="form-control") }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="form-group">
+                                            {{ form.password.label(class="form-control-label") }}
+                                            {% if form.password.errors %}
+                                                {{ form.password(class="form-control is-invalid") }}
+                                                <div class="invalid-feedback">
+                                                    {% for error in form.password.errors %}
+                                                        <span>{{ error }}</span>
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                {{ form.password(class="form-control mb-0") }}
+                                                <button id="passwordshow" type="button" class="btn m-0 p-0" style="font-size: 12px; font-weight: 100;" onclick="javascript: togglePassword1()">Нууц үг харах</button>
+                                            {% endif %}
+                                        </div>
+                                    </fieldset>
+                                    <div class="row align-items-center g-0 m-0">
+										<div class="col-6 col-md-8">
+                                            <span class="text-muted">Нууц үг мартсан? <a href="{{ url_for('auth.reset_request')}}">сэргээх</a></span>
+                                        </div>
+										<div class="col-6 col-md-4 text-end mt-4">
+                                            {{ form.submit(class="btn btn-success") }}
+                                        </div>
+									</div>
+                                </form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- =======================
+	Sign in -->
+	<script>
+		$("#form").submit(function () {
+			var loader = document.createElement("div");
+			$(loader).html('<div class="preloader"><img src="{{ url_for("static", filename="images/preloader.svg") }}" alt="Pre-loader"></div>');
+			$("body").append(loader);
+		});
+	</script>
+	<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            window.scrollBy(0, 100);
+        });
+    </script>
+{% endblock main %}

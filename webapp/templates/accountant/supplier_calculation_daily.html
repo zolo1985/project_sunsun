@@ -1,0 +1,339 @@
+{% extends "layout.html" %} {% block main %}
+<div class="preloader">
+  <img src="{{ url_for('static', filename='images/preloader.svg') }}" alt="Pre-loader" />
+</div>
+<section>
+  <div class="container-fluid min-vh-100" style="width: 80%;">
+    <div class="row">
+      <div class="col-sm-12 mb-5">
+        <h3 class="display-6 mb-4">Харилцагч тооцооны түүх</h3>
+        <form id="form" method="POST" action="">
+          {{ form.csrf_token }}
+            <div class="row g-2">
+              <div class="col-md-3">
+                  {{ form.select_date.label(class="form-control-label") }}
+                  {% if form.select_date.errors %}
+                      {{ form.select_date(class="form-control is-invalid") }}
+                      <div class="invalid-feedback">
+                          {% for error in form.select_date.errors %}
+                              <span>{{ error }}</span>
+                          {% endfor %}
+                      </div>
+                  {% else %}
+                      {{ form.select_date(class="form-control") }}
+                  {% endif %}
+              </div>
+              <div class="col-md-3 align-self-center">
+                  {{ form.submit(class="btn btn-outline-success m-0") }}
+              </div>
+            </div>
+        </form>
+
+        <h5 class="display-6 mt-5">Хүргэлтүүд</h5>
+        <div class="table-responsive-sm">
+          <table id="inventory-table" class="table table-lg table-bordered">
+            <thead>
+              <tr>
+                <th scope="col" class="bg-grad">Харилцагч</th>
+                <th scope="col" class="bg-grad">Нийт тоо</th>
+                <th scope="col" class="bg-grad">Төлбөр</th>
+                <th scope="col" class="bg-grad">Нэхэмжилдэг</th>
+                <th scope="col" class="bg-grad">Хүргэлтүүд</th>
+                <th scope="col" class="bg-grad">Бэлэн орлого</th>
+                <th scope="col" class="bg-grad">Бэлэн бус</th>
+                <th scope="col" class="bg-grad">Нийт дүн</th>
+                <th scope="col" class="bg-grad">Шилжүүлэх дүн</th>
+              </tr>
+            </thead>
+            <tbody class="text-center align-middle">
+              {% set total_delivery_orders = namespace(value=0) %}
+              {% set total_delivery_amount = namespace(value=0) %}
+              {% set delivery_belen_amount = namespace(value=0) %}
+              {% set delivery_belen_bus_amount = namespace(value=0) %}
+              {% set delivery_transfer_amount = namespace(value=0) %}
+
+              {% for supplier in suppliers_delivery_total %}
+                <tr>
+                    <td id="supplier_name">{{ supplier.supplier_name }}</td>
+                    <td>
+                        {% set total_delivery_orders.value = total_delivery_orders.value + supplier.total_delivery_count %}
+                        {{ supplier.total_delivery_count | numberformat }}
+                    </td>
+                    <td>{{ supplier.fee | numberformat }}</td>
+                    <td>
+                      {% if supplier.is_invoiced %}
+                        Тйим
+                      {% else %}
+                        Үгүй
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% set list1 = supplier.delivery_ids.split(',') %}
+                      {% for delivery_id in list1 %}
+                        <a class="text-dark" href="#">ID{{ delivery_id }}</a>,
+                      {% endfor %}
+                    </td>
+                    <td>
+                      {% if supplier.is_invoiced %} 0 {% else %} 
+                      {{ (supplier.total_delivery_count * supplier.fee) | numberformat }}
+                          {% set delivery_belen_amount.value = delivery_belen_amount.value + supplier.total_delivery_count * supplier.fee %}
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if supplier.is_invoiced %}
+                          {{ (supplier.total_delivery_count * supplier.fee) | numberformat }}
+                          {% set delivery_belen_bus_amount.value = delivery_belen_bus_amount.value + supplier.total_delivery_count * supplier.fee %}
+                      {% else %}
+                          0
+                      {% endif %}
+                    </td>
+                    <td>
+                      {{ supplier.total_amount | numberformat }}
+                      {% set total_delivery_amount.value = total_delivery_amount.value + supplier.total_amount %}
+                    </td>
+                    <td>
+                      {% if supplier.is_invoiced %}
+                          {{ supplier.total_amount | numberformat }}
+                          {% set delivery_transfer_amount.value = delivery_transfer_amount.value + supplier.total_amount %}
+                      {% else %}
+                          {% if supplier.total_amount == 0 %}
+                              {{ supplier.total_amount | numberformat }}
+                          {% else %} 
+                              {{ (supplier.total_amount - (supplier.total_delivery_count * supplier.fee)) | numberformat }}
+                              {% set delivery_transfer_amount.value = delivery_transfer_amount.value + supplier.total_amount - (supplier.total_delivery_count * supplier.fee) %}
+                          {% endif %}
+                      {% endif %}
+                    </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td>Нийт</td>
+                <td>{{ total_delivery_orders.value | numberformat }}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>{{ delivery_belen_amount.value | numberformat }}</td>
+                <td>{{ delivery_belen_bus_amount.value | numberformat }}</td>
+                <td>{{ total_delivery_amount.value | numberformat }}</td>
+                <td>{{ delivery_transfer_amount.value | numberformat }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <h5 class="display-6 mt-5">Агуулахаас</h5>
+        <div class="table-responsive-sm">
+          <table id="driver-orders" class="table table-lg table-bordered">
+            <thead>
+              <tr>
+                <th scope="col" class="bg-grad">Харилцагч</th>
+                <th scope="col" class="bg-grad">Нийт тоо</th>
+                <th scope="col" class="bg-grad">Төлбөр</th>
+                <th scope="col" class="bg-grad">Нэхэмжилдэг</th>
+                <th scope="col" class="bg-grad">Борлуулалтууд</th>
+                <th scope="col" class="bg-grad">Бэлэн орлого</th>
+                <th scope="col" class="bg-grad">Бэлэн бус</th>
+                <th scope="col" class="bg-grad">Нийт дүн</th>
+                <th scope="col" class="bg-grad">Шилжүүлэх дүн</th>
+              </tr>
+            </thead>
+            <tbody class="text-center align-middle">
+              {% set total_warehouse_orders = namespace(value=0) %}
+              {% set total_warehouse_amount = namespace(value=0) %}
+              {% set warehouse_belen_amount = namespace(value=0) %}
+              {% set warehouse_belen_bus_amount = namespace(value=0) %}
+              {% set warehouse_transfer_amount = namespace(value=0) %}
+
+              {% for supplier in suppliers_warehouse_sales_total %}
+                <tr>
+                    <td id="supplier_name">{{ supplier.supplier_name }}</td>
+                    <td>
+                        {% set total_warehouse_orders.value = total_warehouse_orders.value + supplier.total_warehouse_sale_count %}
+                        {{ supplier.total_warehouse_sale_count | numberformat }}
+                    </td>
+                    <td>{{ supplier.fee | numberformat }}</td>
+                    <td>
+                      {% if supplier.is_invoiced %}
+                        Тйим
+                      {% else %}
+                        Үгүй
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% set list1 = supplier.warehouse_sale_ids.split(',') %}
+                      {% for warehouse_sale_id in list1 %}
+                        <a class="text-dark" href="#">WS{{ warehouse_sale_id }}</a>,
+                      {% endfor %}
+                    </td>
+                    <td>
+                      {% if supplier.is_invoiced %} 0 {% else %} 
+                      {{ (supplier.total_warehouse_sale_count * supplier.fee) | numberformat }}
+                          {% set warehouse_belen_amount.value = warehouse_belen_amount.value + supplier.total_warehouse_sale_count * supplier.fee %}
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if supplier.is_invoiced %}
+                          {{ (supplier.total_warehouse_sale_count * supplier.fee) | numberformat }}
+                          {% set warehouse_belen_bus_amount.value = warehouse_belen_bus_amount.value + supplier.total_warehouse_sale_count * supplier.fee %}
+                      {% else %}
+                          0
+                      {% endif %}
+                    </td>
+                    <td>
+                      {{ supplier.total_amount | numberformat }}
+                      {% set total_warehouse_amount.value = total_warehouse_amount.value + supplier.total_amount %}
+                    </td>
+                    <td>
+                      {% if supplier.is_invoiced %}
+                          {{ supplier.total_amount | numberformat }}
+                          {% set warehouse_transfer_amount.value = warehouse_transfer_amount.value + supplier.total_amount %}
+                      {% else %}
+                          {% if supplier.total_amount == 0 %}
+                              {{ supplier.total_amount | numberformat }}
+                          {% else %} 
+                              {{ (supplier.total_amount - (supplier.total_warehouse_sale_count * supplier.fee)) | numberformat }}
+                              {% set warehouse_transfer_amount.value = warehouse_transfer_amount.value + supplier.total_amount - (supplier.total_warehouse_sale_count * supplier.fee) %}
+                          {% endif %}
+                      {% endif %}
+                    </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td>Нийт</td>
+                <td>{{ total_warehouse_orders.value | numberformat }}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>{{ warehouse_belen_amount.value | numberformat }}</td>
+                <td>{{ warehouse_belen_bus_amount.value | numberformat }}</td>
+                <td>{{ total_warehouse_amount.value | numberformat }}</td>
+                <td>{{ warehouse_transfer_amount.value | numberformat }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  $(document).ready(function () {
+    $("#inventory-table").DataTable({
+      dom: "Bfrtip",
+      buttons: [
+        {
+          extend: "csvHtml5",
+          text: '<a class="btn btn-outline-secondary m-2" style="float: left;">CSV файл татах</a>',
+          tag: "span",
+          exportOptions: {
+            modifier: {
+              search: "none",
+            },
+          },
+        },
+        {
+          extend: "print",
+          text: "Хэвлэх",
+          text: '<a class="btn btn-outline-secondary m-2" style="float: left;">Хэвлэх</a>',
+          tag: "span",
+          exportOptions: {
+            modifier: {
+              search: "none",
+            },
+          },
+        },
+        {
+          extend: "excelHtml5",
+          text: "Excel",
+          text: '<a class="btn btn-outline-secondary m-2" style="float: left;">XLS файл татах</a>',
+          tag: "span",
+          exportOptions: {
+            modifier: {
+              search: "none",
+            },
+          },
+        },
+      ],
+      paging: false,
+      sorting: false,
+      ordering: false,
+      pageLength: 50,
+      lengthMenu: [50, 100, 200, 500],
+      language: {
+        lengthMenu: "_MENU_ эгнээ харах",
+        zeroRecords: "Дата алга",
+        info: "_PAGES_ хуудаснаас _PAGE_-р хуудас. Нийт:  _TOTAL_ ",
+        infoEmpty: "",
+        sSearch: "Шүүх",
+        paginate: {
+          previous: "өмнөх",
+          next: "дараа",
+        },
+      },
+    });
+  });
+</script>
+
+<script>
+  $(document).ready(function () {
+    $("#driver-orders").DataTable({
+      dom: "Bfrtip",
+      buttons: [
+        {
+          extend: "csvHtml5",
+          text: '<a class="btn btn-outline-secondary m-2" style="float: left;">CSV файл татах</a>',
+          tag: "span",
+          exportOptions: {
+            modifier: {
+              search: "none",
+            },
+          },
+        },
+        {
+          extend: "print",
+          text: "Хэвлэх",
+          text: '<a class="btn btn-outline-secondary m-2" style="float: left;">Хэвлэх</a>',
+          tag: "span",
+          exportOptions: {
+            modifier: {
+              search: "none",
+            },
+          },
+        },
+        {
+          extend: "excelHtml5",
+          text: "Excel",
+          text: '<a class="btn btn-outline-secondary m-2" style="float: left;">XLS файл татах</a>',
+          tag: "span",
+          exportOptions: {
+            modifier: {
+              search: "none",
+            },
+          },
+        },
+      ],
+      paging: false,
+      sorting: false,
+      ordering: false,
+      pageLength: 50,
+      lengthMenu: [50, 100, 200, 500],
+      language: {
+        lengthMenu: "_MENU_ эгнээ харах",
+        zeroRecords: "Дата алга",
+        info: "_PAGES_ хуудаснаас _PAGE_-р хуудас. Нийт:  _TOTAL_ ",
+        infoEmpty: "",
+        sSearch: "Шүүх",
+        paginate: {
+          previous: "өмнөх",
+          next: "дараа",
+        },
+      },
+    });
+  });
+</script>
+
+{% endblock main %}

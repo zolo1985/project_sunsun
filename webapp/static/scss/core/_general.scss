@@ -1,0 +1,294 @@
+/*----------------------------------------------------------------------
+  * Wizixo - Multipurpose Corporate theme
+  * General Styles
+------------------------------------------------------------------------*/
+
+
+/*===============================
+            TITLE 
+=================================*/
+.title {
+  padding: 0 0 30px;
+  h2 {
+    font-size: 36px;
+    font-weight: $font-weight-bold;
+    margin-bottom: 10px;
+  }
+  .pre-title {
+    font-family: $font-family-alt;
+    font-size: 24px;
+    font-style: italic;
+    margin-bottom: 10px;
+    display: block;
+  }
+  &.text-center p {
+    padding: 0 80px;
+  }
+  &.title-light * {
+    color: $white;
+    opacity: 0.9;
+  }
+}
+
+/*BACK TOP TOP*/
+.back-top {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  padding: 13px 14px !important;
+  position: fixed !important;
+  bottom: 25px;
+  right: 25px;
+  border-radius: $border-radius;
+  display: block;
+  text-align: center;
+  z-index: 9999;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(50%);
+  transition: $transition-base;
+  i {
+    font-size: 12px;
+    color: $white;
+    margin: 0 !important;
+    display: block;
+  }
+  &.btn-show {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0%);
+  }
+}
+
+/*PRE LOADER*/
+.preloader {
+  background-color: $white;
+  position: fixed;
+  z-index: 999999;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/*===============================
+      TIMELINE 
+=================================*/
+.timeline-dot {
+  height: 30px;
+  width: 30px;
+  display: block;
+  border: solid 2px #efefef;
+  background: $white;
+  text-align: center;
+  margin: 0 auto;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate3d(0, -50%, 0);
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+}
+
+.timeline-line:before {
+  content: "";
+  position: absolute;
+  width: 2px;
+  background: #efefef;
+  height: 100%;
+  display: block;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+}
+
+.timeline-top:before {
+  background: #efefef;
+  position: absolute;
+  height: 3px;
+  width: 50px;
+  display: block;
+  content: "";
+  top: 0;
+  left: 50%;
+  margin-left: -25px;
+}
+
+/*Error page*/
+.error-page {
+  padding: 10rem 0;
+  h2 {
+    font-size: 200px;
+    line-height: 150px;
+    font-weight: bold;
+  }
+  h3 {
+    font-size: 50px;
+    display: block;
+    line-height: 50px;
+  }
+}
+
+.logo-auth{
+  height: $navbar-brand-height;
+  display: block;
+  max-width: 100%;
+  width: auto;
+}
+
+@include media-breakpoint-down(md) {
+  .error-page {
+    padding: 8rem 0;
+  }
+}
+
+@include media-breakpoint-down(sm) {
+  .error-page {
+    padding: 6rem 0;
+  }
+
+  .maintenance-page h1 {
+    font-size: 3rem;
+  }
+
+  .title {
+    h2 {
+      font-size: 30px;
+      line-height: 42px;
+    }
+    .pre-title {
+      font-size: 20px;
+    }
+    p {
+      padding: 0px !important;
+    }
+  }
+
+}
+
+@include media-breakpoint-down(xs){
+  .container {
+    width: 100% !important;
+    padding: 0 15px;
+  }
+
+  .innerpage-banner h1 {
+    font-size: 30px;
+    line-height: 32px;
+  }
+
+  .error-page {
+    padding: 5rem 0;
+    h2 {
+      font-size: 100px;
+      line-height: 80px;
+    }
+    h3 {
+      font-size: 30px;
+      line-height: 30px;
+    }
+  }
+}
+
+:root {
+  --animate-delay: 0.5s;
+}
+
+// GLightbox controls theme
+.plyr__control--overlaid, .plyr--video .plyr__control.plyr__tab-focus, .plyr--video .plyr__control:hover, .plyr--video .plyr__control[aria-expanded=true]{
+  background: $primary;
+}
+.plyr--full-ui input[type=range]{
+  color: $primary;
+}
+
+/* rtl:raw:
+.glightbox-clean .gclose, .glightbox-modern .gclose{
+  right: auto !important;
+  left: 20px;
+}
+*/
+
+/*===============================
+       SECTION MARGIN PADDING   
+=================================*/
+section {
+  padding-top: ($spacer * 5);
+  padding-bottom: ($spacer * 3.8);
+}
+.section-pt {
+  padding-top: ($spacer * 5);
+}
+.section-pb {
+  padding-bottom: ($spacer * 3.8);
+}
+.mt-30 {
+  margin-top: 1.875rem;
+}
+
+@include media-breakpoint-down(md) {
+  section {
+    padding-top: ($spacer * 4);
+    padding-bottom: ($spacer * 3);
+  }
+  .section-pt {
+    padding-top: ($spacer * 4);
+  }
+  .section-pb {
+    padding-bottom: ($spacer * 3);
+  }
+
+}
+@include media-breakpoint-down(sm) {
+  section {
+    padding-top: ($spacer * 4);
+    padding-bottom: ($spacer * 3);
+  }
+  .section-pt {
+    padding-top: ($spacer * 4);
+  }
+  .section-pb {
+    padding-bottom: ($spacer * 3);
+  }
+  .vh-sm-100 {
+    height: auto;
+  }
+  .vh-md-50 {
+    height: 50vh;
+  }
+}
+
+/*triangle down*/
+.triangle-down {
+  position: relative;
+  &:before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 100%;
+    width: 0;
+    height: 0;
+    margin: 0 auto;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 20px solid $gray-100;
+  }
+}
+
+// Canvas
+#waveCanvas{
+  height:500px !important;
+  width:100% !important;
+}

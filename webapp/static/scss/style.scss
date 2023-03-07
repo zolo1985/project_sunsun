@@ -1,0 +1,52 @@
+// Bootstrap Variables
+@import "../vendor/bootstrap/scss/functions";
+@import "../vendor/bootstrap/scss/variables";
+
+// Theme variables
+@import "variables";
+
+// User Variables
+@import "user-variables";
+
+// Bootstrap core
+@import "../vendor/bootstrap/scss/bootstrap";
+
+// Extended bootstrap utilities
+@import "custom/utilities";
+@import "../vendor/bootstrap/scss/utilities/api";
+
+// Extended Bootstrap components
+@import "custom/breadcrumb";
+@import "custom/dropdowns";
+@import "custom/navbar";
+@import "custom/nav";
+@import "custom/buttons";
+@import "custom/list-group";
+@import "custom/tab";
+@import "custom/type";
+@import "custom/progress";
+@import "custom/reboot";
+
+// Theme Core CSS
+@import "core/general";
+@import "core/utilities";
+@import "core/header";
+@import "core/footer";
+@import "core/portfolio";
+@import "core/blog";
+
+// Theme Components 
+@import "components/accordion";
+@import "components/feature-box";
+@import "components/pricing";
+@import "components/testimonials";
+@import "components/overlay";
+@import "components/process";
+@import "components/blockquote";
+@import "components/divider";
+@import "components/social-icons";
+@import "components/team";
+@import "components/tiny-slider";
+
+// In this scss you can write your scss
+@import "user";

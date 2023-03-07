@@ -1,0 +1,308 @@
+{% extends "layout.html" %}
+{% block main %}
+    <section>
+        <div class="container-fluid min-vh-100" style="width: 80%;">
+            <div class="row">
+                <div class="col-sm-12 mb-5">
+                    <h3 class="display-6 mb-4"><i class="fas fa-search fs-12 "></i> Хайх</h3>
+                    <form id="form" method="POST" action="">
+                        {{ form.csrf_token }}
+                        <div class="row g-2">
+                            <div class="col-md-3">
+                                {{ form.search_text.label(class="form-control-label") }}
+                                {% if form.search_text.errors %}
+                                    {{ form.search_text(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.search_text.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.search_text(class="form-control") }}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-3 align-self-center">
+                                {{ form.submit(class="btn btn-outline-success m-0") }}
+                            </div>
+                        </div>
+                    </form>
+                    {% if orders %}
+                        <h5 class="display-6 mb-4 mt-5">Хүргэлтүүд</h5>
+                        <div class="table-responsive-sm">
+                            <table id="inventory-table" class="table table-hover display">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="bg-grad">ID</th>
+                                        <th scope="col" class="bg-grad">Хаяг/Утас</th>
+                                        <th scope="col" class="bg-grad">Харилцагч</th>
+                                        <th scope="col" class="bg-grad">Төлөв</th>
+                                        <th scope="col" class="bg-grad">Хүргэх огноо</th>
+                                        <th scope="col" class="bg-grad">Үүсгэсэн огноо</th>
+                                        <th scope="col" class="bg-grad">Хойшлуулсан огноо</th>
+                                        <th scope="col" class="bg-grad">Бүс</th>
+                                        <th scope="col" class="bg-grad">Жолооч</th>
+                                        <th scope="col" class="bg-grad"></th>
+                                    </tr>
+                                </thead>
+        
+                                <tbody>
+                                    {% for order in orders %}
+                                        <tr>
+                                            <td scope="row">
+                                                <a class="text-dark" href="{{ url_for('manager_order.manager_order_detail', order_id=order.id) }}">ID{{ order.id }}</a>
+                                            </td>
+                                            <td>
+                                                <p>
+                                                    {% if order.addresses.city is not none %}, {{ order.addresses.city }}{% endif %}{% if order.addresses.district is not none %}{{ order.addresses.district }}{% endif %}{% if order.addresses.khoroo is not none %}, {{ order.addresses.khoroo }}-р хороо{% endif %}{% if order.addresses.aimag is not none %}{{ order.addresses.aimag }}{% endif %}{% if order.addresses.address is not none %}, {{ order.addresses.address }}{% endif %}{% if order.addresses.phone is not none %}, {{ order.addresses.phone }}{% endif %}{% if order.addresses.phone_more is not none %}, {{ order.addresses.phone_more }}{% endif %}
+                                                </p>
+                                            </td>
+                                            <td>
+                                                <a class="text-dark" href="{{ url_for('manager_order.manager_order_detail', order_id=order.id) }}">
+                                                    <p>{{ order.user.company_name | capitalize }}</p>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                {% if order.status == "unassigned" %}
+                                                    {% if order.is_postphoned %}
+                                                        <p class="text-info fw-bold">хойшлуулсан</p>
+                                                        <p>хойшлуулсан огноо:
+                                                            {{ order.postphoned_date | datefilter }}</p>
+                                                        <p>Коммент:
+                                                            {{ order.driver_comment }}</p>
+                                                    {% else %}
+                                                        <p class="text-danger fw-bold">хувиарлагдаагүй</p>
+                                                    {% endif %}
+                                                {% elif order.status == "assigned" %}
+                                                    <p class="text-primary fw-bold">хувиарлагдсан</p>
+                                                {% elif order.status == "started" %}
+                                                    <p class="fw-bold" style="color: coral;">одоо хүргэгдэж байна</p>
+                                                {% elif order.status == "completed" %}
+                                                    {% if order.is_postphoned %}
+                                                        <p class="text-success fw-bold">хүргэгдсэн*</p>
+                                                    {% else %}
+                                                        <p class="text-success fw-bold">хүргэгдсэн</p>
+                                                        {% if order.delivered_date is not none %}
+                                                        <p><strong>Хүргэгдсэн огноо:</strong> {{ order.delivered_date }}</p>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% elif order.status == "cancelled" %}
+                                                    <p class="text-danger fw-bold">цуцлагдсан</p>
+                                                {% elif order.status == "postphoned" %}
+                                                    <p class="text-info fw-bold">хойшлуулсан</p>
+                                                    <p class="text-nowrap">хойшлуулсан огноо:
+                                                        {{ order.postphoned_date }}</p>
+                                                    <p>
+                                                        Коммент:
+                                                        {{ order.driver_comment }}
+                                                    </p>
+                                                {% endif %}
+                                                {% if order.is_manager_created %}
+                                                    <p class="text-success fw-bold">*** СҮН СҮН агуулахаас үүсгэсэн ***</p>
+                                                {% endif%}
+        
+                                                {% if (diffdates(cur_date, order.modified_date) | round | int) <= 0 %}
+                                                    <p>0 минутын өмнө</p>
+                                                {% else %}
+                                                    {% if (diffdates(cur_date, order.modified_date) | round | int ) > 60 and (diffdates(cur_date, order.modified_date) | round | int ) < 1440 %}
+                                                        <p>{{ ((diffdates(cur_date, order.modified_date)) / 60 ) | int }}
+                                                            цаг
+                                                            {{ ((diffdates(cur_date, order.modified_date)) % 60 ) | int }}
+                                                            минутын өмнө</p>
+                                                    {% elif (diffdates(cur_date, order.modified_date) | round | int ) < 60 %}
+                                                        <p>{{ ((diffdates(cur_date, order.modified_date)) % 60 ) | int }}
+                                                            минутын өмнө</p>
+                                                        {% elif (diffdates(cur_date, order.modified_date) | round | int ) > 1440 %}
+                                                    {% endif %}
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <p class="text-center text-nowrap">{{ order.delivery_date.strftime('%Y-%m-%d') }}</p>
+                                            </td>
+                                            <td>
+                                                <p>{{ order.created_date.strftime('%Y-%m-%d') }}</p>
+                                            </td>
+                                            <td>
+                                                {% if order.postphoned_date %}
+                                                    <p>{{ order.postphoned_date.strftime('%Y-%m-%d') }}</p>
+                                                {% endif %}
+                                            </td>
+        
+                                            <td>
+                                                {% if order.region is none %}
+                                                    <p class="text-danger">бүсчлэгдээгүй</p>
+                                                {% else %}
+                                                    <p class="text-success">{{ order.region }}</p>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if order.assigned_driver_id is none %}
+                                                    <p class="text-danger">хувиарлагдаагүй</p>
+                                                    {% if order.is_postphoned %}
+                                                        {% if order.status == "assigned" or order.status == "completed" or order.status == "started" %}
+                                                            <p class="text-success">{{ order.driver.lastname[0] | capitalize }}. {{ order.driver.firstname | capitalize}}</p>
+                                                            <p class="text-secondary">хойшлуулсан жолооч:
+                                                                {{ order.postphoned_driver.lastname[0] | capitalize }}. {{ order.postphoned_driver.firstname | capitalize }}</p>
+                                                        {% else %}
+                                                            <p class="text-secondary">хойшлуулсан жолооч:
+                                                                {{ order.postphoned_driver.lastname[0] | capitalize }}. {{ order.postphoned_driver.firstname | capitalize }}</p>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        {% if  order.assigned_driver_id is not none %}
+                                                            <p class="text-success">{{ order.driver.lastname[0] | capitalize }}. {{ order.driver.firstname | capitalize}}</p>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% else %}
+                                                    {% if order.is_postphoned %}
+                                                        <p class="text-success">{{ order.driver.lastname[0] | capitalize }}. {{ order.driver.firstname | capitalize}}</p>
+                                                        {% if order.status == "assigned" or order.status == "completed" or order.status == "started" %}
+                                                            <p class="text-secondary">хойшлуулсан жолооч:
+                                                                {{ order.postphoned_driver.lastname[0] | capitalize }}. {{ order.postphoned_driver.firstname | capitalize }}</p>
+                                                        {% else %}
+                                                            <p class="text-secondary">хойшлуулсан жолооч:
+                                                                {{ order.postphoned_driver.lastname[0] | capitalize }}. {{ order.postphoned_driver.firstname | capitalize }}</p>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <p class="text-success">{{ order.driver.lastname[0] | capitalize }}. {{ order.driver.firstname | capitalize}}</p>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <a class="btn btn-outline-success" href="{{ url_for('manager_order.manager_order_detail', order_id=order.id) }}">Ажлыг нээх</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+
+                    {% if warehouse_sales %}
+                        <h5 class="display-6 mb-4 mt-5">Агуулахаас</h5>
+                        <div class="table-responsive-sm">
+                            <table id="inventory-table" class="table table-lg table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="bg-grad">WS</th>
+                                        <th scope="col" class="bg-grad">Төлөв</th>
+                                        <th scope="col" class="bg-grad">Бараа</th>
+                                        <th scope="col" class="bg-grad">Үүсгэсэн огноо</th>
+                                        <th scope="col" class="bg-grad">Нярав хүлээлгэж өгсөн огноо</th>
+                                        <th scope="col" class="bg-grad">Нийт дүн</th>
+                                        <th scope="col" class="bg-grad">Авах дүн</th>
+                                        <th scope="col" class="bg-grad"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for warehouse_sale in warehouse_sales %}
+                                        <tr>
+                                            <td>WS{{ warehouse_sale.id }}</td>
+                                            <td>
+                                                {% if warehouse_sale.is_completed %}
+                                                    <p class="text-success">Агуулахаас зарагдсан</p>
+                                                {% elif warehouse_sale.is_cancelled %}
+                                                    <p class="text-danger">Цуцлагдсан</p>
+                                                {% else %}
+                                                    <p class="text-info">Хүлээгдэж байна</p>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% for order_detail in warehouse_sale.warehouse_sale_details %}
+                                                    <p>
+                                                        {% if order_detail.products.name %}{{ order_detail.products.name }}{% endif %}{% if order_detail.products.color %}, {{ order_detail.products.color }}{% endif %}{% if order_detail.products.size %}, {{ order_detail.products.size }}{% endif %}{% if order_detail.products.type %}, {{ order_detail.products.type }}{% endif %}{% if order_detail.quantity %} - {{ order_detail.quantity }} ширхэг. {% endif %}{% if order_detail.products.price %} нэгж үнэ: {{ (order_detail.products.price)  | round | int | numberformat }}₮{% endif%}
+                                                    </p>
+                                                {% endfor %}
+                                            </td>
+                                            
+                                            <td>{% if warehouse_sale.manager %}
+                                                    Үүсгэсэн менежер: {{ warehouse_sale.manager.lastname[0] | capitalize }}. {{ warehouse_sale.manager.firstname }} ({{ warehouse_sale.created_date }})
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if warehouse_sale.is_received_from_clerk %}
+                                                    {{ warehouse_sale.clerk.lastname[0] | capitalize }}. {{ warehouse_sale.clerk.firstname }} {{ warehouse_sale.received_from_clerk_date }}
+                                                {% else %}
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ warehouse_sale.total_amount }}</td>
+                                            <td>
+                                                {% if warehouse_sale.payment_details %}
+                                                    {{ warehouse_sale.payment_details.total_amount}}
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if warehouse_sale.is_processed_by_accountant %}
+                                                    <p>Тооцоо хийгдсэн</p>
+                                                {% else %}
+                                                    <p><a class="give-order btn btn-small btn-outline-success" href="#" data-warehouse-sale-id="{{ warehouse_sale.id }}">Тооцоо хийх</a></p>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        $(document).ready(function () {
+            $('#inventory-table').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'csvHtml5',
+                        text: '<a class="btn btn-outline-secondary m-2" style="float: left;">CSV файл татах</a>',
+                        tag: 'span',
+                        exportOptions: {
+                            modifier: {
+                                search: 'none'
+                            }
+                        }
+                    }, {
+                        extend: 'print',
+                        text: '<a class="btn btn-outline-secondary m-2" style="float: left;">Хэвлэх</a>',
+                        tag: 'span',
+                        exportOptions: {
+                            modifier: {
+                                search: 'none'
+                            }
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel',
+                        text: '<a class="btn btn-outline-secondary m-2" style="float: left;">XLS файл татах</a>',
+                        tag: 'span',
+                        exportOptions: {
+                            modifier: {
+                                search: 'none'
+                            }
+                        }
+                    },
+                ],
+                "columnDefs": [
+                    {
+                        "orderData": [0, 1]
+                    },
+                ],
+                pageLength: 50,
+                lengthMenu: [
+                    50, 100, 200, 500
+                ],
+                language: {
+                    lengthMenu: "_MENU_ эгнээ харах",
+                    zeroRecords: "Дата алга",
+                    info: "_PAGES_ хуудаснаас _PAGE_-р хуудас. Нийт: _TOTAL_",
+                    infoEmpty: "",
+                    sSearch: "Шүүх",
+                    paginate: {
+                    previous: "өмнөх",
+                    next: "дараа",
+                    },
+                },
+            });
+        });
+    </script>
+{% endblock main %}

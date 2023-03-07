@@ -1,0 +1,411 @@
+{% extends "layout.html" %}
+{% block main %}
+    <section>
+        <div class="container-fluid min-vh-100" style="width: 80%;">
+            <div class="row">
+                <div class="col-sm-12 mb-5">
+                    <h3 class="display-6 mb-4">Хойшлуулсан / Цуцлагдсан захиалгууд хүлээж авах</h3>
+                    <form id="form" method="POST" action="">
+                        {{ form.csrf_token }}
+                        <div class="row g-2">
+                            <div class="col-md-3">
+                                {{ form.date.label(class="form-control-label") }}
+                                {% if form.date.errors %}
+                                    {{ form.date(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.date.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.date(class="form-control") }}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-3 align-self-center">
+                                {{ form.submit(class="btn btn-outline-success m-0") }}
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="table-responsive-sm">
+                        <table id="inventory-table" class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="bg-grad">RR</th>
+                                    <th scope="col" class="bg-grad">Харилцагч</th>
+                                    <th scope="col" class="bg-grad">Бараа</th>
+                                    <th scope="col" class="bg-grad">Хүргэлт</th>
+                                    <th scope="col" class="bg-grad">Хэнээс</th>
+                                    <th scope="col" class="bg-grad"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for return in returns %}
+                                <tr>
+                                    <td>RR{{ return.delivery.id }}</td>
+                                    <td>
+                                        <p>{{ return.delivery.user.company_name | capitalize }}</p>
+                                    </td>
+                                    <td>
+                                        {% if return.delivery.supplier_type == "unstored" %}
+                                            {{ return.delivery.addresses.phone }}
+                                        {% elif return.delivery.supplier_type == "stored" %}
+                                            {% for order_detail in return.delivery.delivery_details %}
+                                              <p>
+                                                {% if order_detail.products.name %}{{ order_detail.products.name }}{% endif %}{% if order_detail.products.color %}, {{ order_detail.products.color }}{% endif %}{% if order_detail.products.size %}, {{ order_detail.products.size }}{% endif %}{% if order_detail.products.type %}, {{ order_detail.products.type }}{% endif %}{% if order_detail.quantity %} - {{ order_detail.quantity }} ширхэг. {% endif %}{% if order_detail.products.price %} нэгж үнэ: {{ (order_detail.products.price)  | round | int | numberformat }}₮{% endif%}
+                                              </p>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if return.delivery_status == "postphoned" %}
+                                            <p class="text-info">Хүргэлт: ID{{ return.delivery.id }} - Хойшилсон</p>
+                                        {% elif return.delivery_status == "cancelled" %}
+                                            <p class="text-danger">Хүргэлт: ID{{ return.delivery.id }} - Цуцалсан</p>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <p>{{ return.driver.lastname[0] | capitalize }}. {{ return.driver.firstname | capitalize }}</p>
+                                    </td>
+                                    <td>
+                                        {% if return.is_returned %}
+                                            <p>авсан ({{ return.returned_date }})</p>
+                                        {% else %}
+                                            {% if return.delivery_status=="postphoned" %}
+                                                <a class="postphoned-order btn btn-small btn-outline-success" href="#" data-order-id="{{ return.id }}">Буцааж авах</a>
+                                                <p class="loading" style="display:none;">Түр хүлээнэ үү...</p>
+                                            {% elif return.delivery_status=="cancelled" %}
+                                                <a class="cancelled-order btn btn-small btn-outline-success" href="#" data-order-id="{{ return.id }}">Буцааж авах</a>
+                                                <p class="loading" style="display:none;">Түр хүлээнэ үү...</p>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <h3 class="display-6 mb-4 mt-5">Захиалгаас хасагдсан хүлээж авах</h3>
+                    <div class="table-responsive-sm">
+                        <table id="inventory-table1" class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="bg-grad">ID</th>
+                                    <th scope="col" class="bg-grad">Харилцагч</th>
+                                    <th scope="col" class="bg-grad">Бараа</th>
+                                    <th scope="col" class="bg-grad">Хэнээс</th>
+                                    <th scope="col" class="bg-grad"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for substracted_product in substracted_products %}
+                                <tr>
+                                    <td>ID{{ substracted_product.delivery.id }}</td>
+                                    <td>
+                                        <p>{{ substracted_product.delivery.user.company_name | capitalize }}</p>
+                                    </td>
+                                    <td>
+                                      <p>
+                                        {% if substracted_product.product.name %}{{ substracted_product.product.name }}{% endif %}{% if substracted_product.product.color %}, {{ substracted_product.product.color }}{% endif %}{% if substracted_product.product.size %}, {{ substracted_product.product.size }}{% endif %}{% if substracted_product.product.type %}, {{ substracted_product.product.type }}{% endif %}{% if substracted_product.product_quantity %} - {{ substracted_product.product_quantity }} ширхэг. {% endif %}{% if substracted_product.product.price %} нэгж үнэ: {{ (substracted_product.product.price)  | round | int | numberformat }}₮{% endif%}
+                                      </p>
+                                    </td>
+                                    <td>
+                                        {% if substracted_product.driver %}
+                                          <p>{{ substracted_product.driver.lastname[0] | capitalize }}. {{ substracted_product.driver.firstname  | capitalize }}</p>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if substracted_product.is_returned %}
+                                            <p>авсан ({{ substracted_product.returned_date }})</p>
+                                        {% else %}
+                                            <a class="substracted-order btn btn-small btn-outline-success" href="#" data-order-id="{{ substracted_product.id }}">Буцааж авах</a>
+                                            <p class="loading" style="display:none;">Түр хүлээнэ үү...</p>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="modal fade" id="confirmPostphonedModal" tabindex="-1" role="dialog" aria-labelledby="inventory-tableModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="inventory-tableModalLabel">Бараа буцааж авах</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          </button>
+        </div>
+        <div class="modal-body">
+          Та итгэлтэй байна уу?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Үгүй</button>
+          <button type="button" class="btn btn-primary" id="confirmPostphonedModalYes">Тйим</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="confirmCancelledModal" tabindex="-1" role="dialog" aria-labelledby="inventory-tableModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="inventory-tableModalLabel">Бараа буцааж авах</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          </button>
+        </div>
+        <div class="modal-body">
+          Та итгэлтэй байна уу?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Үгүй</button>
+          <button type="button" class="btn btn-primary" id="confirmCancelledModalYes">Тйим</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="confirmSubstractedModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Бараа буцааж авах</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          </button>
+        </div>
+        <div class="modal-body">
+          Та итгэлтэй байна уу?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Үгүй</button>
+          <button type="button" class="btn btn-primary" id="confirmSubstractedModalYes">Тйим</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+  $(document).ready(function () {
+      $('#example').DataTable({
+          dom: 'Bfrtip',
+          buttons: [
+              {
+                  extend: 'csvHtml5',
+                  text: 'CSV файл татах',
+                  text: '<a class="btn btn-outline-secondary m-2" style="float: left;">CSV файл татах</a>',
+                  tag: 'span',
+                  exportOptions: {
+                      modifier: {
+                          search: 'none'
+                      }
+                  }
+              }, {
+                  extend: 'print',
+                  text: 'Хэвлэх',
+                  text: '<a class="btn btn-outline-secondary m-2" style="float: left;">Хэвлэх</a>',
+                  tag: 'span',
+                  exportOptions: {
+                      modifier: {
+                          search: 'none'
+                      }
+                  }
+              },
+              {
+                  extend: 'excelHtml5',
+                  text: 'Excel',
+                  text: '<a class="btn btn-outline-secondary m-2" style="float: left;">XLS файл татах</a>',
+                  tag: 'span',
+                  exportOptions: {
+                      modifier: {
+                          search: 'none'
+                      }
+                  }
+              },
+          ],
+          paging: false,
+          "columnDefs": [
+              {
+                  "orderData": [0, 1]
+              },
+          ],
+          pageLength: 50,
+          lengthMenu: [
+              50, 100, 200, 500
+          ],
+          language: {
+            lengthMenu: "_MENU_ эгнээ харах",
+            zeroRecords: "Дата алга",
+            info: "_PAGES_ хуудаснаас _PAGE_-р хуудас. Нийт: _TOTAL_",
+            infoEmpty: "",
+            sSearch: "Шүүх",
+            paginate: {
+              previous: "өмнөх",
+              next: "дараа",
+            },
+          },
+      });
+  });
+</script>
+<script>
+  $(document).ready(function() {
+    $('.postphoned-order').click(function() {
+      var orderID = $(this).data('order-id');
+      var elem = this;
+      $('#confirmPostphonedModal').modal('show');
+      $('#confirmPostphonedModalYes').click(function() {
+        sendOrderId(orderID, elem);
+      });
+    });
+  
+    function sendOrderId(orderID, elem) {
+      $('#confirmPostphonedModal').modal('hide');
+      $(elem).hide();
+      $('.loading').show();
+      $.ajax({
+        type: 'POST',
+        url: '/clerk/returns/postphoned',
+        contentType: 'application/json',
+        data: JSON.stringify({order_id: orderID}),
+        success: function(response) {
+          $('.loading').hide();
+          $(elem).replaceWith('<p class="fw-bold text-success">' + response["msg"] + '</p>');
+        },
+        error: function(xhr, status, error) {
+          $('.loading').hide();
+          var responseMessage = 'Failed';
+          if (xhr.status === 400) {
+              responseMessage = xhr.responseJSON.msg;
+          }
+          $(elem).replaceWith('<p>' + responseMessage + '</p>');
+        }
+      });
+    }
+  });
+</script>
+<script>
+    $(document).ready(function() {
+      $('.cancelled-order').click(function() {
+        var orderID = $(this).data('order-id');
+        var elem = this;
+        $('#confirmCancelledModal').modal('show');
+        $('#confirmCancelledModalYes').click(function() {
+          sendOrderId(orderID, elem);
+        });
+      });
+    
+      function sendOrderId(orderID, elem) {
+        $('#confirmCancelledModal').modal('hide');
+        $(elem).hide();
+        $('.loading').show();
+        $.ajax({
+          type: 'POST',
+          url: '/clerk/returns/cancelled',
+          contentType: 'application/json',
+          data: JSON.stringify({order_id: orderID}),
+          success: function(response) {
+            $('.loading').hide();
+            $(elem).replaceWith('<p class="fw-bold text-success">' + response["msg"] + '</p>');
+          },
+          error: function(xhr, status, error) {
+            $('.loading').hide();
+            var responseMessage = 'Failed';
+            if (xhr.status === 400) {
+                responseMessage = xhr.responseJSON.msg;
+            }
+            $(elem).replaceWith('<p>' + responseMessage + '</p>');
+          }
+        });
+      }
+    });
+</script>
+<script>
+  $(document).ready(function() {
+    $('.substracted-order').click(function() {
+      var orderID = $(this).data('order-id');
+      var elem = this;
+      $('#confirmSubstractedModal').modal('show');
+      $('#confirmSubstractedModalYes').click(function() {
+        sendOrderId(orderID, elem);
+      });
+    });
+  
+    function sendOrderId(orderID, elem) {
+      $('#confirmSubstractedModal').modal('hide');
+      $(elem).hide();
+      $('.loading').show();
+      $.ajax({
+        type: 'POST',
+        url: '/clerk/returns/substracted',
+        contentType: 'application/json',
+        data: JSON.stringify({order_id: orderID}),
+        success: function(response) {
+          $('.loading').hide();
+          $(elem).replaceWith('<p class="fw-bold text-success">' + response["msg"] + '</p>');
+        },
+        error: function(xhr, status, error) {
+          $('.loading').hide();
+          var responseMessage = 'Failed';
+          if (xhr.status === 400) {
+              responseMessage = xhr.responseJSON.msg;
+          }
+          $(elem).replaceWith('<p>' + responseMessage + '</p>');
+        }
+      });
+    }
+  });
+</script>
+<script>
+  $(document).ready(function () {
+      $('#example1').DataTable({
+          dom: 'Bfrtip',
+          buttons: [
+            {
+              extend: 'csvHtml5',
+              text: 'CSV файл татах',
+              text: '<a class="btn btn-outline-secondary m-2" style="float: left;">CSV файл татах</a>',
+              tag: 'span',
+              exportOptions: {
+                  modifier: {
+                      search: 'none'
+                  }
+              }
+            }, {
+              extend: 'print',
+              text: 'Хэвлэх',
+              text: '<a class="btn btn-outline-secondary m-2" style="float: left;">Хэвлэх</a>',
+              tag: 'span',
+              exportOptions: {
+                  modifier: {
+                      search: 'none'
+                  }
+              }
+            },
+          ],
+          paging: false,
+          "columnDefs": [
+            {
+              "orderData": [0, 1]
+            },
+          ],
+          pageLength: 50,
+          lengthMenu: [
+            50, 100, 200, 500
+          ],
+          language: {
+            lengthMenu: "_MENU_ эгнээ харах",
+            zeroRecords: "Дата алга",
+            info: "_PAGES_ хуудаснаас _PAGE_-р хуудас. Нийт: _TOTAL_",
+            infoEmpty: "",
+            sSearch: "Шүүх",
+            paginate: {
+              previous: "өмнөх",
+              next: "дараа",
+            },
+          },
+      });
+  });
+</script>
+{% endblock main %}

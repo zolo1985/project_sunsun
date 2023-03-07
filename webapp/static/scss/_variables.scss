@@ -1,0 +1,427 @@
+
+// Color system
+$white:       #ffffff;
+$gray-100:    #f7f8f9;
+$gray-200:    #f0f1f3;
+$gray-300:    #dfe2e5;
+$gray-400:    #d0d4d9;
+$gray-500:    #b4b9bd;
+$gray-600:    #8f9397;
+$gray-700:    #495057;
+$gray-800:    #343a40;
+$gray-900:    #212529;
+$black:       #000000;
+
+$blue:        #007bff;
+$indigo:      #6610f2;
+$purple:      #6f42c1;
+$pink:        #e83e8c;
+$red:         #dc3545;
+$orange:      #fd7e14;
+$yellow:      #ffc107;
+$green:       #28a745;
+$teal:        #20c997;
+$cyan:        #17a2b8;
+
+$primary:     #4cbd89;
+$secondary:   $gray-600;
+$success:     $green;
+$info:        $cyan;
+$warning:     $yellow;
+$danger:      $red;
+$light:       $gray-100;
+$dark:        $gray-800;
+
+$theme-colors: ();
+$theme-colors: map-merge(
+  (
+    "primary":    $primary,
+    "secondary":  $secondary,
+    "success":    $success,
+    "info":       $info,
+    "warning":    $warning,
+    "danger":     $danger,
+    "light":      $light,
+    "dark":       $dark
+  ),
+  $theme-colors
+);
+
+// scss-docs-start theme-colors-rgb
+$theme-colors-rgb: map-loop($theme-colors, to-rgb, "$value");
+
+//Theme gradient Colors - Starting and ending point
+$grad-start:      #97c74e; //#97c74e
+$grad-end:        #2ab9a5; //#2ab9a5
+
+// The contrast ratio to reach against white
+$min-contrast-ratio:   2;
+
+// Options
+//
+// Quickly modify global styling by enabling or disabling optional features.
+$enable-negative-margins:     true;
+$rfs-base-value:              1rem;
+
+// Spacers
+$spacer: 1rem;
+$spacers: ();
+$spacers: map-merge(
+  (
+    0: 0,
+    1: ($spacer * .25),
+    2: ($spacer * .5),
+    3: $spacer,
+    4: ($spacer * 1.5),
+    5: ($spacer * 3),
+    6: ($spacer * 4.5),
+    7: ($spacer * 6),
+    8: ($spacer * 8),
+    9: ($spacer * 11),
+    10: ($spacer * 14)
+  ),
+  $spacers
+);
+
+// scss-docs-start display-headings
+$display-font-sizes: (
+  1: 6rem,
+  2: 4.5rem,
+  3: 4rem,
+  4: 3.5rem,
+  5: 3rem,
+  6: 2rem,
+  7: 1.5rem,
+  8: 1.2rem
+);
+
+
+// Body
+$body-bg:                   $white;
+$body-color:                $gray-600;
+
+// Links
+$link-color:                $primary;
+$link-decoration:           none;
+$link-hover-color:          shift-color($link-color, 10%);
+$link-hover-decoration:     none;
+
+// Paragraphs
+$paragraph-margin-bottom:   1.3rem;
+
+// Shadow
+$box-shadow:                  0 0 3.125rem rgba($black, .10);
+$box-shadow-sm:               0 .125rem .25rem rgba($black, .075);
+$box-shadow-lg:               0 1rem 4rem rgba($black, .175);
+$box-shadow-inset:            inset 0 1px 2px rgba($black, .075);
+
+// Line Height
+$line-height-base:          1.6;
+$line-height-lg:            1.7;
+$line-height-sm:            1.4;
+
+$border-width:              1px;
+$border-color:              rgba($black, .1);
+
+$border-radius:             3px;
+
+$component-active-color:        $white;
+$component-active-bg:           $primary;
+$component-active-border-color: $primary;
+
+$component-hover-color:         $gray-300;
+$component-hover-bg:            $gray-300;
+$component-hover-border-color:  $gray-300;
+
+$transition-base:               all .3s ease-in-out;
+
+// Fonts
+//
+// Font Families
+$font-family-base:            'Roboto', sans-serif;
+$font-family-heading:         'Poppins', sans-serif;
+$font-family-alt:             'Playfair Display', serif;
+
+$font-weight-lighter:         lighter;
+$font-weight-light:           400;
+$font-weight-normal:          500;
+$font-weight-bold:            600;
+$font-weight-bolder:          bolder;
+
+// Font Sizes
+$font-size-xs:                .8125rem; //13px
+$font-size-base:              .875rem;  //14px
+$font-size-lg:                $font-size-base * 1.25;
+$font-size-sm:                $font-size-base * .875;
+
+// Headings
+$h1-font-size:                $font-size-base * 2.5;
+$h2-font-size:                $font-size-base * 2;
+$h3-font-size:                $font-size-base * 1.75;
+$h4-font-size:                $font-size-base * 1.5;
+$h5-font-size:                $font-size-base * 1.25;
+$h6-font-size:                $font-size-base;
+
+$headings-margin-bottom:        .5rem;
+$headings-font-family:          $font-family-heading;
+$headings-font-weight:          $font-weight-normal;
+$headings-line-height:          1.2;
+$headings-color:                $gray-800;
+
+$enable-responsive-font-sizes:  true;
+
+$display1-weight:             $font-weight-normal;
+$display2-weight:             $font-weight-normal;
+$display3-weight:             $font-weight-normal;
+$display4-weight:             $font-weight-normal;
+$display-line-height:         1.2;
+
+
+$hr-border-color:             $border-color;
+
+// Input buttons
+$input-btn-padding-y:         .5rem;
+$input-btn-padding-x:         1rem;
+$input-btn-font-size:         $font-size-base;
+$input-btn-line-height:       $line-height-base;
+
+$input-btn-focus-width:       0;
+$input-btn-focus-color:       rgba($component-active-bg, .25);
+$input-btn-focus-box-shadow:  0 0 0 $input-btn-focus-width $input-btn-focus-color;
+
+$input-btn-padding-y-sm:      .4rem;
+$input-btn-padding-x-sm:      .8rem;
+$input-btn-font-size-sm:      $font-size-base * .9;
+$input-btn-line-height-sm:    $line-height-sm;
+
+$input-btn-padding-y-lg:      .8rem;
+$input-btn-padding-x-lg:      1.5rem;
+$input-btn-font-size-lg:      $font-size-lg;
+$input-btn-line-height-lg:    $line-height-lg;
+
+$input-btn-border-width:      2px;
+
+// Buttons
+$btn-padding-y:               $input-btn-padding-y;
+$btn-padding-x:               $input-btn-padding-x;
+$btn-font-size:               $input-btn-font-size;
+$btn-line-height:             $input-btn-line-height;
+
+$btn-padding-y-sm:            $input-btn-padding-y-sm;
+$btn-padding-x-sm:            $input-btn-padding-x-sm;
+$btn-font-size-sm:            $input-btn-font-size-sm;
+$btn-line-height-sm:          $input-btn-line-height-sm;
+
+$btn-padding-y-lg:            $input-btn-padding-y-lg;
+$btn-padding-x-lg:            $input-btn-padding-x-lg;
+$btn-font-size-lg:            $input-btn-font-size-lg;
+$btn-line-height-lg:          $input-btn-line-height-lg;
+
+$btn-border-width:            $input-btn-border-width;
+
+$btn-font-weight:             $font-weight-normal;
+$btn-box-shadow:              none;
+$btn-focus-width:             $input-btn-focus-width;
+$btn-focus-box-shadow:        $input-btn-focus-box-shadow;
+$btn-disabled-opacity:        .65;
+$btn-active-box-shadow:       none;
+$btn-close-focus-shadow:      none;
+
+$btn-link-color:              $link-color;
+$btn-link-hover-color:        $link-hover-color;
+$btn-link-disabled-color:     $gray-600;
+$btn-block-spacing-y:         .5rem;
+
+// Button border radius
+$btn-border-radius:           $border-radius;
+$btn-border-radius-lg:        $border-radius;
+$btn-border-radius-sm:        $border-radius;
+
+// Forms
+
+$input-padding-y:                       $input-btn-padding-y;
+$input-padding-x:                       $input-btn-padding-x;
+$input-font-size:                       $input-btn-font-size;
+$input-line-height:                     $input-btn-line-height;
+
+$input-padding-y-sm:                    $input-btn-padding-y-sm;
+$input-padding-x-sm:                    $input-btn-padding-x-sm;
+$input-font-size-sm:                    $input-btn-font-size-sm;
+$input-line-height-sm:                  $input-btn-line-height-sm;
+
+$input-padding-y-lg:                    $input-btn-padding-y-lg;
+$input-padding-x-lg:                    $input-btn-padding-x-lg;
+$input-font-size-lg:                    $input-btn-font-size-lg;
+$input-line-height-lg:                  $input-btn-line-height-lg;
+
+$input-bg:                              $white;
+$input-disabled-bg:                     $gray-200;
+
+$input-color:                           $gray-700;
+$input-border-color:                    $gray-300;
+$input-border-width:                    $input-btn-border-width;
+$input-box-shadow:                      none;
+
+$input-border-radius:                   $border-radius;
+$input-border-radius-xl:                $border-radius;
+$input-border-radius-lg:                $border-radius;
+$input-border-radius-sm:                $border-radius;
+
+$input-focus-bg:                        $white;
+$input-focus-border-color:              $primary;
+$input-focus-color:                     $input-color;
+$input-focus-width:                     $input-border-width;
+$input-focus-box-shadow:                $input-btn-focus-box-shadow;
+
+$input-placeholder-color:               $gray-500;
+
+$input-height-border:                   $input-border-width * 2;
+$input-height:                          add($input-line-height * 1em, add($input-padding-y * 2, $input-height-border, false));
+$input-height-sm:                       add($input-line-height-sm * 1em, add($input-padding-y-sm * 2, $input-height-border, false));
+$input-height-lg:                       add($input-line-height-lg * 1em, add($input-padding-y-lg * 2, $input-height-border, false));
+
+$form-check-input-bg:                     $body-bg;
+$form-check-input-border:                 1px solid rgba(0, 0, 0, .25);
+$form-check-input-border-radius:          .25em;
+$form-check-radio-border-radius:          50%;
+$form-check-input-focus-border:           $input-focus-border-color;
+$form-check-input-focus-box-shadow:       $input-btn-focus-box-shadow;
+
+$form-check-input-checked-color:          $component-active-color;
+$form-check-input-checked-bg-color:       $component-active-bg;
+$form-check-input-checked-border-color:   $form-check-input-checked-bg-color;
+
+$form-check-input-indeterminate-color:          $component-active-color;
+$form-check-input-indeterminate-bg-color:       $component-active-bg;
+$form-check-input-indeterminate-border-color:   $form-check-input-indeterminate-bg-color;
+
+$form-switch-focus-color:         $input-focus-border-color;
+$form-switch-focus-bg-image:      url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{$form-switch-focus-color}'/></svg>");
+
+$form-select-padding-y:             $input-padding-y;
+$form-select-padding-x:             $input-padding-x;
+$form-select-font-size:             $input-font-size;
+$form-select-font-weight:           $input-font-weight;
+$form-select-line-height:           $input-line-height;
+$form-select-color:                 $input-color;
+$form-select-border-radius:         $border-radius;
+
+$form-select-border-width:        $input-border-width;
+$form-select-border-color:        $input-border-color;
+$form-select-border-radius:       $border-radius;
+$form-select-box-shadow:          $box-shadow-inset;
+
+$form-select-focus-border-color:    $input-focus-border-color;
+$form-select-focus-box-shadow:      $input-btn-focus-box-shadow;
+
+$form-range-thumb-bg:                      $component-active-bg;
+$form-range-thumb-active-bg:               tint-color($component-active-bg, 70%);
+$form-range-thumb-disabled-bg:             $gray-500;
+$form-range-thumb-box-shadow:              0 .1rem .25rem rgba($black, .1);
+$form-range-thumb-focus-box-shadow:        0 0 0 1px $body-bg, $input-focus-box-shadow;
+
+// Accordion
+
+// scss-docs-start accordion-variables
+
+$accordion-button-active-bg:              tint-color($component-active-bg, 90%);
+$accordion-button-active-color:           shade-color($primary, 10%);
+$accordion-button-focus-box-shadow:       $btn-focus-box-shadow;
+
+$accordion-icon-active-color:             $accordion-button-active-color;
+
+$accordion-button-icon:         url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#{$accordion-icon-color}'><path fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/></svg>");
+$accordion-button-active-icon:  url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#{$accordion-icon-active-color}'><path fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/></svg>");
+// scss-docs-end accordion-variables
+
+// Dropdowns
+$dropdown-min-width:                12rem;
+// $dropdown-padding-x:                0.5rem;
+$dropdown-padding-y:                1rem;
+$dropdown-spacer:                   0;
+$dropdown-font-size:                $font-size-base;
+$dropdown-color:                    $body-color;
+$dropdown-bg:                       $white;
+$dropdown-border-color:             $border-color;
+$dropdown-border-radius:            0;
+$dropdown-border-width:             0;
+
+$dropdown-divider-bg:               $gray-200;
+// $dropdown-divider-margin-y:         $nav-divider-margin-y;
+$dropdown-box-shadow:               0px 20px 30px rgba(83, 88, 93, 0.15);
+
+$dropdown-link-color:               $gray-600 !important;
+$dropdown-link-hover-color:         $primary !important;
+$dropdown-link-hover-bg:            transparent;
+
+$dropdown-link-active-color:        $primary;
+$dropdown-link-active-bg:           transparent;
+
+$dropdown-link-disabled-color:      $gray-600;
+
+$dropdown-item-font-weight:         $font-weight-light;
+
+$dropdown-item-padding-y:           .40rem;
+$dropdown-item-padding-x:           1rem;
+
+$dropdown-header-color:             $gray-800;
+$dropdown-header-font-size:         $font-size-base;
+$dropdown-header-font-weight:       $font-weight-bold;
+
+// Navs 
+$nav-link-padding-y:                .25rem;
+$nav-link-padding-x:                .75rem;
+$nav-link-color:                    $gray-700;
+$nav-link-disabled-color:           $gray-600;
+
+// Navbar
+$navbar-padding-y:                  0;
+$navbar-padding-x:                  1rem;
+
+$navbar-nav-link-padding-x:         1rem;
+$navbar-nav-link-font-size:         $font-size-base;
+$navbar-nav-link-font-weight:       $font-weight-normal;
+$navbar-nav-link-text-transform:    capitalize;
+
+$navbar-brand-height:               44px; //Logo height
+$navbar-brand-padding-y:            20px;
+$nav-link-line-height:              $navbar-brand-padding-y * 2 + $navbar-brand-height;
+
+$sticky-navbar-brand-height:        34px; //sticky Logo height
+$sticky-navbar-brand-padding-y:     14px;
+$sticky-nav-link-line-height:       $sticky-navbar-brand-padding-y * 2 + $sticky-navbar-brand-height;
+
+$mobile-navbar-brand-height:        30px; //mobile Logo height
+$mobile-navbar-brand-padding-y:     10px;
+$mobile-nav-link-line-height:       40px;
+
+$navbar-toggler-padding-x:          0;
+
+$navbar-dark-color:                 $white;
+$navbar-dark-hover-color:           $primary;
+$navbar-dark-active-color:          $primary;
+$navbar-dark-disabled-color:        rgba($white, .25);
+$navbar-dark-toggler-icon-bg:       str-replace(url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='#ffffff' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e"), "#", "%23");
+
+$navbar-light-color:                $gray-600;
+$navbar-light-hover-color:          $primary;
+$navbar-light-active-color:         $primary;
+$navbar-light-disabled-color:       rgba($black, .3);
+$navbar-light-toggler-border-color: rgba($black, .1);
+
+$navbar-primary-color:              $white;
+$navbar-primary-hover-color:        $gray-800;
+$navbar-primary-active-color:       $gray-800;
+$navbar-primary-disabled-color:     rgba($white, .25);
+$navbar-primary-toggler-icon-bg:    str-replace(url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='#ffffff' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e"), "#", "%23");
+
+// Define the maximum width of `.container`
+$container-max-widths: (
+  sm: 96%,
+  md: 94%,
+  lg: 94%,
+  xl: 1140px,
+  xxl: 1200px
+);
+
+@include _assert-ascending($container-max-widths, "$container-max-widths");

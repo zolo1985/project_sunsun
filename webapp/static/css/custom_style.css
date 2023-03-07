@@ -1,0 +1,254 @@
+.custom-nav-item {
+    font-size: 16px;
+    font-weight: 500;
+    padding: 1rem;
+    margin: 0.8rem;
+}
+
+.custom-header {
+    font-weight: 600;
+}
+
+th, td {
+    padding: 15px !important;
+}
+
+.text-primary {
+  color: rgb(54, 163, 38);
+}
+
+.text-primary-1 {
+  color: #4fd03b;
+}
+
+.alert {
+    margin: auto;
+    border: 0px;
+    padding: 2rem 2rem !important; 
+    border-radius: 10px;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.alert-danger {
+    background-color:orangered;
+    color: white;
+}
+
+.alert-info {
+    background-color:steelblue;
+    color: white;
+}
+
+.alert-success {
+    background: linear-gradient(150deg, #1b713b 0%, #33a294 100%);
+    color: white;
+}
+
+.alert-warning {
+    background-color:rgb(255, 181, 7);
+    color: white;
+}
+
+.vertical {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+}
+
+.btn {
+    border-radius: 50px;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+ 
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+#example_info {
+    font-size: 16px;
+    color: black;
+    font-weight: 500;
+}
+
+#select2-product-container {
+    height: 40px !important;
+    font-size: 15px;
+}
+
+.selector-container {
+    height: 60px !important;
+    font-size: 15px;
+}
+
+.select2-selection, .select2-selection__rendered {
+    height: 40px !important;
+    font-size: 15px;
+}
+
+.form-check-input {width: 20px; height: 20px;}
+
+.bg-grad-custom {
+    background: linear-gradient(150deg, #94b8eb 0%, #2aa3b9 100%);
+}
+
+table {
+  border: 1px solid #ccc;
+  border-collapse: collapse;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+table caption {
+  font-size: 1.5em;
+  margin: .5em 0 .75em;
+}
+
+table tr {
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  padding: .35em;
+}
+
+table th,
+table td {
+  padding: .625em;
+  text-align: left;
+}
+
+table th {
+  font-size: .85em;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  position: sticky !important;
+  top: 0; /* Don't forget this, required for the stickiness */
+}
+
+#header-fixed {
+  position: fixed;
+  top: 0px;
+  display: none;
+  background-color: white;
+}
+  
+@media screen and (max-width: 600px) {
+  table {
+    border: 0;
+  }
+
+  table caption {
+    font-size: 1.3em;
+  }
+    
+  table thead {
+    border: none;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+    
+  table tr {
+    border-bottom: 3px solid #ddd;
+    display: block;
+    margin-bottom: .625em;
+  }
+
+  table td {
+    border-bottom: 1px solid #ddd;
+    display: block;
+    font-size: .8em;
+    text-align: left;
+  }
+    
+  table td::before {
+    /*
+    * aria-label has no advantage, it won't be read inside a table
+    content: attr(aria-label);
+    */
+    content: attr(data-label);
+    float: left;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  table td:last-child {
+    border-bottom: 0;
+  }
+}
+  
+/* general styling */
+body {
+  line-height: 1.25;
+}
+
+
+.bold-primary-text {
+  color: rgb(54, 163, 38) !important;
+  font-weight: 700;
+}
+
+#colorize-icons {
+  width: 75px !important;
+}
+
+#info-icons {
+  width: 7rem !important;
+}
+
+.rounded-img {
+  border-radius: 1rem;
+}
+
+.first-letter {
+  border-bottom: 2px solid #4fd03b;
+}
+
+.custom-font-weight {
+  font-weight:bolder;
+}
+
+.custom-background {
+  background: rgb(2,0,36);
+background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(59,150,8,1) 0%, rgba(255,255,255,1) 44%);
+}
+
+.custom-background-1 {
+  background: rgba(59,150,8,1);
+}
+
+#inventory-table th {
+  font-size: .85em;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  position: sticky !important;
+  top: 60px !important;
+}
+
+#driver-orders th {
+  font-size: .85em;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  position: sticky !important;
+  top: 60px !important;
+}
+

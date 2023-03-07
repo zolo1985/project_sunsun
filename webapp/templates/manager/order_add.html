@@ -1,0 +1,460 @@
+{% extends "layout.html" %}
+{% block main %}
+    <!-- ORDERS ADD -->
+    <section>
+        <div class="container-fluid min-vh-100" style="width: 80%;">
+                <h3 class="display-6 mb-4">Шинэ хүргэлт оруулах</h3>
+                <form id="form" method="POST" action="">
+                    {{ form.csrf_token }}
+                    <div class="row">
+                        <div class="col">
+                            <section class="py-4 border mb-5 rounded-3 border-2">
+                                <div class="container">
+                                    <p style="font-size: 18px; color:black; font-weight: 500;">{{ form.delivery_type.label(class="form-control-label") }}</p>
+                                    {% for subfield in form.delivery_type %}
+                                        <p class="ms-3" style="font-size: 15px; color: black; font-weight: 400;">{{ subfield(class="form-check-input m-0", onclick="checkType()") }}
+                                            {{ subfield.label }}</p>
+                                    {% endfor %}
+                                </div>
+                            </section>
+                        </div>
+                        <div id="orderTypeSection" class="col" style="display: block;">
+                            <section class="py-4 border mb-5 rounded-3 border-2">
+                                <div class="container">
+                                    <p style="font-size: 18px; color:black; font-weight: 500;">{{ form.order_type.label(class="form-control-label") }}</p>
+                                    {% for subfield in form.order_type %}
+                                        <p class="ms-3" style="font-size: 15px; color: black; font-weight: 400;">{{ subfield(class="form-check-input m-0", onclick="checkDestination()") }}
+                                            {{ subfield.label }}</p>
+                                    {% endfor %}
+                                </div>
+                            </section>
+                        </div>
+
+                        <div id="deliveryAddSection">
+                            <div class="col">
+                                <div class="table-responsive">
+                                    <table class="table table-hover" id="Infos">
+                                        <thead>
+                                            <tr class="bg-grad">
+                                                <th scope="col">Хүргэлтийн Мэдээлэл</th>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="main">
+                                            <tr>
+                                                <td>
+                                                    <div class="form-group">
+                                                        {{ form.phone.label(class="form-control-label") }}
+                                                        {% if form.phone.errors %}
+                                                            {{ form.phone(class="form-control is-invalid") }}
+                                                            <div class="invalid-feedback">
+                                                                {% for error in form.phone.errors %}
+                                                                    <span>{{ error }}</span>
+                                                                {% endfor %}
+                                                            </div>
+                                                        {% else %}
+                                                            {{ form.phone(class="form-control") }}
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="form-group">
+                                                        {{ form.phone_more.label(class="form-control-label") }}
+                                                        {% if form.phone_more.errors %}
+                                                            {{ form.phone_more(class="form-control is-invalid") }}
+                                                            <div class="invalid-feedback">
+                                                                {% for error in form.phone_more.errors %}
+                                                                    <span>{{ error }}</span>
+                                                                {% endfor %}
+                                                            </div>
+                                                        {% else %}
+                                                            {{ form.phone_more(class="form-control") }}
+                                                        {% endif %}
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <div id="local">
+                                                        {{ form.district.label(class="form-control-label") }}
+                                                        {% if form.district.errors %}
+                                                            {{ form.district(class="form-control is-invalid m-0") }}
+                                                            <div class="invalid-feedback">
+                                                                {% for error in form.district.errors %}
+                                                                    <span>{{ error }}</span>
+                                                                {% endfor %}
+                                                            </div>
+                                                        {% else %}
+                                                            {{ form.district(class="form-control") }}
+                                                        {% endif %}
+        
+                                                        {{ form.khoroo.label(class="form-control-label") }}
+                                                        {% if form.khoroo.errors %}
+                                                            {{ form.khoroo(class="form-control is-invalid m-0") }}
+                                                            <div class="invalid-feedback">
+                                                                {% for error in form.khoroo.errors %}
+                                                                    <span>{{ error }}</span>
+                                                                {% endfor %}
+                                                            </div>
+                                                        {% else %}
+                                                            {{ form.khoroo(class="form-control") }}
+                                                        {% endif %}
+                                                    </div>
+                                                    <div id="long" style="display: none;">
+                                                        {{ form.aimag.label(class="form-control-label") }}
+                                                        {% if form.aimag.errors %}
+                                                            {{ form.aimag(class="form-control is-invalid m-0") }}
+                                                            <div class="invalid-feedback">
+                                                                {% for error in form.aimag.errors %}
+                                                                    <span>{{ error }}</span>
+                                                                {% endfor %}
+                                                            </div>
+                                                        {% else %}
+                                                            {{ form.aimag(class="form-control") }}
+                                                        {% endif %}
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <div class="form-group">
+                                                        {{ form.address.label(class="form-control-label") }}
+                                                        {% if form.address.errors %}
+                                                            {{ form.address(class="form-control is-invalid") }}
+                                                            <div class="invalid-feedback">
+                                                                {% for error in form.address.errors %}
+                                                                    <span>{{ error }}</span>
+                                                                {% endfor %}
+                                                            </div>
+                                                        {% else %}
+                                                            {{ form.address(class="form-control", style="min-height: 105px;") }}
+                                                        {% endif %}
+                                                    </div>
+                                                </td>
+
+                                                <td>
+                                                    <div class="form-group">
+                                                        {{ form.total_amount.label(class="form-control-label") }}
+                                                        {% if form.total_amount.errors %}
+                                                            {{ form.total_amount(class="form-control is-invalid") }}
+                                                            <div class="invalid-feedback">
+                                                                {% for error in form.total_amount.errors %}
+                                                                    <span>{{ error }}</span>
+                                                                {% endfor %}
+                                                            </div>
+                                                        {% else %}
+                                                            {{ form.total_amount(class="form-control") }}
+                                                        {% endif %}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="container">
+                            <section class="py-4 border mb-5 rounded-3 border-2 p-3">
+                                <h5 class="display-6 mb-4">Бараа нэмэх хэсэг</h5>
+                                <div id="productAddSection">
+                                    <div class="row">
+                                        <div id="suppliersSelect" class="col p-2" style="display:block">
+                                            <div class="form-group">
+                                                {% if form.suppliers.errors %}
+                                                    {{ form.suppliers(class="form-control is-invalid") }}
+                                                    <div class="invalid-feedback">
+                                                        {% for error in form.suppliers.errors %}
+                                                            <span>{{ error }}</span>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form.suppliers(class="form-control") }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col p-2">
+                                            <span class="selector-container" style="position:relative;">
+                                                <select class="searchBar form-control" id="product" style="width: 100%;"></select>
+                                            </span>
+                                        </div>
+                                        <div class="col-md-auto p-2">
+                                            <input autocomplete="off" step="0" class="form-control" name="quantityInput" id="quantityInput" placeholder="Тоо ширхэг" type="number" max="1000000" style="width: 200px;"></div>
+                                            <div class="mb-3 float-end">
+                                                <a id="add-product" class="btn btn-sm btn-outline-info" onclick="addProduct();">Нэмэх</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover" id="lines" style="display: none;">
+                                            <thead>
+                                                <tr>
+                                                    <th class="bg-grad" style="font-size: 14px;">Харилцагч</th>
+                                                    <th class="bg-grad" style="font-size: 14px;">Бараа</th>
+                                                    <th class="bg-grad" style="font-size: 14px;">Тоо ширхэг</th>
+                                                    <th class="bg-grad" style="font-size: 14px;">Нийт</th>
+                                                    <th class="bg-grad">Хасах</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                    <div class="mt-3">
+                                        <label for="selectedProdcutsTotal">Барааны нийлбэр дүн</label><br>
+                                        <input id="calculateTotal" type="number" name="calculateTotal" class="form-control text-success fw-bold" value=0 readonly>
+                                        <a class="btn btn-sm btn-outline-info" onclick="copySumToTotalForm()">Нийлбэрийг нийт дүнрүү хуулах</a>
+                                    </div>
+                                </div>
+                                <div id="paymentSection" class="mt-3" style="display: none;">
+                                    <section class="py-4 border mb-5 rounded-3 border-2">
+                                        <div class="container">
+                                            <p style="font-size: 18px; color:black; font-weight: 500;">Тооцоо</p>
+                                            <div class="row">
+                                            <div class="col">
+                                                <label for="totalInput">Нийт дүн</label><br>
+                                                <input autocomplete="off" class="form-control" step="0" name="totalInput" id="totalInput" placeholder="Нийт дүн" value="0" type="number" style="width: 200px;">
+                                            </div>
+                                            <div class="col">
+                                                <label for="commentInput">Тэмдэглэгээ</label><br>
+                                                <input autocomplete="off" class="form-control" name="commentInput" id="commentInput" placeholder="Тэмдэглэгээ" value="" type="text" style="width: 600px;">
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </section>
+                                </div>
+                                <div id="submitButton" class="form-group">
+                                    {{ form.submit(class="btn btn-outline-success") }}
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </form>
+        </div>
+    </section>
+    <!-- END ORDERS ADD -->
+    <script type="text/javascript">
+        var csrf_token = "{{ csrf_token() }}";
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                }
+            }
+        });
+    </script>
+    <script>
+        var parentElement = $(".selector-container");
+        var supplier_name = document.getElementById('suppliers');
+
+        supplier_name.onchange = function () {
+            supplier = supplier_name.value;
+            $(".searchBar").select2({
+                dropdownParent: parentElement,
+                placeholder: 'Бараа хайх',
+                minimumInputLength: 2,
+                width: 'resolve',
+                ajax: {
+                    headers: {
+                        'X-CSRF-Token': $('meta[name=csrf-token]').attr('content')
+                    },
+                    url: "/manager/orders/search/products/" + supplier,
+                    dataType: 'json',
+                    delay: 250,
+                    type: "POST",
+                    data: function (term) {
+                        return {term: term.term};
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: $.map(data, function (item) {
+                                return {
+                                    id: item.id,
+                                    text: item.name + ' ' + '(' + item.color + ',' + ' ' + item.size + ',' + ' ' + item.type + ',' + ' ' + item.quantity + 'ш' + ',' + ' ' + item.price + '₮' + ')',
+                                    price: item.price
+                                }
+                            })
+                        };
+                    }
+                },
+            });
+            if (supplier_name!="Харилцагч сонгох") {
+                $("#suppliersSelect").hide();
+            }
+        }
+    </script>
+    <script>
+        function addProduct() {
+            document.getElementById('lines').style.display = 'table';
+
+            var supplier_id = $('#suppliers').find(":selected").val();
+            var supplier_name = $('#suppliers').find(":selected").text();
+            var product_id = $('#product').find(":selected").val();
+            var product_name = $('#product').find(":selected").text();
+            var quantity = document.getElementById("quantityInput").value;
+            var total_amount = document.getElementById('total_amount');
+
+            if (supplier_name == 'Харилцагч сонгох') {
+                alert('Харилцагч сонгоно уу!')
+                return false;
+            }
+
+            if (quantity == null || quantity == "") {
+                alert('Барааны тоо ширхэг оруулна уу!')
+                return false;
+            }
+
+            if (parseInt((product_name.split(",")[3].slice(0, -1)))<=0 || parseInt((product_name.split(",")[3].slice(0, -1)))<parseInt(quantity)) {
+                alert('Агуулахын үлдэгдэл хүрэлцэхгүй байна!')
+                return false;
+            }
+
+            if (product_id == null) {
+                alert('Нэмэх бараа эхлээд сонгоно уу!')
+            } else {
+                $('#lines').find('tbody').append($('#tr-placeholder tr:first').clone());
+                $('#lines').find('tbody tr:last input[name="supplier"]').val(supplier_id);
+                $('#lines').find('tbody tr:last p[data-name="supplier_name"]').text(supplier_name);
+                $('#lines').find('tbody tr:last input[name="product"]').val(product_id);
+                $('#lines').find('tbody tr:last p[data-name="product_name"]').text(product_name);
+                $('#lines').find('tbody tr:last input[name="quantity"]').val(quantity);
+                $('#lines').find('tbody tr:last p[data-name="quantity_name"]').text(quantity);
+                $('#lines').find('tbody tr:last input[name="rowTotal"]').val(quantity*parseInt((product_name.split(",")[4].slice(0, -1))));
+                $('#lines').find('tbody tr:last p[data-name="row_total"]').text(quantity*parseInt((product_name.split(",")[4].slice(0, -1))));
+                document.getElementById('calculateTotal').value = parseInt(document.getElementById('calculateTotal').value) + (quantity*parseInt((product_name.split(",")[4].slice(0, -1))));
+            }
+        }
+    </script>
+    <script>
+        function checkType() {
+            delivery = document.getElementById('delivery_type-0');
+
+            if (delivery.checked) {
+                document.getElementById('deliveryAddSection').style.display = 'block';
+                document.getElementById('productAddSection').style.display = 'block';
+                document.getElementById('submitButton').style.display = 'block';
+                document.getElementById('paymentSection').style.display = 'none';
+                document.getElementById('orderTypeSection').style.display = 'block';
+                
+                
+            } else {
+                document.getElementById('phone').value = "75777222";
+                document.getElementById('phone_more').value = "75777222";
+                document.getElementById('district').value = "Баянзүрх";
+                document.getElementById('khoroo').value = "25";
+                document.getElementById('address').value = "Манлайбаатар Дамдинсүрэнгийн гудамж A104-22 тоот. СҮН СҮН агуулах";
+                document.getElementById('total_amount').value = 0;
+                
+                document.getElementById('deliveryAddSection').style.display = 'none';
+                document.getElementById('productAddSection').style.display = 'block';
+                document.getElementById('submitButton').style.display = 'block';
+                document.getElementById('paymentSection').style.display = 'block';
+                document.getElementById('orderTypeSection').style.display = 'none';
+            }
+        }
+
+        function checkDestination() {
+            order_type = document.getElementById('order_type-0');
+
+            if (order_type.checked) {
+                document.getElementById('local').style.display = 'block';
+                document.getElementById('long').style.display = 'none';
+            } else {
+                document.getElementById('local').style.display = 'none';
+                document.getElementById('long').style.display = 'block';
+            }
+        }
+    </script>
+    <script>
+        $('#submit').click(function () {
+            var districtValue = document.getElementById("district").value
+            var khorooValue = document.getElementById("khoroo").value
+            var aimagValue = document.getElementById("aimag").value
+            
+            delivery = document.getElementById('delivery_type-0');
+            order_type = document.getElementById('order_type-0');
+
+            if ($('#lines tbody tr').length == 0) {
+                alert("Бараа оруулаагүй байна!")
+                return false;
+            }
+
+            if (delivery.checked) {
+                if (order_type.checked) {
+                    // local
+                    if (districtValue == "Дүүрэг сонгох" || khorooValue == "Хороо сонгох") {
+                        alert("Дүүрэг, хороо сонгоогүй байна! Сонголтоо хийгээд үргэлжлүүлнэ үү!")
+                        return false;
+                    } else {
+                        return true;
+                    }
+
+                } else {
+                    // long
+                    if (aimagValue == "Аймаг сонгох") {
+                        alert("Аймаг сонгоогүй байна! Сонголтоо хийгээд үргэлжлүүлнэ үү!")
+                        return false;
+                    } else {
+                        return true;
+                    }
+
+                }
+
+            } else {
+                var totalInput = document.getElementById('totalInput').value;
+
+                if (districtValue == "Дүүрэг сонгох" || khorooValue == "Хороо сонгох") {
+                    alert("Дүүрэг, хороо сонгоогүй байна! Сонголтоо хийгээд үргэлжлүүлнэ үү!")
+                    return false;
+                } else if (totalInput == null || totalInput == "") {
+                    alert("Тооцооны дүн алдаатай байна!")
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        });
+    </script>
+    <script>
+        function findRow(data) {
+            var thisrow = data.parent().parent().find('#rowTotal').val();
+            data.parent().parent().remove();
+            document.getElementById('calculateTotal').value = parseInt(document.getElementById('calculateTotal').value) - thisrow;
+        }
+    </script>
+    <script>
+        $(window).on('load', function(){
+            document.getElementById('calculateTotal').value = 0;
+            console.log(document.getElementById('calculateTotal').value);
+        });
+    </script>
+    <script>
+        function copySumToTotalForm() {
+            order_sum = document.getElementById('calculateTotal').value;
+            document.getElementById('total_amount').value = order_sum
+            document.getElementById('totalInput').value = order_sum
+        }
+    </script>
+    <table style="display: none;">
+        <tbody id="tr-placeholder">
+            <tr>
+                <td>
+                    <input type="hidden" name="supplier" class="form-control" required>
+                    <p data-name="supplier_name" style="font-size: 15px;"></p>
+                </td>
+                <td>
+                    <input type="hidden" name="product" class="form-control" required>
+                    <p data-name="product_name" style="font-size: 15px;"></p>
+                </td>
+                <td>
+                    <input type="hidden" name="quantity" class="form-control" required>
+                    <p data-name="quantity_name" style="font-size: 15px;"></p>
+                </td>
+                <td>
+                    <input type="hidden" id="rowTotal" name="rowTotal" class="form-control" required>
+                    <p data-name="row_total" style="font-size: 15px;"></p>
+                </td>
+                <td>
+                    <button type="button" class="btn p-0 m-0" onclick="findRow($(this));"><i class="bi bi-x-circle"></i></button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock main %}

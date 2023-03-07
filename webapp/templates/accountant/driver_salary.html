@@ -1,0 +1,193 @@
+{% extends "layout.html" %}
+{% block main %}
+<div class="preloader">
+  <img src="{{ url_for('static', filename='images/preloader.svg') }}" alt="Pre-loader" />
+</div>
+<section>
+  <div class="container-fluid min-vh-100" style="width: 80%;">
+    <div class="row">
+      <div class="col-sm-12 mb-5">
+        <h3 class="display-6 mb-4">
+          <p>Жолооч цалин түүх</p>
+          {% if form.select_date.data is none %} {{ current_date.strftime('%Y') }} оны {{ current_date.strftime('%m') }} сарын {{ day_list | first }} - {{ day_list | last }} хооронд {% else %} {{ form.select_date.data.strftime('%Y') }} оны {{ form.select_date.data.strftime('%m') }} сарын {{ day_list | first }} - {{ day_list | last }} хооронд жолоочийн цалин{% endif %}
+        </h3>
+        <form id="form" method="POST" action="">
+          {{ form.csrf_token }}
+          <div class="row g-2">
+            <div class="col-md-3">
+              {{ form.select_date.label(class="form-control-label") }} {% if form.select_date.errors %} {{ form.select_date(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.select_date.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+              {% else %} {{ form.select_date(class="form-control") }} {% endif %}
+            </div>
+            <div class="col-md-3 align-self-center">{{ form.submit(class="btn btn-outline-success m-0") }}</div>
+          </div>
+        </form>
+        <div class="table-responsive-sm">
+          <table id="example" class="table table-lg table-bordered">
+            <thead>
+              <tr>
+                <th scope="col" class="bg-grad">Жолооч/{{ day_list | first }}-{{ day_list | last }} хооронд</th>
+                <th scope="col" class="bg-grad">Төрөл</th>
+                {% for day in day_list %}
+                <th scope="col" class="bg-grad">{{ day }}</th>
+                {% endfor %}
+                <th scope="col" class="bg-grad">Нийт</th>
+                <th scope="col" class="bg-grad">Мөнгөн дүн</th>
+                <th scope="col" class="bg-grad">Дутуу үлдэгдэл</th>
+                <th scope="col" class="bg-grad">Цалин</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for data in datas %}
+                {% set orders_total_data = namespace (order_total = 0) %}
+                {% set pickups_total_data = namespace (pickup_total = 0) %}
+                {% set dropoffs_total_data = namespace (dropoff_total = 0) %}
+                {% for dt in data[2] %}
+                    {% set orders_total_data.order_total = orders_total_data.order_total + dt[1] %}
+                    {% set pickups_total_data.pickup_total = pickups_total_data.pickup_total + dt[2] %}
+                    {% set dropoffs_total_data.dropoff_total = dropoffs_total_data.dropoff_total + dt[3] %}
+                {% endfor %}
+              <tr>
+                <td class="text-center align-middle" rowspan="3" style="border-bottom: 2px solid black">
+                  <span>{{ data[0] }}</span>
+                </td>
+                <td class="text-center align-middle">Хүргэлт {{ data[3] }}</td>
+                {% for dt in data[2] %}
+                <td class="text-center align-middle">
+                  {% if dt[1]>0 %}
+                  <span>{{ dt[1] }}</span>
+                  {% else %} {{ dt[1] }} {% endif %}
+                </td>
+                {% endfor %}
+                <td class="text-center align-middle">
+                  <span>{{ orders_total_data.order_total }}</span>
+                </td>
+                <td class="text-center align-middle">
+                  <span>{{ (orders_total_data.order_total * (data[3]|int)) | numberformat }}</span>
+                </td>
+                <td class="text-center align-middle" rowspan="3" style="border-bottom: 2px solid black">
+                  <span>{{ data[4] | numberformat }}</span>
+                </td>
+                <td class="text-center align-middle" rowspan="3" style="border-bottom: 2px solid black">
+                  <span
+                    >{{ ((orders_total_data.order_total * (data[3]|int) + pickups_total_data.pickup_total * (data[3]|int) + dropoffs_total_data.dropoff_total * (data[3]|int)) - (data[4])) |
+                    numberformat }}</span
+                  >
+                </td>
+              </tr>
+
+              <tr>
+                <td class="text-center align-middle" style="display: none">
+                  <span>{{ data[0] }}</span>
+                </td>
+                <td class="text-center align-middle">Таталт {{ data[3] }}</td>
+                {% for dt in data[2] %}
+                <td class="text-center align-middle">
+                  {% if dt[2]>0 %}
+                  <span>{{ dt[2] }}</span>
+                  {% else %} {{ dt[2] }} {% endif %}
+                </td>
+                {% endfor %}
+                <td class="text-center align-middle">
+                  <span>{{ pickups_total_data.pickup_total }}</span>
+                </td>
+
+                <td class="text-center align-middle">
+                  <span>{{ (pickups_total_data.pickup_total * (data[3]|int)) | numberformat }}</span>
+                </td>
+                <td style="display: none"></td>
+                <td style="display: none"></td>
+              </tr>
+
+              <tr style="border-bottom: 2px solid black">
+                <td class="text-center align-middle" style="display: none">
+                  <span>{{ data[0] }}</span>
+                </td>
+                <td class="text-center align-middle">Буцаалт {{ data[3] }}</td>
+                {% for dt in data[2] %}
+                <td class="text-center align-middle">
+                  {% if dt[3]>0 %}
+                  <span>{{ dt[3] }}</span>
+                  {% else %} {{ dt[3] }} {% endif %}
+                </td>
+                {% endfor %}
+                <td class="text-center align-middle">
+                  <span>{{ dropoffs_total_data.dropoff_total }}</span>
+                </td>
+
+                <td class="text-center align-middle">
+                  <span>{{ (dropoffs_total_data.dropoff_total * (data[3]|int)) | numberformat }}</span>
+                </td>
+                <td style="display: none"></td>
+                <td style="display: none"></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  $(document).ready(function () {
+    $("#example").DataTable({
+      dom: "Bfrtip",
+      buttons: [
+        {
+          extend: "csvHtml5",
+          text: '<a class="btn btn-outline-secondary m-2" style="float: left;">CSV файл татах</a>',
+          tag: "span",
+          exportOptions: {
+            modifier: {
+              search: "none",
+            },
+          },
+        },
+        {
+          extend: "print",
+          text: "Хэвлэх",
+          text: '<a class="btn btn-outline-secondary m-2" style="float: left;">Хэвлэх</a>',
+          tag: "span",
+          exportOptions: {
+            modifier: {
+              search: "none",
+            },
+          },
+        },
+        {
+          extend: "excelHtml5",
+          text: "Excel",
+          text: '<a class="btn btn-outline-secondary m-2" style="float: left;">XLS файл татах</a>',
+          tag: "span",
+          exportOptions: {
+            modifier: {
+              search: "none",
+            },
+          },
+        },
+      ],
+      paging: false,
+      sorting: false,
+      ordering: false,
+      pageLength: 50,
+      lengthMenu: [50, 100, 200, 500],
+      language: {
+        lengthMenu: "_MENU_ эгнээ харах",
+        zeroRecords: "Дата алга",
+        info: "_PAGES_ хуудаснаас _PAGE_-р хуудас.",
+        infoEmpty: "",
+        sSearch: "Шүүх",
+        paginate: {
+          previous: "өмнөх",
+          next: "дараа",
+        },
+      },
+    });
+  });
+</script>
+{% endblock main %}

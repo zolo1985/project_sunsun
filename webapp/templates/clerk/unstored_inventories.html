@@ -1,0 +1,133 @@
+{% extends "layout.html" %}
+{% block main %}
+    <!-- ORDERS -->
+    <section>
+        <div class="container-fluid min-vh-100" style="width: 80%;">
+            <div class="row">
+                <div class="col-sm-12 mb-5">
+                    <h3 class="display-6 mb-4">
+                        {% if orders|length > 0 %}
+                            <p>Агуулахгүй Харилцагч</p>
+                        {% else %}
+                            <p>Агуулахгүй Харилцагч</p>
+                        {% endif %}
+                    </h3>
+                    <form id="form" method="POST" action="">
+                        {{ form.csrf_token }}
+                        <div class="row g-2 m-2">
+                            <div class="col-md-3">
+                                {{ form.select_supplier.label(class="form-control-label") }}
+                                {% if form.select_supplier.errors %}
+                                    {{ form.select_supplier(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.select_supplier.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.select_supplier(class="form-control") }}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-3 align-self-center">
+                                {{ form.submit(class="btn btn-outline-success m-0") }}
+                            </div>
+                        </div>
+                    </form>
+                        <div class="table-responsive-sm">
+                            <table id="inventory-table" class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="bg-grad">Хүргэлт</th>
+                                        <th scope="col" class="bg-grad"></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    {% for unstored_inventory in unstored_inventories %}
+                                        <tr>
+                                            <td>
+                                                <p>Хүргэлт: ID{{ unstored_inventory.delivery.id }}</p>
+                                                <p>Хүргэлт төлөв: Цуцалсан</p>
+                                                <p>{{ unstored_inventory.delivery.addresses.phone }}</p>
+                                            </td>
+                                            <td>
+                                                {% if unstored_inventory.is_returned_to_supplier %}
+                                                    <p>Буцаалт үүссэн.</p>
+                                                {% else %}
+                                                    <a class="btn btn-outline-success" href="{{ url_for('clerk_return_task.clerk_return_task_add', unstored_inventory_id=unstored_inventory.id) }}">Буцаалт үүсгэх</a>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END ORDERS -->
+    <script>
+        $(document).ready(function () {
+            $('#inventory-table').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'csvHtml5',
+                        text: 'CSV файл татах',
+                        text: '<a class="btn btn-outline-secondary m-2" style="float: left;">CSV файл татах</a>',
+                        tag: 'span',
+                        exportOptions: {
+                            modifier: {
+                                search: 'none'
+                            }
+                        }
+                    }, {
+                        extend: 'print',
+                        text: 'Хэвлэх',
+                        text: '<a class="btn btn-outline-secondary m-2" style="float: left;">Хэвлэх</a>',
+                        tag: 'span',
+                        exportOptions: {
+                            modifier: {
+                                search: 'none'
+                            }
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel',
+                        text: '<a class="btn btn-outline-secondary m-2" style="float: left;">XLS файл татах</a>',
+                        tag: 'span',
+                        exportOptions: {
+                            modifier: {
+                                search: 'none'
+                            }
+                        }
+                    },
+                ],
+                paging: false,
+                "columnDefs": [
+                    {
+                        "orderData": [0, 1]
+                    },
+                ],
+                pageLength: 50,
+                lengthMenu: [
+                    50, 100, 200, 500
+                ],
+                language: {
+                    lengthMenu: "_MENU_ эгнээ харах",
+                    zeroRecords: "Дата алга",
+                    info: "_PAGES_ хуудаснаас _PAGE_-р хуудас. Нийт: _TOTAL_",
+                    infoEmpty: "",
+                    sSearch: "Шүүх",
+                    paginate: {
+                    previous: "өмнөх",
+                    next: "дараа",
+                    },
+                },
+            });
+        });
+    </script>
+
+{% endblock main %}

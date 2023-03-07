@@ -1,0 +1,124 @@
+{% extends "layout.html" %} {% block main %}
+<!-- Products -->
+<section>
+  <div class="container-fluid min-vh-100" style="width: 80%;">
+    <div class="row">
+      <div class="col-sm-12 mb-5">
+        <h3 class="display-6 mb-4">Агуулахад бүртгэлтэй бараа</h3>
+        <div class="table-responsive-sm">
+          <table id="inventory-table" class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col" class="bg-grad">#</th>
+                <th scope="col" class="bg-grad">Зураг</th>
+                <th scope="col" class="bg-grad">Барааны нэр</th>
+                <th scope="col" class="bg-grad">Өнгө</th>
+                <th scope="col" class="bg-grad">Хэмжээ</th>
+                <th scope="col" class="bg-grad">Төрөл</th>
+                <th scope="col" class="bg-grad">Бусад</th>
+                <th scope="col" class="bg-grad">Хэрэглэх заавар</th>
+                <th scope="col" class="bg-grad">Нэгж үнэ</th>
+                <th scope="col" class="bg-grad"></th>
+                <th scope="col" class="bg-grad">Төлөв</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for product in products %}
+              <tr>
+                <td>{{ loop.index }}.</td>
+                <td>
+                  {% if product.image_url is none %}
+                    <img class="product-img rounded border-3 shadow" src="{{url_for('static', filename='images/placeholder.jpg')}}" alt="" />
+                  {% else %}
+                    <img class="product-img rounded border-3 shadow" src="{{ url_for('supplier1_util.artwork', artwork=product.image_url) }}" alt="" style="width: 300px;"/>
+                  {% endif %}
+                </td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.color}}</td>
+                <td>{{ product.size}}</td>
+                <td>{{ product.type }}</td>
+                <td>{{ product.description }}</td>
+                <td>{{ product.usage_guide }}</td>
+                <td style="text-align: end">{{ product.price | numberformat }}₮</td>
+                <td><a class="btn btn-sm btn-outline-success" href="{{ url_for('supplier1_product.supplier1_product_edit', product_id=product.id) }}">Засах</a></td>
+                <td>
+                  {% if product.is_active %}
+                  <a class="btn btn-sm btn-outline-success" href="{{ url_for('supplier1_product.supplier1_product_state', product_id=product.id) }}">Идэвхгүй болгох</a>
+                  {% else %}
+                  <a class="btn btn-sm btn-outline-danger" href="{{ url_for('supplier1_product.supplier1_product_state', product_id=product.id) }}">Идэвхтэй болгох</a>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- END Products -->
+<script>
+  $(document).ready(function () {
+      $('#inventory-table').DataTable({
+          dom: 'Bfrtip',
+          buttons: [
+              {
+                  extend: 'csvHtml5',
+                  text: 'CSV файл татах',
+                  text: '<a class="btn btn-outline-secondary m-2" style="float: left;">CSV файл татах</a>',
+                  tag: 'span',
+                  exportOptions: {
+                      modifier: {
+                          search: 'none'
+                      }
+                  }
+              },
+              {
+                  extend: 'print',
+                  text: 'Хэвлэх',
+                  text: '<a class="btn btn-outline-secondary m-2" style="float: left;">Хэвлэх</a>',
+                  tag: 'span',
+                  exportOptions: {
+                      modifier: {
+                          search: 'none'
+                      }
+                  }
+              },
+              {
+                  extend: 'excelHtml5',
+                  text: 'Excel',
+                  text: '<a class="btn btn-outline-secondary m-2" style="float: left;">XLS файл татах</a>',
+                  tag: 'span',
+                  exportOptions: {
+                      modifier: {
+                          search: 'none'
+                      }
+                  }
+              },
+          ],
+          "columnDefs": [
+              {
+                  "orderData": [0, 1]
+              },
+          ],
+          pageLength: 50,
+          order: [[1, 'asc']],
+          lengthMenu: [
+              50, 100, 200, 500
+          ],
+          language: {
+              lengthMenu: "_MENU_ эгнээ харах",
+              zeroRecords: "Дата алга",
+              info: "_PAGES_ хуудаснаас _PAGE_-р хуудас. Нийт: _TOTAL_",
+              infoEmpty: "",
+              sSearch: "Шүүх",
+              paginate: {
+              previous: "өмнөх",
+              next: "дараа",
+              },
+          },
+      });
+  });
+</script>
+{% endblock main %}

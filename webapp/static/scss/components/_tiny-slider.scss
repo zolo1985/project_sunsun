@@ -1,0 +1,354 @@
+// 
+// tiny-slider.scss
+// Theme Component
+
+// Tiny slider animation only works with animate__fadeInUp
+.tiny-slider [class*="animate__"] {
+    animation-name: none;
+}
+.tiny-slider .tns-slide-active {
+  .animate__fadeInUp {
+      animation-name: fadeInUp;
+  }
+}
+
+.tns-outer{
+  position: relative;
+}
+
+.tiny-slider{
+  .item{
+    position: relative;
+  }
+}
+
+//
+// Slider arrow
+//
+.tns-controls{
+  [data-controls] {
+    width: 28px;
+    height: 28px;
+    margin: -16px 15px 0;
+    display: block;
+    position: absolute;
+    top: 50%;
+    border-radius: 3px;
+    z-index: 10;
+    cursor: pointer;
+    text-align: center;
+    transition: $transition-base;
+    color: $gray-800;
+    background-color: $white;
+    text-align: center;
+    z-index: 200;
+    border: 2px solid $white;
+    box-sizing: border-box;
+    }
+    i{
+      color: $gray-800;
+      font-size: 12px;
+      transition: $transition-base;
+    }
+  }
+
+.tns-controls [data-controls='prev'] {
+  left: 0;
+}
+.tns-controls [data-controls='next'] {
+  right: 0;
+}
+
+/* rtl:raw:
+.tiny-slider .tns-controls [data-controls]{
+  transform: scaleX(-1) translateY(-50%);
+}
+*/
+
+
+// arrow dark
+.arrow-dark{
+  [data-controls] {
+    color: $white;
+    border-color: $gray-800;
+    background-color: $gray-800;
+  }
+  i {
+    color: $white;
+  }
+  &:hover {
+    i {
+      color: $white;
+    }
+  }
+}
+
+// arrow gray
+.arrow-gray{
+  [data-controls] {
+    color: $gray-800;
+    border: 2px solid $gray-100;
+    background-color: $gray-100;
+    &:hover {
+      background-color: $gray-100;
+      i {
+        color: $gray-800;
+      }
+    }
+  }
+}
+
+// arrow large
+.arrow-large{
+  [data-controls] {
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    margin: -16px 0 0;
+    border-radius: 0;
+    i {
+      font-size: 20px;
+    }
+  }
+}
+
+// arrow-transparent
+.arrow-transparent{
+  [data-controls] {
+    opacity: .7;
+    &:hover{
+      opacity: 1;
+    }
+  }
+
+}
+
+// arrow round
+.arrow-round{
+  [data-controls] {
+    border-radius: 100%;
+  }
+}
+
+// arrow bordered
+.arrow-bordered{
+  [data-controls] {
+    background: transparent;
+    color: $gray-600;
+    border: 2px solid $gray-600;
+    font-weight: bold;
+    i {
+      font-weight: bold;
+      color: $gray-600;
+    }
+    &:hover{
+      color: $gray-800;
+    }
+    &:hover{
+      border-color: $gray-800;
+      background: transparent;
+    }
+  }
+}
+
+// arrow only
+.arrow-only{
+  [data-controls] {
+    background: transparent;
+    &:hover{
+      background: transparent;
+      color: $gray-800;
+    }
+  }
+}
+
+// arrow hover
+.arrow-hover{
+  overflow: hidden;
+  [data-controls='prev']{
+    left: -60px;
+  }
+  [data-controls='next']{
+    right: -60px;
+  }
+  &:hover{
+    [data-controls='prev']{
+    left: 0px;
+    }
+    [data-controls='next']{
+      right: 0px;
+    }
+  }
+}
+
+// arrow md none
+@include media-breakpoint-down(md) {
+  .arrow-md-none [data-controls] {
+    display: none;
+  }
+}
+
+// arrow left bottom
+.arrow-start-bottom{
+  .tns-controls [data-controls]{
+    top: auto;
+    bottom: 10px;
+  }
+  [data-controls='prev']{
+    left: 20px;
+  }
+  [data-controls='next']{
+    left: 90px;
+  }
+}
+
+
+// 
+// Slider dots
+// 
+.tns-nav{
+  position: absolute;
+  top: 100%;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  width: auto;
+  text-align: center;
+  white-space: nowrap;
+  [data-nav] {
+    position: relative;
+    display: inline-block;
+    margin: 0 4px;
+    padding: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: transparent;
+    box-shadow: inset 0 0 0 2px $gray-500;
+    transition: $transition-base;
+    border: 0;
+    &:after{
+      border-radius: 50%;
+      overflow: hidden;
+      content: '';
+      position: absolute;
+      bottom: 0;
+      height: 0;
+      left: 0;
+      width: 100%;
+      background-color: $gray-500;
+      box-shadow: 0 0 1px $gray-500;
+      transition: height 0.3s ease-in-out;
+    }
+  }
+  .tns-nav-active{
+    &:after{
+      height: 100%;
+    }
+  }
+}
+
+// Dots inside
+.dots-inside .tns-nav{
+  top: auto;
+  padding-bottom: 20px;
+}
+.dots-end .tns-nav{
+  top: 50%;
+  bottom: auto;
+  transform: translateY(-50%);
+  padding: 0;
+  right: 30px;
+  left: auto;
+  [data-nav] {
+    display: block;
+    margin: 6px;
+  }
+}
+
+/*dots position*/
+.dots-right-top .tns-nav {
+  position: absolute;
+  top: -55px;
+  right: 0;
+  left: auto;
+}
+
+// Dots primary
+.dots-primary .tns-nav{
+  [data-nav] {
+    box-shadow: inset 0 0 0 2px $primary;
+    transition: $transition-base;
+    &:after{
+      background-color: $primary;
+      box-shadow: 0 0 1px $primary;
+    }
+  }
+}
+
+// Dots white
+.dots-white .tns-nav{
+  [data-nav] {
+    box-shadow: inset 0 0 0 2px $white;
+    transition: $transition-base;
+    &:after{
+      background-color: $white;
+      box-shadow: 0 0 1px $white;
+    }
+  }
+}
+
+// Dots dark
+.dots-dark .tns-nav{
+  [data-nav] {
+    box-shadow: inset 0 0 0 2px $dark;
+    transition: $transition-base;
+    &:after{
+      background-color: $dark;
+      box-shadow: 0 0 1px $dark;
+    }
+  }
+}
+
+// Dots bordered
+.dots-bordered .tns-nav{
+  [data-nav] {
+    position: relative;
+    height: 17px;
+    width: 17px;
+    box-shadow: inset 0 0 0 2px transparent;
+    &:after{
+      content: "";
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      height: 5px;
+      width: 5px;
+      background: $dark;
+      display: block;
+    }
+  }
+  .tns-nav-active{
+    box-shadow: inset 0 0 0 2px $dark;
+  }
+}
+.dots-white.dots-bordered{
+  [data-nav] {
+    &:after{
+      background: $white;
+    }
+  }
+  .tns-nav-active{
+    box-shadow: inset 0 0 0 2px $white;
+  }
+}
+
+// Dots left bottom
+.dots-start-bottom{
+  .tns-nav{
+    left: 0;
+    transform: none;
+  }
+}

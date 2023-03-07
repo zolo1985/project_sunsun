@@ -1,0 +1,114 @@
+{% extends "layout.html" %}
+{% block main %}
+<div class="preloader">
+  <img src="{{ url_for('static', filename='images/preloader.svg') }}" alt="Pre-loader" />
+</div>
+<section>
+  <div class="container-fluid min-vh-100" style="width: 80%;">
+    <div class="row">
+      <div class="col-sm-12 mb-5">
+        <h3 class="display-6 mb-4">Тооцооны задаргаа</h3>
+        <div class="table-responsive-sm">
+          <table id="inventory-table" class="table table-lg table-bordered">
+            <thead>
+              <tr>
+                <th scope="col" class="bg-grad">ID</th>
+                <th scope="col" class="bg-grad">Харилцагч</th>
+                <th scope="col" class="bg-grad">Хаяг</th>
+                <th scope="col" class="bg-grad">Жолооч</th>
+                <th scope="col" class="bg-grad">Захиалгын Дүн</th>
+                <th scope="col" class="bg-grad">Авсан Дүн</th>
+                <th scope="col" class="bg-grad">Бараа</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for order in orders %}
+              <tr>
+                <td>ID{{ order.id }}</td>
+                <td>{{ order.user.company_name | capitalize }}</td>
+                <td>
+                  <p>
+                      {% if order.addresses.city is not none %}, {{ order.addresses.city }}{% endif %}{% if order.addresses.district is not none %}{{ order.addresses.district }}{% endif %}{% if order.addresses.khoroo is not none %}, {{ order.addresses.khoroo }}-р хороо{% endif %}{% if order.addresses.aimag is not none %}{{ order.addresses.aimag }}{% endif %}{% if order.addresses.address is not none %}, {{ order.addresses.address }}{% endif %}{% if order.addresses.phone is not none %}, {{ order.addresses.phone }}{% endif %}{% if order.addresses.phone_more is not none %}, {{ order.addresses.phone_more }}{% endif %}
+                  </p>
+                </td>
+                <td>{{ order.driver.lastname[0] | capitalize }}. {{ order.driver.firstname }}</td>
+                <td>{{ order.total_amount }}</td>
+                <td>{{ order.payment_details.total_amount }}</td>
+                <td>
+                    {% if order.user.has_role('supplier1') %}
+                        {% for order_detail in order.delivery_details %}
+                            <p>
+                                {% if order_detail.products.name %}{{ order_detail.products.name }}{% endif %}{% if order_detail.products.color %}, {{ order_detail.products.color }}{% endif %}{% if order_detail.products.size %}, {{ order_detail.products.size }}{% endif %}{% if order_detail.products.type %}, {{ order_detail.products.type }}{% endif %}{% if order_detail.quantity %} - {{ order_detail.quantity }} ширхэг. {% endif %}{% if order_detail.products.price %} нэгж үнэ: {{ (order_detail.products.price)  | round | int | numberformat }}₮{% endif%}
+                            </p>
+                        {% endfor %}
+                    {% elif order.user.has_role('supplier2') %}
+                        {{ order.addresses.phone }}
+                    {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  $(document).ready(function () {
+    $("#inventory-table").DataTable({
+      dom: "Bfrtip",
+      buttons: [
+        {
+          extend: "csvHtml5",
+          text: '<a class="btn btn-outline-secondary m-2" style="float: left;">CSV файл татах</a>',
+          tag: "span",
+          exportOptions: {
+            modifier: {
+              search: "none",
+            },
+          },
+        },
+        {
+          extend: "print",
+          text: "Хэвлэх",
+          text: '<a class="btn btn-outline-secondary m-2" style="float: left;">Хэвлэх</a>',
+          tag: "span",
+          exportOptions: {
+            modifier: {
+              search: "none",
+            },
+          },
+        },
+        {
+          extend: "excelHtml5",
+          text: "Excel",
+          text: '<a class="btn btn-outline-secondary m-2" style="float: left;">XLS файл татах</a>',
+          tag: "span",
+          exportOptions: {
+            modifier: {
+              search: "none",
+            },
+          },
+        },
+      ],
+      paging: false,
+      sorting: false,
+      ordering: false,
+      pageLength: 50,
+      lengthMenu: [50, 100, 200, 500],
+      language: {
+        lengthMenu: "_MENU_ эгнээ харах",
+        zeroRecords: "Дата алга",
+        info: "_PAGES_ хуудаснаас _PAGE_-р хуудас.",
+        infoEmpty: "",
+        sSearch: "Шүүх",
+        paginate: {
+          previous: "өмнөх",
+          next: "дараа",
+        },
+      },
+    });
+  });
+</script>
+{% endblock main %}

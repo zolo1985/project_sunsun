@@ -1,0 +1,32 @@
+
+//
+// Breadcrumb overrides
+//
+
+.breadcrumb {
+  background: transparent;
+  padding: 0;
+  .breadcrumb-item {
+    display: inline-block;
+    a {
+      i {
+        font-size: 12px;
+        transition: $transition-base;
+      }
+      &:hover i {
+        color: $primary;
+        transition: $transition-base;
+      }
+    }
+  }
+  > .breadcrumb-item + .breadcrumb-item:before {
+    content: "\f111" !important;
+    padding: 0 12px 0 0px !important;
+    font-family: 'Font Awesome 5 Free';
+    font-size: 7px;
+    font-weight: bold;
+    vertical-align: middle;
+    color: $white !important;
+    float: none;
+  }
+}

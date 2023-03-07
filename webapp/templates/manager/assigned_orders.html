@@ -1,0 +1,161 @@
+{% extends "layout.html" %}
+{% block main %}
+    <!-- ORDERS -->
+    <section>
+        <div class="container-fluid min-vh-100" style="width: 80%;">
+            <div class="col-sm-12 mb-5">
+                <h3 class="display-6 mb-4">Хүргэлт буцаах</h3>
+                <form id="form" method="POST" action="">
+                    {{ form.csrf_token }}
+                    <div class="row g-3">
+                        <div class="col-md-4 position-relative">
+                            {{ form.selected_driver.label(class="form-control-label") }}
+                            {% if form.selected_driver.errors %}
+                                {{ form.selected_driver(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.selected_driver.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.selected_driver(class="form-control") }}
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 d-flex align-items-center">
+                            {{ form.submit(class="btn btn-outline-success m-0") }}
+                        </div>
+                    </div>
+                    {% if orders %}
+                        <div class="table-responsive-sm">
+                            <table id="inventory-table" class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="bg-grad">ID</th>
+                                        <th scope="col" class="bg-grad">Төлөв</th>
+                                        <th scope="col" class="bg-grad">Үүсгэсэн огноо</th>
+                                        <th scope="col" class="bg-grad">Хаяг/Утас</th>
+                                        <th scope="col" class="bg-grad">Бараа/Тоо ширхэг/Нэгж үнэ</th>
+                                        <th scope="col" class="bg-grad">Дүн</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in orders|sort(attribute='id', reverse=True) %}
+                                        <tr>
+                                            <td>ID{{ order.id }}</td>
+                                            <td>
+                                                {{ order.status }}
+                                            </td>
+                                            <td>{{ order.created_date.strftime('%Y-%m-%d') }}</td>
+                                            <td>
+                                                <p class="display-8">
+                                                    {% if order.addresses.city is not none %}, {{ order.addresses.city }}{% endif %}{% if order.addresses.district is not none %}{{ order.addresses.district }}{% endif %}{% if order.addresses.khoroo is not none %}, {{ order.addresses.khoroo }}-р хороо{% endif %}{% if order.addresses.aimag is not none %}{{ order.addresses.aimag }}{% endif %}{% if order.addresses.address is not none %}, {{ order.addresses.address }}{% endif %}{% if order.addresses.phone is not none %}, {{ order.addresses.phone }}{% endif %}{% if order.addresses.phone_more is not none %}, {{ order.addresses.phone_more }}{% endif %}
+                                                </p>
+                                            </td>
+                                            <td>
+                                                {% if order.user.has_role('supplier1') %}
+                                                    {% for order_detail in order.delivery_details %}
+                                                        <p>
+                                                            {% if order_detail.products.name %}{{ order_detail.products.name }}{% endif %}{% if order_detail.products.color %}, {{ order_detail.products.color }}{% endif %}{% if order_detail.products.size %}, {{ order_detail.products.size }}{% endif %}{% if order_detail.products.type %}, {{ order_detail.products.type }}{% endif %}{% if order_detail.quantity %} - {{ order_detail.quantity }} ширхэг. {% endif %}{% if order_detail.products.price %} нэгж үнэ: {{ (order_detail.products.price)  | round | int | numberformat }}₮{% endif%}
+                                                        </p>
+                                                    {% endfor %}
+                                                {% elif order.user.has_role('supplier2') %}
+                                                    {{ order.addresses.phone }}
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <span class="m-2">₮{{ order.total_amount  | round | int | numberformat }}</span>
+                                                {% if order.status == "unassigned" %}
+                                                    {% if order.is_postphoned %}
+                                                    
+                                                    {% else %}
+                                                            <a class="btn btn-outline-danger" href="{{ url_for('supplier1_order.supplier1_order_delete', order_id=order.id) }}">Устгах</a>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                </form>
+                {% if orders %}
+                <form id="form" method="POST" action="">
+                    {{ form1.csrf_token }}
+                    {% for order in orders|sort(attribute='id', reverse=True) %}
+                        {{ form1.order_id(class="form-control", value=order.id) }}
+                    {% endfor %}
+                    <div class="float-end mt-5 mb-5">
+                        {{ form1.submit(class="btn btn-outline-success m-0") }}
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    $(document).ready(function () {
+        $('#inventory-table').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'csvHtml5',
+                    text: 'CSV файл татах',
+                    text: '<a class="btn btn-outline-secondary m-2" style="float: left;">CSV файл татах</a>',
+                    tag: 'span',
+                    exportOptions: {
+                        modifier: {
+                            search: 'none'
+                        }
+                    }
+                }, {
+                    extend: 'print',
+                    text: 'Хэвлэх',
+                    text: '<a class="btn btn-outline-secondary m-2" style="float: left;">Хэвлэх</a>',
+                    tag: 'span',
+                    exportOptions: {
+                        modifier: {
+                            search: 'none'
+                        }
+                    }
+                }, {
+                    extend: 'excelHtml5',
+                    text: 'Excel',
+                    text: '<a class="btn btn-outline-secondary m-2" style="float: left;">XLS файл татах</a>',
+                    tag: 'span',
+                    exportOptions: {
+                        modifier: {
+                            search: 'none'
+                        }
+                    }
+                },
+            ],
+            "columnDefs": [
+                {
+                    "orderData": [0, 1]
+                },
+            ],
+            pageLength: 50,
+            order: [
+                [1, 'asc']
+            ],
+            lengthMenu: [
+                50, 100, 200, 500
+            ],
+            "language": {
+                "lengthMenu": "_MENU_ эгнээ харах",
+                "zeroRecords": "Дата алга",
+                "info": "_PAGES_ хуудаснаас _PAGE_-р хуудас. Нийт: _TOTAL_ хүргэлт",
+                "infoEmpty": "",
+                sSearch: "Шүүх",
+                "paginate": {
+                    "previous": "өмнөх",
+                    "next": "дараа"
+                }
+
+            }
+        });
+    });
+</script>
+<!-- END ORDERS -->{% endblock main %}

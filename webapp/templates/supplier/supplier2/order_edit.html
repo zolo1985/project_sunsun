@@ -1,0 +1,148 @@
+{% extends "layout.html" %}
+{% block main %}
+<!-- ORDERS ADD -->
+<section>
+    <div class="container">
+        <div class="row">
+            <form id="form" method="POST" action="">
+                {{ form.csrf_token }}
+                <!-- Tab default -->
+				<div class="col-sm-12 col-md-12">
+					<h3 class="display-6 mb-4">Хүргэлт Засах</h3>
+					<div class="tab-content">
+						<div class="tab-pane show active" id="tab-1-1">
+							<div class="col-sm-12 mb-5">
+                                <div class="table-responsive-sm">
+                                    <table class="table table-hover" id="lines">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" class="bg-grad">Утасны дугаар</th>
+                                                <th scope="col" class="bg-grad">Дүүрэг/орон нутаг</th>
+                                                <th scope="col" class="bg-grad">Хаяг</th>
+                                                <th scope="col" class="bg-grad">Нийт дүн</th>
+                                            </tr>
+                                        </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            {{ form.phone.label(class="form-control-label") }}
+                                                            {% if form.phone.errors %}
+                                                            {{ form.phone(class="form-control is-invalid") }}
+                                                            <div class="invalid-feedback">
+                                                                {% for error in form.phone.errors %}
+                                                                <span>{{ error }}</span>
+                                                                {% endfor %}
+                                                            </div>
+                                                            {% else %}
+                                                            {{ form.phone(class="form-control") }}
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="form-group">
+                                                            {{ form.phone_more.label(class="form-control-label") }}
+                                                            {% if form.phone_more.errors %}
+                                                            {{ form.phone_more(class="form-control is-invalid") }}
+                                                            <div class="invalid-feedback">
+                                                                {% for error in form.phone_more.errors %}
+                                                                <span>{{ error }}</span>
+                                                                {% endfor %}
+                                                            </div>
+                                                            {% else %}
+                                                            {{ form.phone_more(class="form-control") }}
+                                                            {% endif %}
+                                                        </div>
+                                                    </td>
+            
+                                                    <td>
+                                                        {% if task_detail.destination_type == "local" %}
+                                                            <div class="form-group">
+                                                                {{ form.district.label(class="form-control-label") }}
+                                                                {% if form.district.errors %}
+                                                                    {{ form.district(class="form-control is-invalid") }}
+                                                                    <div class="invalid-feedback">
+                                                                        {% for error in form.district.errors %}
+                                                                            <span>{{ error }}</span>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                {% else %}
+                                                                    {{ form.district(class="form-control") }}
+                                                                {% endif %}
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                {{ form.khoroo.label(class="form-control-label") }}
+                                                                {% if form.khoroo.errors %}
+                                                                    {{ form.khoroo(class="form-control is-invalid") }}
+                                                                    <div class="invalid-feedback">
+                                                                        {% for error in form.khoroo.errors %}
+                                                                            <span>{{ error }}</span>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                {% else %}
+                                                                    {{ form.khoroo(class="form-control") }}
+                                                                {% endif %}
+                                                            </div>
+                                                        {% elif task_detail.destination_type == "long" %}
+                                                            <div class="form-group">
+                                                                {{ form.aimag.label(class="form-control-label") }}
+                                                                {% if form.aimag.errors %}
+                                                                    {{ form.aimag(class="form-control is-invalid") }}
+                                                                    <div class="invalid-feedback">
+                                                                        {% for error in form.aimag.errors %}
+                                                                            <span>{{ error }}</span>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                {% else %}
+                                                                    {{ form.aimag(class="form-control") }}
+                                                                {% endif %}
+                                                            </div>
+                                                        {% endif %}
+                                                    </td>
+            
+                                                    <td>
+                                                        <div class="form-group">
+                                                            {{ form.address.label(class="form-control-label") }}
+                                                            {% if form.address.errors %}
+                                                                {{ form.address(class="form-control is-invalid") }}
+                                                                <div class="invalid-feedback">
+                                                                    {% for error in form.address.errors %}
+                                                                        <span>{{ error }}</span>
+                                                                    {% endfor %}
+                                                                </div>
+                                                            {% else %}
+                                                                {{ form.address(class="form-control", style="min-height: 105px;") }}
+                                                            {% endif %}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            {{ form.total_amount.label(class="form-control-label") }}
+                                                            {% if form.total_amount.errors %}
+                                                                {{ form.total_amount(class="form-control is-invalid") }}
+                                                                <div class="invalid-feedback">
+                                                                    {% for error in form.total_amount.errors %}
+                                                                        <span>{{ error }}</span>
+                                                                    {% endfor %}
+                                                                </div>
+                                                            {% else %}
+                                                                {{ form.total_amount(class="form-control") }}
+                                                            {% endif %}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="form-group float-end">
+                                {{ form.submit(class="btn btn-outline-success") }}
+                            </div>
+						</div>
+					</div>
+				</div>
+            </form>
+        </div>
+    </div>
+</section>
+<!-- END ORDERS ADD -->
+{% endblock main %}

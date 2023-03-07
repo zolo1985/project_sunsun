@@ -1,0 +1,315 @@
+{% extends "layout.html" %}
+{% block main %}
+    <section>
+        <div class="container-fluid min-vh-100" style="width: 80%;">
+            <div class="row">
+                <div class="col-sm-12 mb-5">
+                    <h3 class="display-6 mb-4">Өнөөдрийн нийт хүргэлт</h3>
+                    <section class="py-4 border mb-5 rounded-3 border-2">
+                        <div class="container">
+                            <div class="row">
+                                <!-- count item -->
+                                <div class="col mb-4 mb-md-0">
+                                    <div class="text-center">
+                                        <i class="display-6 ti-dropbox"></i>
+                                        <h2 class="fw-bold mt-2 mb-0 purecounter" data-purecounter-start="0" data-purecounter-delay="10" data-purecounter-duration="1" data-purecounter-end="{{ total_orders }}">0</h2>
+                                        <p class="mb-0">Нийт хүргэлт</p>
+                                    </div>
+                                </div>
+                                <!-- count item -->
+                                <div class="col mb-4 mb-md-0">
+                                    <div class="text-center">
+                                        <i class="display-6 ti-layout-list-thumb"></i>
+                                        <h2 class="fw-bold mt-2 mb-0 purecounter" data-purecounter-start="0" data-purecounter-delay="10" data-purecounter-duration="1" data-purecounter-end="{{ unassigned_orders }}">0</h2>
+                                        <p class="mb-0">Хувиарлагдаагүй</p>
+                                    </div>
+                                </div>
+                                <!-- count item -->
+                                <div class="col mb-4 mb-md-0">
+                                    <div class="text-center">
+                                        <i class="display-6 ti-truck"></i>
+                                        <h2 class="fw-bold mt-2 mb-0 purecounter" data-purecounter-start="0" data-purecounter-delay="10" data-purecounter-duration="1" data-purecounter-end="{{ delivered_orders }}">0</h2>
+                                        <p class="mb-0">Хүргэгдсэн</p>
+                                    </div>
+                                </div>
+                                <!-- count item -->
+                                <div class="col mb-4 mb-md-0">
+                                    <div class="text-center">
+                                        <i class="display-6 ti-time"></i>
+                                        <h2 class="fw-bold mt-2 mb-0 purecounter" data-purecounter-start="0" data-purecounter-delay="10" data-purecounter-duration="1" data-purecounter-end="{{ postphoned_orders }}">0</h2>
+                                        <p class="mb-0">Хойшлуулсан</p>
+                                    </div>
+                                </div>
+                                <!-- count item -->
+                                <div class="col mb-4 mb-md-0">
+                                    <div class="text-center">
+                                        <i class="display-6 ti-alert"></i>
+                                        <h2 class="fw-bold mt-2 mb-0 purecounter" data-purecounter-start="0" data-purecounter-delay="10" data-purecounter-duration="1" data-purecounter-end="{{ cancelled_orders }}">0</h2>
+                                        <p class="mb-0">Цуцалсан</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+    
+                    <section class="py-4 border mb-5 rounded-3 border-2">
+                        <div class="container">
+                            <div class="mb-3">
+                                <span style="font-size: 16px; color: black; padding-right: 1rem;">
+                                    <strong>Өнөөдрийн хүргэлт дүүргээр:
+                                    </strong>
+                                </span>
+                                {% for order in total_orders_count_by_district %}
+                                    <span style="font-size: 16px; color: black; padding-right: 1rem;">{{ order.district }}:
+                                        <strong>{{ order.total_count }}</strong>
+                                    </span>
+                                {% endfor %}
+                            </div>
+            
+                            <div class="mb-3">
+                                <span style="font-size: 16px; color: black; padding-right: 1rem;">
+                                    <strong>Өнөөдрийн хүргэлт хувиарлалтаар:
+                                    </strong>
+                                </span>
+                                {% for order in total_orders_count_by_driver %}
+                                    <span style="font-size: 16px; color: black; padding-right: 1rem;">{{ order.driver }}:
+                                        <strong>{{ order.total_count }}</strong>
+                                    </span>
+                                {% endfor %}
+                            </div>
+            
+                            <div class="mb-3">
+                                <span style="font-size: 16px; color: black; padding-right: 1rem;">
+                                    <strong>Өнөөдрийн хүргэлт аймгаар:
+                                    </strong>
+                                </span>
+                                {% for order in total_orders_count_by_aimag %}
+                                    <span style="font-size: 16px; color: black; padding-right: 1rem;">{{ order.aimag }}:
+                                        <strong>{{ order.total_count }}</strong>
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </section>
+    
+                    <form id="form" method="POST" action="">
+                        {{ form.csrf_token }}
+                        <div class="row g-2">
+                            <div class="col-md-3">
+                                {{ form.date.label(class="form-control-label") }}
+                                {% if form.date.errors %}
+                                    {{ form.date(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.date.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.date(class="form-control") }}
+                                {% endif %}
+                            </div>         
+                            <div class="col-md-3 align-self-center">
+                                {{ form.submit(class="btn btn-outline-success m-0") }}
+                            </div>
+                        </div>
+                    </form>
+    
+                    <div class="table-responsive-sm">
+                        <table id="inventory-table" class="table table-hover display">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="bg-grad">ID</th>
+                                    <th scope="col" class="bg-grad">Хаяг/Утас</th>
+                                    <th scope="col" class="bg-grad">Харилцагч</th>
+                                    <th scope="col" class="bg-grad">Төлөв</th>
+                                    <th scope="col" class="bg-grad">Хүргэх огноо</th>
+                                    <th scope="col" class="bg-grad">Бүс</th>
+                                    <th scope="col" class="bg-grad">Жолооч</th>
+                                    <th scope="col" class="bg-grad"></th>
+                                </tr>
+                            </thead>
+    
+                            <tbody>
+                                {% for order in orders %}
+                                    <tr>
+                                        <td scope="row">
+                                            <a class="text-dark" href="{{ url_for('manager_order.manager_order_detail', order_id=order.id) }}">ID{{ order.id }}</a>
+                                        </td>
+                                        <td>
+                                            <p class="display-8">
+                                                {% if order.addresses.city is not none %}, {{ order.addresses.city }}{% endif %}{% if order.addresses.district is not none %}{{ order.addresses.district }}{% endif %}{% if order.addresses.khoroo is not none %}, {{ order.addresses.khoroo }}-р хороо{% endif %}{% if order.addresses.aimag is not none %}{{ order.addresses.aimag }}{% endif %}{% if order.addresses.address is not none %}, {{ order.addresses.address }}{% endif %}{% if order.addresses.phone is not none %}, {{ order.addresses.phone }}{% endif %}{% if order.addresses.phone_more is not none %}, {{ order.addresses.phone_more }}{% endif %}
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <a style="text-align: center; color: black;" href="{{ url_for('manager_order.manager_order_detail', order_id=order.id) }}">
+                                                <p>{{ order.user.company_name | capitalize }}</p>
+                                            </a>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            {% if order.status == "unassigned" %}
+                                                {% if order.is_postphoned %}
+                                                    <p class="text-info">Хойшлуулсан</p>
+                                                    <p><strong>Хойшлуулсан огноо: </strong>{{ order.postphoned_date | datefilter }}</p>
+                                                    <p><strong>Коммент: </strong>{{ order.driver_comment }}</p>
+                                                {% else %}
+                                                    <p class="text-danger">Хувиарлагдаагүй</p>
+                                                {% endif %}
+                                            {% elif order.status == "assigned" %}
+                                                <p class="text-primary">Хувиарлагдсан</p>
+                                            {% elif order.status == "completed" %}
+                                                {% if order.is_postphoned %}
+                                                    <p class="text-success">Хүргэгдсэн*</p>
+                                                        {% if order.driver_comment is not none %}
+                                                            <strong>Нэмэлт тэмдэглэгээ:</strong> {{ order.driver_comment }}
+                                                        {% endif %}
+                                                {% else %}
+                                                    <p class="text-success">Хүргэгдсэн</p>
+                                                        {% if order.driver_comment is not none %}
+                                                            <strong>Нэмэлт тэмдэглэгээ:</strong> {{ order.driver_comment }}
+                                                        {% endif %}
+                                                {% endif %}
+                                            {% elif order.status == "cancelled" %}
+                                                <p class="text-danger">Цуцлагдсан</p>
+                                                {% if order.driver_comment is not none %}
+                                                    <p><strong>Коммент: </strong>{{ order.driver_comment }}</p>
+                                                {% endif %}
+                                            {% elif order.status == "postphoned" %}
+                                                <p class="text-info fw-bold">Хойшлуулсан</p>
+                                                <p class="text-nowrap"><strong>Хойшлуулсан огноо: </strong>{{ order.postphoned_date }}</p>
+                                                <p><strong>Коммент: </strong>{{ order.driver_comment }}</p>
+                                            {% endif %}
+    
+                                            {% if (diffdates(cur_date, order.modified_date) | round | int) <= 0 %}
+                                                <p>0 минутын өмнө</p>
+                                            {% else %}
+                                                {% if (diffdates(cur_date, order.modified_date) | round | int ) > 60 and (diffdates(cur_date, order.modified_date) | round | int ) < 1440 %}
+                                                    <p>{{ ((diffdates(cur_date, order.modified_date)) / 60 ) | int }}
+                                                        цаг
+                                                        {{ ((diffdates(cur_date, order.modified_date)) % 60 ) | int }}
+                                                        минутын өмнө</p>
+                                                {% elif (diffdates(cur_date, order.modified_date) | round | int ) < 60 %}
+                                                    <p>{{ ((diffdates(cur_date, order.modified_date)) % 60 ) | int }}
+                                                        минутын өмнө</p>
+                                                    {% elif (diffdates(cur_date, order.modified_date) | round | int ) > 1440 %}
+                                                {% endif %}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {{ order.delivery_date.strftime('%Y-%m-%d') }}
+                                        </td>
+    
+                                        <td style="text-align: center;">
+                                            {% if order.region is none %}
+                                                <p class="text-danger">бүсчлэгдээгүй</p>
+                                            {% else %}
+                                                <p class="text-success">{{ order.region }}</p>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if order.assigned_driver_id is none %}
+                                                <p class="text-danger">хувиарлагдаагүй</p>
+                                                {% if order.is_postphoned %}
+                                                    {% if order.status == "assigned" or order.status == "completed" %}
+                                                        {% if order.driver %}
+                                                            <p class="text-success">{{ order.driver.lastname[0] | capitalize }}. {{ order.driver.firstname | capitalize }}</p>
+                                                        {% else %}
+                                                        {% endif %}
+                                                        
+                                                        <p class="text-secondary">хойшлуулсан жолооч:
+                                                            {{ order.postphoned_driver.lastname[0] | capitalize }}. {{ order.postphoned_driver.firstname | capitalize }}</p>
+                                                    {% else %}
+                                                        <p class="text-secondary">хойшлуулсан жолооч:
+                                                            {{ order.postphoned_driver.lastname[0] | capitalize }}. {{ order.postphoned_driver.firstname | capitalize }}</p>
+                                                    {% endif %}
+                                                {% else %}
+                                                    {% if  order.assigned_driver_id is not none %}
+                                                        <p class="text-success">{{ order.driver.lastname[0] | capitalize }}. {{ order.driver.firstname | capitalize }}</p>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% else %}
+                                                {% if order.is_postphoned %}
+                                                    <p class="text-success">{{ order.driver.lastname[0] | capitalize }}. {{ order.driver.firstname | capitalize }}</p>
+                                                    {% if order.status == "assigned" or order.status == "completed" %}
+                                                        <p class="text-secondary">хойшлуулсан жолооч:
+                                                            {{ order.postphoned_driver.lastname[0] | capitalize }}. {{ order.postphoned_driver.firstname | capitalize }}</p>
+                                                    {% else %}
+                                                        <p class="text-secondary">хойшлуулсан жолооч:
+                                                            {{ order.postphoned_driver.lastname[0] | capitalize }}. {{ order.postphoned_driver.firstname | capitalize }}</p>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <p class="text-success">{{ order.driver.lastname[0] | capitalize }}. {{ order.driver.firstname | capitalize }}</p>
+                                                {% endif %}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-outline-success" href="{{ url_for('manager_order.manager_order_detail', order_id=order.id) }}">Ажлыг нээх</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        $(document).ready(function () {
+            $('#inventory-table').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'csvHtml5',
+                        text: '<a class="btn btn-outline-secondary m-2" style="float: left;">CSV файл татах</a>',
+                        tag: 'span',
+                        exportOptions: {
+                            modifier: {
+                                search: 'none'
+                            }
+                        }
+                    }, {
+                        extend: 'print',
+                        text: '<a class="btn btn-outline-secondary m-2" style="float: left;">Хэвлэх</a>',
+                        tag: 'span',
+                        exportOptions: {
+                            modifier: {
+                                search: 'none'
+                            }
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel',
+                        text: '<a class="btn btn-outline-secondary m-2" style="float: left;">XLS файл татах</a>',
+                        tag: 'span',
+                        exportOptions: {
+                            modifier: {
+                                search: 'none'
+                            }
+                        }
+                    },
+                ],
+                order: [[0, 'desc']],
+                pageLength: 50,
+                lengthMenu: [
+                    50, 100, 200, 500
+                ],
+                language: {
+                    lengthMenu: "_MENU_ эгнээ харах",
+                    zeroRecords: "Дата алга",
+                    info: "_PAGES_ хуудаснаас _PAGE_-р хуудас. Нийт: _TOTAL_",
+                    infoEmpty: "",
+                    sSearch: "Шүүх",
+                    paginate: {
+                    previous: "өмнөх",
+                    next: "дараа",
+                    },
+                },
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@srexi/purecounterjs/dist/purecounter_vanilla.js"></script>
+    <script>
+        new PureCounter();
+    </script>
+{% endblock main %}

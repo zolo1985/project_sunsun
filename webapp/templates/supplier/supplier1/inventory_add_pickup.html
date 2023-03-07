@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block main %}
+    <!-- Product Add -->
+    <section>
+        <div class="container-fluid min-vh-100" style="width: 80%;">
+            <div class="row">
+                <form id="form" method="POST" action="">
+                    {{ form.csrf_token }}
+                    <div class="col-sm-12 mb-5">
+                        <h3 class="display-6 mb-4">Бараа орлого жолооч дуудах</h3>
+                        <div class="table-responsive-sm">
+                            <table class="table table-hover" id="lines">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="bg-grad">Тоо/ширхэг</th>
+                                        <th scope="col" class="bg-grad">Бараа</th>
+                                        <th scope="col" class="bg-grad">Хасах</th>
+                                    </tr>
+                                </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                {% if form.quantity.errors %}
+                                                    {{ form.quantity(class="form-control is-invalid") }}
+                                                    <div class="invalid-feedback">
+                                                        {% for error in form.quantity.errors %}
+                                                            <span>{{ error }}</span>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    {{ form.quantity(class="form-control") }}
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {{ form.product(class="form-control")}}
+                                            </td>
+                                            <td role="cell">
+                                                <button type="button" class="btn" onclick="if ($('#lines tbody tr').length > 1) { $(this).parent().parent().remove(); }"><i class="bi bi-x-circle"></i></button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                            </table>
+                        </div>
+                        <a type="button" class="btn btn-sm btn-info" onclick="$('#lines').find('tbody').append($('#lines').find('tbody tr:first').clone());">Барааны төрөл нэмэх</a>
+                    </div>
+                    <div class="form-group float-end">
+                        {{ form.submit(class="btn btn-outline-success") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+    </section>
+    <!-- END Product Add -->
+{% endblock main %}

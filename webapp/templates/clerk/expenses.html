@@ -1,0 +1,242 @@
+{% extends "layout.html" %}
+{% block main %}
+<section>
+  <div class="container-fluid min-vh-100" style="width: 80%;">
+    <div class="row">
+      <div class="col-sm-12 mb-5">
+        <h3 class="display-6 mb-4">Жолоочид хүлээлгэж өгөх</h3>
+        <form id="form" method="POST" action="">
+          {{ form.csrf_token }}
+          <div class="row g-2">
+            <div class="col-md-3">
+              {{ form.drivers.label(class="form-control-label") }} {% if form.drivers.errors %} {{ form.drivers(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.drivers.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+              {% else %} {{ form.drivers(class="form-control") }} {% endif %}
+            </div>
+            <div class="col-md-3 align-self-center">{{ form.submit(class="btn btn-outline-success m-0") }}</div>
+          </div>
+        </form>
+        {% if orders %}
+          <form id="form" method="POST" action="">
+            {{ form1.csrf_token }}
+            <div class="table-responsive-sm">
+              <table id="inventory-table" class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col" class="bg-grad">ID</th>
+                    <th scope="col" class="bg-grad">Байгууллага</th>
+                    <th scope="col" class="bg-grad">Хаяг/Утас</th>
+                    <th scope="col" class="bg-grad">Бараа/Тоо ширхэг</th>
+                    <th scope="col" class="bg-grad">Бүс</th>
+                    <th scope="col" class="bg-grad">Жолооч</th>
+                    <th scope="col" class="bg-grad">Төлөв</th>
+                    <th scope="col" class="bg-grad">Өгсөн огноо</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for order in orders %}
+                  <tr>
+                    <td>
+                      ID{{ order.id }}{{ form.order_id(class="form-control", value=order.id) }}
+                    </td>
+                    <td>
+                      {{ order.user.company_name | capitalize }}
+                    </td>
+                    <td>
+                      {% if order.addresses.city is not none %}{{ order.addresses.city }}, {% endif %}{% if order.addresses.district is not none %}{{ order.addresses.district }}, {% endif %}{% if order.addresses.khoroo is not none %}{{ order.addresses.khoroo }}-р хороо, {% endif %}{% if order.addresses.aimag is not none %}{{ order.addresses.aimag }}, {% endif %}{{ order.addresses.address }} {{ order.addresses.phone }}{% if order.addresses.phone_more is not none %}, {{ order.addresses.phone_more }}{% endif %}
+                    </td>
+                    <td class="display-7">
+                      {% if order.user.has_role('supplier1') %}
+                          {% for order_detail in order.delivery_details %}
+                              <p>
+                                  {% if order_detail.products.name %}{{ order_detail.products.name }}{% endif %}{% if order_detail.products.color %}, {{ order_detail.products.color }}{% endif %}{% if order_detail.products.size %}, {{ order_detail.products.size }}{% endif %}{% if order_detail.products.type %}, {{ order_detail.products.type }}{% endif %}{% if order_detail.quantity %} - {{ order_detail.quantity }} ширхэг. {% endif %}{% if order_detail.products.price %} нэгж үнэ: {{ (order_detail.products.price)  | round | int | numberformat }}₮{% endif%}
+                              </p>
+                          {% endfor %}
+                      {% elif order.user.has_role('supplier2') %}
+                          {{ order.addresses.phone }}
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if order.region is none %}
+                        бүсчлэгдээгүй
+                      {% else %}
+                        {{ order.region }}
+                      {% endif %}
+                    </td>
+                    <td>
+                      {{ order.driver.lastname[0] | capitalize }}. {{ order.driver.firstname | capitalize }}
+                    </td>
+                    <td>
+                      {% if order.is_received_from_clerk %}
+                        <p class="text-success fw-bold">Жолооч хүлээж авах дарсан</p>
+                        {% if order.is_driver_received %}
+                          <p class="text-secondary fw-bold">Нягтлан хүлээлгэж өгсөн({{ order.received_from_clerk_date }})</p>
+                        {% else %}
+                          <p class="text-danger fw-bold">Нягтлан хүлээлгэж өгөөгүй</p>
+                        {% endif %}
+                        <p></p>
+                      {% else %}
+                        <p class="text-danger fw-bold">Жолооч хүлээж авах дараагүй</p>
+                        {% if not order.is_driver_received %}
+                          <p class="text-secondary fw-bold">Нягтлан хүлээлгэж өгөөгүй</p>
+                        {% endif %}
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if order.is_driver_received %}
+                        {{ order.received_from_clerk_date }}
+                      {% else %}
+                        {% if order_window %}
+                          <a class="give-order btn btn-small btn-outline-success" href="#" data-order-id="{{ order.id }}">Хүлээлгэж өгөх</a>
+                          <p class="loading" style="display:none;">Түр хүлээнэ үү...</p>
+                        {% else %}
+                          <div class="text-center fw-bold">
+                            <h5 class="text-danger">Цонх хаагдсан байна</h5>
+                          </div>
+                        {% endif %}
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              {% if order_window %}
+                
+              {% else %}
+              <div class="text-center fw-bold">
+                <h5 class="text-danger">Цонх хаагдсан байна</h5>
+              </div>
+              {% endif %}
+            </div>
+          </form>
+        {% else %}
+          <div class="mt-5">
+            {% for unassigned_order in unassigned_orders %}
+              <p class="text-danger" style="font-size: 18px">{{ unassigned_order.driver_name }}-д хүлээлгэж өгөөгүй {{ unassigned_order.total_count }} ширхэг хүргэлт байна.</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="confirmGiveModal" tabindex="-1" role="dialog" aria-labelledby="inventory-tableModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="inventory-tableModalLabel">Хүлээлгэж өгөх</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        Та итгэлтэй байна уу?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Үгүй</button>
+        <button type="button" class="btn btn-primary" id="confirmGiveModalYes">Тйим</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function () {
+    $("#inventory-table").DataTable({
+      dom: "Bfrtip",
+      buttons: [
+        {
+          extend: "csvHtml5",
+          text: "CSV файл татах",
+          text: '<a class="btn btn-outline-secondary m-2" style="float: left;">CSV файл татах</a>',
+          tag: "span",
+          exportOptions: {
+            modifier: {
+              search: "none",
+            },
+          },
+        },
+        {
+          extend: "print",
+          text: "Хэвлэх",
+          text: '<a class="btn btn-outline-secondary m-2" style="float: left;">Хэвлэх</a>',
+          tag: "span",
+          exportOptions: {
+            modifier: {
+              search: "none",
+            },
+          },
+        },
+        {
+          extend: "excelHtml5",
+          text: "Excel",
+          text: '<a class="btn btn-outline-secondary m-2" style="float: left;">XLS файл татах</a>',
+          tag: "span",
+          exportOptions: {
+            modifier: {
+              search: "none",
+            },
+          },
+        },
+      ],
+      paging: false,
+      columnDefs: [
+        {
+          orderData: [0, 1],
+        },
+      ],
+      pageLength: 50,
+      lengthMenu: [50, 100, 200, 500],
+      language: {
+        lengthMenu: "_MENU_ эгнээ харах",
+        zeroRecords: "Дата алга",
+        info: "_PAGES_ хуудаснаас _PAGE_-р хуудас. Нийт: _TOTAL_ хүргэлт",
+        infoEmpty: "",
+        sSearch: "Шүүх",
+        paginate: {
+          previous: "өмнөх",
+          next: "дараа",
+        },
+      },
+    });
+  });
+</script>
+<script>
+  $(document).ready(function() {
+    $('.give-order').click(function() {
+      var orderID = $(this).data('order-id');
+      var elem = this;
+      $('#confirmGiveModal').modal('show');
+      $('#confirmGiveModalYes').click(function() {
+        sendOrderId(orderID, elem);
+      });
+    });
+  
+    function sendOrderId(orderID, elem) {
+      $('#confirmGiveModal').modal('hide');
+      $(elem).hide();
+      $('.loading').show();
+      $.ajax({
+        type: 'POST',
+        url: '/clerk/expense/driver-order',
+        contentType: 'application/json',
+        data: JSON.stringify({order_id: orderID}),
+        success: function(response) {
+          $('.loading').hide();
+          $(elem).replaceWith('<p class="fw-bold text-success">' + response["msg"] + '</p>');
+        },
+        error: function(xhr, status, error) {
+          $('.loading').hide();
+          var responseMessage = 'Failed';
+          if (xhr.status === 400) {
+              responseMessage = xhr.responseJSON.msg;
+          }
+          $(elem).replaceWith('<p>' + responseMessage + '</p>');
+        }
+      });
+    }
+  });
+</script>
+{% endblock main %}

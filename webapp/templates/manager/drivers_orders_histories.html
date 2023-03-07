@@ -1,0 +1,219 @@
+{% extends "layout.html" %}
+{% block main %}
+    <section>
+        <div class="container-fluid min-vh-100" style="width: 80%;">
+            <div class="row">
+                <div class="col-sm-12 mb-5">
+                    <h3 class="display-6 mb-4">Жолоочийн ажлын түүх</h3>
+                    <form id="form" method="POST" action="">
+                        {{ form.csrf_token }}
+                        <div class="row g-2">
+                            <div class="col-md-3">
+                                {{ form.date.label(class="form-control-label") }}
+                                {% if form.date.errors %}
+                                    {{ form.date(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.date.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.date(class="form-control") }}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-3">
+                                {{ form.select_drivers.label(class="form-control-label") }}
+                                {% if form.select_drivers.errors %}
+                                    {{ form.select_drivers(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.select_drivers.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.select_drivers(class="form-control") }}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-3 align-self-center">
+                                    {{ form.submit(class="btn btn-outline-success m-0") }}
+                            </div>
+                        </div>
+                    </form>
+                        {% if orders %}
+                        <div class="table-responsive-sm">
+                            <table id="example" class="table table-hover display">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="bg-grad">Захиалгын ID</th>
+                                        <th scope="col" class="bg-grad">Төлөв</th>
+                                        <th scope="col" class="bg-grad">Огноо</th>
+                                        <th scope="col" class="bg-grad">Хаяг/Утас</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in orders %}
+                                    <tr>
+                                        <td scope="row">
+                                            {% if order.delivery_id %}
+                                                <a class="text-dark" href="{{ url_for('manager_order.manager_order_detail', order_id=order.delivery_id)}}"><p>Хүргэлт: ID{{ order.delivery_id }}</p></a>
+                                            {% elif order.pickup_task_id %}
+                                                <a class="text-dark" href="{{ url_for('manager_pickup.manager_pickup', pickup_id=order.pickup_task_id)}}"><p>Таталт: PT{{ order.pickup_task_id }}</p></a>
+                                            {% elif order.return_task_id %}
+                                                <a class="text-dark" href="#"><p>Буцаалт: RT{{ order.return_task_id }}</p></a>
+                                            {% endif %}
+                                        </td>
+                                        <td style="text-align: center;">
+                                            {% if order.type == "pickup" %}
+                                                {% if order.status == "waiting" %}
+                                                    <p class="text-danger">хувиарлагдаагүй.</p>
+                                                {% elif order.status == "enroute" %}
+                                                    <p class="text-info">жолооч очиж авна.</p>
+                                                {% elif order.status == "pickedup" %}
+                                                    <p class="text-info">жолоочид байна.</p>
+                                                {% elif order.status == "completed" %}
+                                                    <p class="text-success">хүргэгдсэн.</p>
+                                                {% endif %}
+                                            {% elif order.type == "delivery" %}
+                                                {% if order.status == "assigned" %}
+                                                    <p class="text-primary">хувиарлагдсан</p>
+                                                {% elif order.status == "started" %}
+                                                    <p class="text-info">одоо хүргэгдэж байна</p>
+                                                {% elif order.status == "completed" %}
+                                                    <p class="text-success">хүргэгдсэн</p>
+                                                {% elif order.status == "cancelled" %}
+                                                    <p class="text-danger">цуцлагдсан</p>
+                                                {% elif order.status == "postphoned" %}
+                                                    <p class="text-info">хойшлуулсан</p>
+                                                {% endif %}
+                                            {% elif order.type == "return task" %}
+                                                {% if order.status == "waiting" %}
+                                                    <p class="text-danger">хувиарлагдаагүй.</p>
+                                                {% elif order.status == "enroute" %}
+                                                    <p class="text-info">жолооч очиж авна.</p>
+                                                {% elif order.status == "pickedup" %}
+                                                    <p class="text-info">жолоочид байна.</p>
+                                                {% elif order.status == "completed" %}
+                                                    <p class="text-success">хүргэгдсэн.</p>
+                                                {% endif %}
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ order.created_date }}</td>
+                                        <td>
+                                            {% if order.type == "delivery" %}
+                                                <p>
+                                                    {% if order.delivery.addresses.city is not none %}, {{ order.delivery.addresses.city }}{% endif %}{% if order.delivery.addresses.district is not none %}{{ order.delivery.addresses.district }}{% endif %}{% if order.delivery.addresses.khoroo is not none %}, {{ order.delivery.addresses.khoroo }}-р хороо{% endif %}{% if order.delivery.addresses.aimag is not none %}{{ order.delivery.addresses.aimag }}{% endif %}{% if order.delivery.addresses.address is not none %}, {{ order.delivery.addresses.address }}{% endif %}{% if order.delivery.addresses.phone is not none %}, {{ order.delivery.addresses.phone }}{% endif %}{% if order.delivery.addresses.phone_more is not none %}, {{ order.delivery.addresses.phone_more }}{% endif %}
+                                                </p>
+                                            {% elif order.type == "pickup" %}
+                                                <p>{{ order.pickup_task.supplier.company_name }}</p>
+                                                <p>
+                                                    {% if order.pickup_task.supplier.has_role('supplier1')%}
+                                                        {% for pickup_detail in order.pickup_task.pickup_task_details %}
+                                                        <p>
+                                                            {% if pickup_detail.product.name %}{{ pickup_detail.product.name }}{% endif %}{% if pickup_detail.product.color %}, {{ pickup_detail.product.color }}{% endif %}{% if pickup_detail.product.size %}, {{ pickup_detail.product.size }}{% endif %}{% if pickup_detail.product.type %}, {{ pickup_detail.product.type }}{% endif %}{% if pickup_detail.quantity %} - <strong>{{ pickup_detail.quantity }} ширхэг.</strong>{% endif %}
+                                                        </p>
+                                                        {% endfor %}
+                                                    {% elif order.pickup_task.supplier.has_role('supplier2')%}
+                                                        {% for pickup_detail in order.pickup_task.pickup_task_details %}
+                                                            {% if pickup_detail.destination_type == "local" %}
+                                                                <p>
+                                                                {{ loop.index }}. {{ pickup_detail.phone }}, {{ pickup_detail.district }}, {{ pickup_detail.khoroo }}, {{ pickup_detail.address }}. <strong>Нийт дүн: {{ pickup_detail.total_amount }}</strong>
+                                                                </p>
+                                                            {% elif pickup_detail.destination_type == "long" %}
+                                                                <p>
+                                                                {{ loop.index }}. {{ pickup_detail.phone }}, {{ pickup_detail.aimag }}, {{ pickup_detail.address }}. <strong>Нийт дүн: {{ pickup_detail.total_amount }}</strong>
+                                                                </p>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                </p>
+                                            {% elif order.type == "return task" %}
+                                                <p>{{ order.return_task.supplier.company_name }}</p>
+                                                <p>
+                                                    {% if order.return_task.supplier.has_role('supplier1')%}
+                                                        {% for return_detail in order.return_task.return_task_details %}
+                                                            <p>
+                                                            {% if return_detail.product.name %}{{ return_detail.product.name }}{% endif %}{% if return_detail.product.color %}, {{ return_detail.product.color }}{% endif %}{% if return_detail.product.size %}, {{ return_detail.product.size }}{% endif %}{% if return_detail.product.type %}, {{ return_detail.product.type }}{% endif %}{% if return_detail.quantity %} - <strong>{{ return_detail.quantity }} ширхэг.</strong>{% endif %}
+                                                            </p>
+                                                        {% endfor %}
+                                                    {% elif order.return_task.supplier.has_role('supplier2')%}
+                                                        {% for return_detail in order.return_task.return_task_details %}
+                                                                <p>{{ return_detail.phone }}</p>
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                </p>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        $(document).ready(function () {
+            $('#example').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'csvHtml5',
+                        text: 'CSV файл татах',
+                        text: '<a class="btn btn-outline-secondary m-2" style="float: left;">CSV файл татах</a>',
+                        tag: 'span',
+                        exportOptions: {
+                            modifier: {
+                                search: 'none'
+                            }
+                        }
+                    },
+                    {
+                        extend: 'print',
+                        text: 'Хэвлэх',
+                        text: '<a class="btn btn-outline-secondary m-2" style="float: left;">Хэвлэх</a>',
+                        tag: 'span',
+                        exportOptions: {
+                            modifier: {
+                                search: 'none'
+                            }
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel',
+                        text: '<a class="btn btn-outline-secondary m-2" style="float: left;">XLS файл татах</a>',
+                        tag: 'span',
+                        exportOptions: {
+                            modifier: {
+                                search: 'none'
+                            }
+                        }
+                    },
+                ],
+                paging: false,
+                "columnDefs": [
+                    {
+                        "orderData": [0, 1]
+                    },
+                ],
+                pageLength: 50,
+                lengthMenu: [50, 100, 200, 500],
+                "language": {
+                    "lengthMenu": "_MENU_ эгнээ харах",
+                    "zeroRecords": "Дата алга",
+                    "info": "_PAGES_ хуудаснаас _PAGE_-р хуудас. Нийт: _TOTAL_ хүргэлт",
+                    "infoEmpty": "",
+                    sSearch: "Шүүх",
+                    "paginate": {
+                        "previous": "өмнөх",
+                        "next": "дараа",
+                    }
+                    
+                }
+            });
+        });
+    </script>
+{% endblock main %}

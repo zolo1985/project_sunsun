@@ -1,0 +1,133 @@
+{% extends "layout.html" %}
+{% block main %}
+    <!-- ORDER DETAIL-->
+    <div class="container-fluid mt-5" style="width: 80%;">
+        <div class="row">
+            <div class="col-sm-12 mb-5">
+                <h3 class="display-6 mb-4">Ажил ID: {{ order.id }}</h3>
+                <div class="table-responsive-sm">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="bg-grad">ID</th>
+                                <th scope="col" class="bg-grad">Байгууллага</th>
+                                <th scope="col" class="bg-grad">Төлөв</th>
+                                <th scope="col" class="bg-grad">Үүсгэсэн огноо</th>
+                                <th scope="col" class="bg-grad">Хүргэх огноо</th>
+                                <th scope="col" class="bg-grad">Хаяг/Утас</th>
+                                <th scope="col" class="bg-grad">Бараа</th>
+                                <th scope="col" class="bg-grad">Бүс</th>
+                                <th scope="col" class="bg-grad">Жолооч</th>
+                                <th scope="col" class="bg-grad">Няраваас бараа авсан</th>
+                                <th scope="col" class="bg-grad">Нягтлантай тооцоо хийгдсэн</th>
+                                <th scope="col" class="bg-grad">Дүн</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td scope="row">
+                                    <p>ID{{ order.id }}</p>
+                                </td>
+                                <td>
+                                    <p>{{ order.user.company_name | capitalize }}</p>
+                                    <p>{{ order.user.lastname[0] | capitalize }}. {{ order.user.firstname | capitalize }}</p>
+                                    <p>{{ order.user.phone }}</p>
+                                    <p>{{ order.user.email }}</p>
+                                </td>
+                                <td>
+                                    {% if order.status == "unassigned" %}
+                                        {% if order.is_postphoned %}
+                                            <p class="text-info">хойшлуулсан</p>
+                                            <p>хойшлуулсан огноо: {{ order.postphoned_date | datefilter }}</p>
+                                            <p>Коммент: {{ order.driver_comment }}</p>
+                                        {% else %}
+                                            <p class="text-danger">жолооч хувиарлагдаагүй байна</p>
+                                            {% if order.driver_comment %}
+                                                <p><strong>Коммент:</strong> {{ order.driver_comment }}</p>
+                                            {% else %}
+                                            {% endif %}
+                                        {% endif %}
+                                    {% elif order.status == "assigned" %}
+                                        <p class="text-success">жолооч хүргэлтэнд гарсан байна</p>
+                                    {% elif order.status == "completed" %}
+                                    <p class="text-success">хүргэгдсэн</p>
+                                    {% elif order.status == "cancelled" %}
+                                        <p class="text-danger">цуцлагдсан</p>
+                                        <p>Коммент:
+                                            {{ order.driver_comment }}</p>
+                                    {% elif order.status == "postphoned" %}
+                                        <p class="text-info">хойшлуулсан</p>
+                                        <p>хойшлуулсан огноо:
+                                            {{ order.postphoned_date }}</p>
+                                        <p>Коммент:
+                                            {{ order.driver_comment }}</p>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <p>{{ order.created_date }}</p>
+                                </td>
+                                <td>
+                                    <p class="text-nowrap">{{ order.delivery_date.strftime('%Y-%m-%d') }}</p>
+                                </td>
+                                <td>
+                                    <p>
+                                        {% if order.addresses.city is not none %}, {{ order.addresses.city }}{% endif %}{% if order.addresses.district is not none %}{{ order.addresses.district }}{% endif %}{% if order.addresses.khoroo is not none %}, {{ order.addresses.khoroo }}-р хороо{% endif %}{% if order.addresses.aimag is not none %}{{ order.addresses.aimag }}{% endif %}{% if order.addresses.address is not none %}, {{ order.addresses.address }}{% endif %}{% if order.addresses.phone is not none %}, {{ order.addresses.phone }}{% endif %}{% if order.addresses.phone_more is not none %}, {{ order.addresses.phone_more }}{% endif %}
+                                    </p>
+                                </td>
+                                <td>
+                                    {% if order.user.has_role('supplier1') %}
+                                        {% for order_detail in order.delivery_details %}
+                                            <p>
+                                                {% if order_detail.products.name %}{{ order_detail.products.name }}{% endif %}{% if order_detail.products.color %}, {{ order_detail.products.color }}{% endif %}{% if order_detail.products.size %}, {{ order_detail.products.size }}{% endif %}{% if order_detail.products.type %}, {{ order_detail.products.type }}{% endif %}{% if order_detail.quantity %} - {{ order_detail.quantity }} ширхэг. {% endif %}{% if order_detail.products.price %} нэгж үнэ: {{ (order_detail.products.price)  | round | int | numberformat }}₮{% endif%}
+                                            </p>
+                                        {% endfor %}
+                                    {% elif order.user.has_role('supplier2') %}
+                                        {{ order.addresses.phone }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if order.region %}
+                                        <p class="text-success">{{ order.region }}</p>
+                                    {% else %}
+                                        <p class="text-danger">Бүс хувиарлаагүй</p>
+                                    {% endif %}
+                                    
+                                </td>
+                                <td>
+                                    {% if order.assigned_driver_id %}
+                                        <p>{{ order.driver.lastname[0] | capitalize }}. {{ order.driver.firstname | capitalize }}</p>
+                                    {% else %}
+                                        <p class="text-danger">Жолооч хувиарлаагүй</p>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if order.is_received_from_clerk %}
+                                        Тийм
+                                    {% else %}
+                                        Үгүй
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if order.is_proccessed_by_accountant %}
+                                        Тийм
+                                    {% else %}
+                                        Үгүй
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ order.total_amount  | round | int | numberformat }}₮
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="float-end">
+                        {% if order.status == "assigned" or order.status == "unassigned" %}
+                            {{ form.submit(class="btn btn-outline-success m-0") }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END ORDER DETAIL -->
+{% endblock main %}

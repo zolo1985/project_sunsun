@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block main %}
+    <div class="left bg-grad pattern-overlay-4">
+        <div class="container">
+            <div class="row all-text-white">
+                <div class="col-md-12 align-self-center position-relative">
+                    <h1 class="fw-bold display-1 mb-2 mb-md-n4 mt-9">Бүсийн мэдээлэл</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+	<section>
+        <div class="container">
+            <p class="fw-bold" style="font-size: large;">1. Улаанбаатар хот дотор</p>
+            <ol>
+                <p style="font-size: large; padding-left: 50px;"><i class="fa fa-compass" aria-hidden="true"></i> <strong>Баруун</strong> - Орбитийн тойрог</p>
+                <p style="font-size: large; padding-left: 50px;"><i class="fa fa-compass" aria-hidden="true"></i> <strong>Баруун хойд</strong> - Баянхошуу тойрог</p>
+                <p style="font-size: large; padding-left: 50px;"><i class="fa fa-compass" aria-hidden="true"></i> <strong>Хойд</strong> - Дамбадаржаа</p>
+                <p style="font-size: large; padding-left: 50px;"><i class="fa fa-compass" aria-hidden="true"></i> <strong>Зүүн хойд</strong> - Шархад эцэс</p>
+                <p style="font-size: large; padding-left: 50px;"><i class="fa fa-compass" aria-hidden="true"></i> <strong>Зүүн</strong> - Амгалан автобус буудал</p>
+                <p style="font-size: large; padding-left: 50px;"><i class="fa fa-compass" aria-hidden="true"></i> <strong>Урд</strong> - Зайсангийн эцэс</p>
+                <p style="font-size: large; padding-left: 50px;"><i class="fa fa-compass" aria-hidden="true"></i> <strong>Баруун урд</strong> - Нисэхийн тойрог ( Буянт-Ухаа 2, Байрны буудал)</p>
+            </ol>
+            <img class="rounded" src="{{ url_for('static', filename='images/zone/6.jpg')}}" alt="" style="max-width: 500px;">
+        </div>
+        <div class="container mt-5">
+            <p class="fw-bold" style="font-size: large;">2. Орон нутгийн нийтийн зорчигч болон ачаа тээврийн хэрэгсэлд дайх үйлчилгээ.</p>
+        </div>
+	</section>
+{% endblock main %}

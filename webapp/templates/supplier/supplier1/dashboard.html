@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block main %}
+<div class="preloader">
+  <img src="{{ url_for('static', filename='images/preloader.svg') }}" alt="Pre-loader" />
+</div>
+<section>
+  <div class="container-fluid min-vh-100" style="width: 80%;">
+    <div class="row">
+      {% if pickups %}
+        <div class="col-sm-12 mb-5">
+          <h3 class="display-6 mb-4">Жолооч авах бараа</h3>
+              <a class="btn btn-outline-danger" href="{{ url_for('supplier1_inventory.supplier1_inventory_pickups_and_dropoffs')}}"> {{ pickups }} ажил байна.</a>
+        </div>
+      {% endif %}
+
+      {% if dropoffs %}
+        <div class="col-sm-12 mb-5">
+          <h3 class="display-6 mb-4">Агуулахад хүлээлгэж өгөх бараа</h3>
+              <a class="btn btn-outline-danger" href="{{ url_for('supplier1_inventory.supplier1_inventory_pickups_and_dropoffs')}}"> {{ dropoffs }} ажил байна.</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock main %}
