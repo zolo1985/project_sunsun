@@ -5,7 +5,14 @@
 </div>
 <section>
   <div class="container-fluid min-vh-100" style="width: 80%;">
+    <h3 class="display-6 mb-4">Самбар</h3>
     <div class="row">
+      {% if not driver_pickups and not supplier_dropoffs and not unprocessed_orders and not returns and not substracted_products and not unreturned_supplier2_orders and not warehouse_sales and not unprocessed_return_tasks %}
+        <div class="col-sm-12 mb-5">
+          <p class="display-8">Одоохондоо дата алга</p>
+        </div>
+      {% endif %}
+
       {% if driver_pickups > 0 %}
         <div class="col-sm-12 display-8">
             <a class="btn btn-lg btn-outline-danger" href="{{ url_for('clerk_receive.clerk_receive_pickup_inventories') }}">Жолоочоос авах {{ driver_pickups }} таталт байна</a>

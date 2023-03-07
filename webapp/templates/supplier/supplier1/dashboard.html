@@ -5,7 +5,14 @@
 </div>
 <section>
   <div class="container-fluid min-vh-100" style="width: 80%;">
+    <h3 class="display-6 mb-4">Самбар</h3>
     <div class="row">
+      {% if not pickups and not dropoffs %}
+        <div class="col-sm-12 mb-5">
+          <p class="display-8">Одоохондоо дата алга</p>
+        </div>
+      {% endif %}
+
       {% if pickups %}
         <div class="col-sm-12 mb-5">
           <h3 class="display-6 mb-4">Жолооч авах бараа</h3>
