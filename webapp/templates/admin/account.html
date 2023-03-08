@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+{% block main %}
+    <!-- Products -->
+    <section>
+        <div class="container-fluid min-vh-100" style="width: 80%;">
+            <div class="row">
+                <form id="form" method="POST" action="">
+                    {{ form.csrf_token }}
+                    <h3 class="display-6 mb-4">Данс</h3>
+                    <div class="table-responsive-sm">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="bg-grad">ID</th>
+                                    <th scope="col" class="bg-grad">Овог</th>
+                                    <th scope="col" class="bg-grad">Нэр</th>
+                                    <th scope="col" class="bg-grad">Утас</th>
+                                    <th scope="col" class="bg-grad">И-мэйл</th>
+                                    <th scope="col" class="bg-grad">Хүргэлт бүрт</th>
+                                    <th scope="col" class="bg-grad">Өөрчлөх</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td scope="row">{{ account.id }}</td>
+                                    <td>
+                                        {{ account.lastname  | capitalize }}
+                                    </td>
+                                    <td>
+                                        {{ account.firstname  | capitalize }}
+                                    </td>
+                                    <td>
+                                        {% if form.phone.errors %}
+                                            {{ form.phone(class="form-control is-invalid") }}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.phone.errors %}
+                                                    <span>{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ form.phone(class="form-control") }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if form.email.errors %}
+                                            {{ form.email(class="form-control is-invalid") }}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.email.errors %}
+                                                    <span>{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ form.email(class="form-control") }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if form.supplier_rate.errors %}
+                                            {{ form.supplier_rate(class="form-control is-invalid") }}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.supplier_rate.errors %}
+                                                    <span>{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ form.supplier_rate(class="form-control") }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div>
+                                            {{ form.submit(class="btn btn-outline-success m-0") }}
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    <!-- END Products -->
+{% endblock main %}

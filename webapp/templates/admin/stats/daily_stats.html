@@ -1,0 +1,145 @@
+{% extends "layout.html" %}
+{% block main %}
+    <!-- Products -->
+    <section>
+        <div class="container-fluid min-vh-100" style="width: 80%;">
+            <div class="row">
+                <div class="col-sm-12 mb-5">
+                    <h3 class="display-6 mb-4">Өдрийн статистик</h3>
+                    <div class="container">
+                        <div
+                            class="col-12">
+                            <!-- Chart START -->
+                                <!-- Card header -->
+                                <div class="card-header p-3 border-bottom">
+                                    <h5 class="card-header-title mb-0">{{ selected_date }} хүргэлт хувиар</h5>
+                                </div>
+
+                                <!-- Card body -->
+                                <div
+                                    class="card-body">
+                                    <!-- Apex chart -->
+                                    <div id="chart" class="mt-2"></div>
+                                </div>
+                            <!-- Chart END -->
+                        </div>
+                    </div>
+                    <div class="container mt-5">
+                        <div
+                            class="col-12">
+                            <!-- Chart START -->
+                            <div
+                                class="card border h-100">
+                                <!-- Card header -->
+                                <div class="card-header p-3 border-bottom">
+                                    <h5 class="card-header-title mb-0">{{ selected_date }} хүргэлт</h5>
+                                </div>
+
+                                <!-- Card body -->
+                                <div
+                                    class="card-body">
+                                    <!-- Apex chart -->
+                                    <div id="apexChartTrafficStats" class="mt-2"></div>
+                                </div>
+                            </div>
+                            <!-- Chart END -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END Products -->
+    <script src="{{ url_for('static', filename='vendor/apexcharts/js/apexcharts.min.js') }}"></script>
+    <script>
+        var data1 = JSON.parse('{{ data1 | tojson | safe }}');
+        var data2 = JSON.parse('{{ data2 | tojson | safe }}');
+        var data3 = JSON.parse('{{ data3 | tojson | safe }}');
+        var data4 = JSON.parse('{{ data4 | tojson | safe }}')
+        var options = {
+            series: [
+                {
+                    name: 'Хүргэсэн',
+                    data: data1
+                }, {
+                    name: 'Цуцалсан',
+                    data: data2
+                }, {
+                    name: 'Хойшлуулсан',
+                    data: data3
+                }
+            ],
+            chart: {
+                type: 'bar',
+                height: 350
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '55%',
+                }
+            },
+            dataLabels: {
+                enabled: true,
+            },
+            colors:['#41ba00', '#e60202', '#0385ff'],
+            stroke: {
+                show: true,
+                width: 1,
+                colors: ['transparent']
+            },
+            xaxis: {
+                categories: [
+                    data4,
+                ]
+            },
+            yaxis: {
+                title: {
+                    text: 'Хүргэлт'
+                }
+            },
+            fill: {
+                opacity: 1
+            },
+            tooltip: {
+                y: {
+                    formatter: function (val) {
+                        return val
+                    }
+                }
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#apexChartTrafficStats"), options);
+        chart.render();
+    </script>
+
+    <script>
+        var data1 = JSON.parse('{{ completed_rate | tojson | safe }}');
+        var data2 = JSON.parse('{{ cancelled_rate | tojson | safe }}');
+        var data3 = JSON.parse('{{ postphoned_rate | tojson | safe }}');
+        var options = {
+          series: [data1[0], data2[0], data3[0]],
+          chart: {
+          width: 380,
+          type: 'pie',
+        },
+        labels: ['Хүргэгдсэн', 'Цуцалсан', 'Хойшлуулсан'],
+        colors:['#41ba00', '#e60202', '#0385ff'],
+        responsive: [{
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 200
+            },
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }]
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+    </script>
+{% endblock main %}

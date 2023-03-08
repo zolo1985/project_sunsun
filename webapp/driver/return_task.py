@@ -1,12 +1,8 @@
-from flask import (Blueprint, render_template, redirect, abort, url_for, flash)
+from flask import (Blueprint, render_template)
 from webapp import has_role
 from flask_login import login_required, current_user
 from webapp.database import Connection
 from webapp import models
-from sqlalchemy import func, or_
-from .forms import DeliveryStatusForm, DeliveryPostphonedForm, DeliveryCancelledForm, DateSelect, DeliveryCompletedForm
-from datetime import datetime, timedelta
-import pytz
 
 
 driver_return_task_blueprint = Blueprint('driver_return_task', __name__)

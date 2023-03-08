@@ -56,6 +56,7 @@ def create_app(object_name):
     from webapp.accountant import create_module as accountant_create_module
     from webapp.error import create_module as error_create_module
     from webapp.driver import create_module as driver_create_module
+    from webapp.admin import create_module as admin_create_module
 
     auth_create_module(app)
     main_create_module(app)
@@ -67,6 +68,7 @@ def create_app(object_name):
     accountant_create_module(app)
     error_create_module(app)
     driver_create_module(app)
+    admin_create_module(app)
 
     return app
 

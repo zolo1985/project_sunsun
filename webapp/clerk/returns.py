@@ -61,7 +61,6 @@ def clerk_postphoned_order_with_button():
             product_return.returned_date = datetime.now(pytz.timezone("Asia/Ulaanbaatar"))
             connection.commit()
         except Exception as ex:
-            print(ex)
             connection.rollback()
             return jsonify({"response": False, "msg": "Алдаа гарлаа!"})
         else:
@@ -114,7 +113,6 @@ def clerk_cancelled_order_with_button():
             product_return.returned_date = datetime.now(pytz.timezone("Asia/Ulaanbaatar"))
             connection.commit()
         except Exception as ex:
-            print(ex)
             connection.rollback()
             return jsonify({"response": False, "msg": "Алдаа гарлаа!"})
         else:
