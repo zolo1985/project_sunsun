@@ -13,6 +13,8 @@
                     <a class="navbar-brand" href="{{ url_for('supplier1_dashboard.supplier1_dashboard') }}"><img class="navbar-brand-item" src="{{ url_for('static', filename='logos/logo.svg')}}" alt="Logo" /></a>
                 {% elif current_user.has_role('supplier2') %}
                     <a class="navbar-brand" href="{{ url_for('supplier2_dashboard.supplier2_dashboard') }}"><img class="navbar-brand-item" src="{{ url_for('static', filename='logos/logo.svg')}}" alt="Logo" /></a>
+                    {% elif current_user.has_role('driver') %}
+                    <a class="navbar-brand" href="{{ url_for('driver_order.driver_orders') }}"><img class="navbar-brand-item" src="{{ url_for('static', filename='logos/logo.svg')}}" alt="Logo" /></a>
                 {% else %}
                     <a class="navbar-brand" href="{{ url_for('main.home') }}"><img class="navbar-brand-item" src="{{ url_for('static', filename='logos/logo.svg')}}" alt="Logo" /></a>
                 {% endif %}
@@ -207,7 +209,13 @@
                             <a class="nav-link" href="{{ url_for('driver_order.driver_orders') }}">Хүргэлтүүд</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Хүргэлтийн түүх</a>
+                            <a class="nav-link" href="{{ url_for('driver_order.driver_orders_history') }}">Хүргэлтийн түүх</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('driver_pickup_task.driver_pickup_tasks') }}">Таталт</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('driver_return_task.driver_return_tasks') }}">Буцаалт</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">Данс</a>

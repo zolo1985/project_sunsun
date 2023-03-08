@@ -63,7 +63,6 @@ def driver_order_detail(order_id):
     return render_template('/driver/order.html', order=order, form=form)
 
 
-
 @driver_order_blueprint.route('/driver/orders/receive/<int:order_id>', methods=['GET', 'POST'])
 @login_required
 @has_role('driver')
@@ -93,8 +92,6 @@ def driver_order_receive(order_id):
             return redirect(url_for('driver_order.driver_orders'))
         else:
             return redirect(url_for('driver_order.driver_orders'))
-
-
 
 
 @driver_order_blueprint.route('/driver/orders/completed/<int:order_id>', methods=['GET', 'POST'])
@@ -273,4 +270,22 @@ def driver_order_postphoned(order_id):
             return redirect(url_for('driver_order.driver_orders'))
     
     return render_template('/driver/order_postphoned.html', order=order, form=form)
+
+
+@driver_order_blueprint.route('/driver/orders/history', methods=['GET', 'POST'])
+@login_required
+@has_role('driver')
+def driver_orders_history():
+
+    connection = Connection()
+    cur_date = datetime.now(pytz.timezone("Asia/Ulaanbaatar"))
+    form = DateSelect()
+
+    orders = connection.query(models.DriverOrderHistory).filter(models.DriverOrderHistory.driver_id==current_user.id, func.date(models.DriverOrderHistory.created_date)==cur_date.date()).all()
+
+    if form.validate_on_submit():
+        orders = connection.query(models.DriverOrderHistory).filter(models.DriverOrderHistory.driver_id==current_user.id, func.date(models.DriverOrderHistory.created_date)==form.select_date.data).all()
+        return render_template('/driver/orders_history.html', orders=orders, form=form)
+
+    return render_template('/driver/orders_history.html', orders=orders, form=form)
 

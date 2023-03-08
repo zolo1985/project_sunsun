@@ -46,8 +46,8 @@ def signin():
                         #     return redirect(url_for('main.home'))
                         elif user.has_role('accountant'):
                             return redirect(url_for('accountant_dashboard.accountant_dashboard'))
-                        # elif user.roles[0] == "driver":
-                        #     return redirect(url_for('main.home'))
+                        elif user.has_role('driver'):
+                            return redirect(url_for('driver_order.driver_orders'))
                         else:
                             return redirect(url_for('main.home'))
                     else:

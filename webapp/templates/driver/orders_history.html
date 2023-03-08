@@ -1,0 +1,91 @@
+{% extends "layout.html" %}
+{% block main %}
+    <!-- Products -->
+    <div class="container-fluid mt-5 min-vh-100" style="width: 80%;">
+        <div class="row">
+            <div class="col-sm-12 mb-5">
+                <h3 class="display-6 mb-4">Хүргэлтийн түүх</h3>
+                    <form id="form" method="POST" action="">
+                        {{ form.csrf_token }}
+                        <div class="row g-2">
+                            <div class="col-md-3">
+                                {{ form.select_date.label(class="form-control-label") }}
+                                {% if form.select_date.errors %}
+                                    {{ form.select_date(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.select_date.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.select_date(class="form-control") }}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-3 align-self-center">
+                                {{ form.submit(class="btn btn-outline-success m-0") }}
+                            </div>
+                        </div>
+                    </form>
+                    <div class="table-responsive-sm">
+                        <table id="inventory-table" class="table table-hover display">
+                            <thead>
+                                <tr class="bg-grad">
+                                    <th scope="col" class="bg-grad">#</th>
+                                    <th scope="col" class="bg-grad">Харилцагч</th>
+                                    <th scope="col" class="bg-grad">Төрөл</th>
+                                    <th scope="col" class="bg-grad">Төлөв</th>
+                                    <th scope="col" class="bg-grad"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                                <tr>
+                                    <td>
+                                        {{ loop.index }}
+                                    </td>
+                                    <td>
+                                        {{ order.supplier_name }}
+                                    </td>
+                                    <td>
+                                        <p>
+                                            {% if order.type == "delivery" %}
+                                                Хүргэлт
+                                            {% elif order.type == "pickup" %}
+                                                Таталт
+                                            {% elif order.type == "dropoff" %}
+                                                Харилцагч хүргэлт
+                                            {% elif order.type == "return task" %}
+                                                Буцаалт
+                                            {% else %}
+                                                Тодорхой
+                                            {% endif %}
+                                        </p>
+                                    </td>
+                                    <td>
+                                        {% if order.status == "completed" %}
+                                            <p class="text-success">Хүргэсэн</p>
+                                        {% elif order.status == "cancelled" %}
+                                            <p class="text-danger">Цуцалсан</p>
+                                        {% elif order.status == "postphoned" %}
+                                            <p class="text-info">Хойшилсон</p>
+                                        {% else %}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if order.type == "delivery" %}
+                                            <p>
+                                                {% if order.delivery.addresses.city is not none %}, {{ order.delivery.addresses.city }}{% endif %}{% if order.delivery.addresses.district is not none %}{{ order.delivery.addresses.district }}{% endif %}{% if order.delivery.addresses.khoroo is not none %}, {{ order.delivery.addresses.khoroo }}-р хороо{% endif %}{% if order.delivery.addresses.aimag is not none %}{{ order.delivery.addresses.aimag }}{% endif %}{% if order.delivery.addresses.address is not none %}, {{ order.delivery.addresses.address }}{% endif %}{% if order.delivery.addresses.phone is not none %}, {{ order.delivery.addresses.phone }}{% endif %}{% if order.delivery.addresses.phone_more is not none %}, {{ order.delivery.addresses.phone_more }}{% endif %}
+                                            </p>
+                                        {% else %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock main %}

@@ -1,0 +1,147 @@
+{% extends "layout.html" %} {% block main %}
+<!-- Products -->
+<section>
+  <div class="container-fluid min-vh-100" style="width: 80%;">
+    <div class="row">
+      <div class="col-sm-12 mb-5">
+        <h3 class="display-6 mb-4">Бараа таталт</h3>
+        {% if pickup_tasks %}
+          <div class="table-responsive-sm">
+            <table id="inventory-table" class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col" class="bg-grad">PT</th>
+                  <th scope="col" class="bg-grad">Харилцагч</th>
+                  <th scope="col" class="bg-grad">Дэлгэрэнгүй</th>
+                  <th scope="col" class="bg-grad">Төлөв</th>
+                  <th scope="col" class="bg-grad">Хүсэлт Үүсгэсэн Огноо</th>
+                  <th scope="col" class="bg-grad">Бараа Авах Огноо</th>
+                  <th scope="col" class="bg-grad">Жолооч</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for pickup in pickup_tasks %}
+                <tr>
+                  <td>
+                    <p>PT{{ pickup.id }}</p>
+                  </td>
+                  <td>
+                    <p>{{ pickup.supplier.company_name | capitalize }}</p>
+                  </td>
+                  <td>
+                        {% if pickup.supplier.has_role('supplier1')%}
+                            {% for pickup_detail in pickup.pickup_task_details %}
+                                <p>
+                                {% if pickup_detail.product.name %}{{ pickup_detail.product.name }}{% endif %}{% if pickup_detail.product.color %}, {{ pickup_detail.product.color }}{% endif %}{% if pickup_detail.product.size %}, {{ pickup_detail.product.size }}{% endif %}{% if pickup_detail.product.type %}, {{ pickup_detail.product.type }}{% endif %}{% if pickup_detail.quantity %} - <strong>{{ pickup_detail.quantity }} ширхэг.</strong>{% endif %}
+                                </p>
+                            {% endfor %}
+                        {% elif pickup.supplier.has_role('supplier2')%}
+                            {% for pickup_detail in pickup.pickup_task_details %}
+                                {% if pickup_detail.destination_type == "local" %}
+                                    <p>
+                                        {{ loop.index }}. {{ pickup_detail.phone }}, {{ pickup_detail.district }}, {{ pickup_detail.khoroo }}, {{ pickup_detail.address }}. <strong>Нийт дүн: {{ pickup_detail.total_amount }}</strong>
+                                    </p>
+                                {% elif pickup_detail.destination_type == "long" %}
+                                    <p>
+                                        {{ loop.index }}. {{ pickup_detail.phone }}, {{ pickup_detail.aimag }}, {{ pickup_detail.address }}. <strong>Нийт дүн: {{ pickup_detail.total_amount }}</strong>
+                                    </p>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                  </td>
+                  <td>
+                      {% if pickup.is_ready and pickup.is_driver_received==false and pickup.assigned_driver_id is none %}
+                        <p class="text-danger">Авах жолооч хувиарлахыг хүлээж байна.</p>
+                      {% elif pickup.is_ready and pickup.is_driver_received==false and pickup.assigned_driver_id is not none %}
+                        <p class="text-info">Жолооч очиж авна.</p>
+                      {% elif pickup.is_ready==false and pickup.is_driver_received==true and pickup.assigned_driver_id is not none %}
+                        <p class="text-success">Жолооч aвсан.</p>
+                      {% elif pickup.is_completed==true %}
+                        <p class="text-success">СҮН СҮН хүлээж авсан.</p>
+                      {% elif pickup.is_cancelled==true %}
+                        <p class="text-danger">Харилцагч цуцалсан. ({{ pickup.supplier.lastname[0] | capitalize }}. {{ pickup.supplier.firstname | capitalize }}. {{ pickup.modified_date }})</p>
+                      {% endif %}
+                  </td>
+                  <td>
+                    <p>{{ pickup.created_date }}</p>
+                  </td>
+                  <td>
+                    {% if pickup.pickup_date %}
+                        <p>{{ pickup.pickup_date.strftime('%Y-%m-%d') }}</p>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if pickup.assigned_driver_id is not none %}
+                        <p>{{ pickup.driver.lastname[0] | capitalize }}. {{ pickup.driver.firstname | capitalize }}</p>
+                    {% else %}
+                        <p class="text-danger">Жолооч хувиарлагдаагүй байна.</p>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+        <p class="display-6">Таталт байхгүй байна</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+<!-- END Products -->
+<script>
+  $(document).ready(function () {
+    $("#inventory-table").DataTable({
+      dom: "Bfrtip",
+      buttons: [
+        {
+          extend: "csvHtml5",
+          text: '<a class="btn btn-outline-secondary m-2" style="float: left;">CSV файл татах</a>',
+          tag: "span",
+          exportOptions: {
+            modifier: {
+              search: "none",
+            },
+          },
+        },
+        {
+          extend: "print",
+          text: '<a class="btn btn-outline-secondary m-2" style="float: left;">Хэвлэх</a>',
+          tag: "span",
+          exportOptions: {
+            modifier: {
+              search: "none",
+            },
+          },
+        },
+        {
+          extend: "excelHtml5",
+          text: "Excel",
+          text: '<a class="btn btn-outline-secondary m-2" style="float: left;">XLS файл татах</a>',
+          tag: "span",
+          exportOptions: {
+            modifier: {
+              search: "none",
+            },
+          },
+        },
+      ],
+      order: [[7, 'desc']],
+      pageLength: 50,
+      lengthMenu: [50, 100, 200, 500],
+      language: {
+        lengthMenu: "_MENU_ эгнээ харах",
+        zeroRecords: "Дата алга",
+        info: "_PAGES_ хуудаснаас _PAGE_-р хуудас. Нийт: _TOTAL_",
+        infoEmpty: "",
+        sSearch: "Шүүх",
+        paginate: {
+          previous: "өмнөх",
+          next: "дараа",
+        },
+      },
+    });
+  });
+</script>
+{% endblock main %}
