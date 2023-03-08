@@ -20,7 +20,28 @@ def search():
     orders = []
     warehouse_sales = []
     if form.validate_on_submit():
-        if form.search_types.data == 'Хүргэлт':
+        if form.search_types.data == 'Хүргэлт' and form.search_mode.data == "0":
+            connection = Connection()
+            search_text = form.search_text.data
+            orders = (
+                connection.query(models.Delivery)
+                .join(models.Address)
+                .filter(or_(
+                    models.Address.aimag.like(f'%{search_text}%'),
+                    models.Address.district.like(f'%{search_text}%'),
+                    models.Address.phone.like(f'%{search_text}%'),
+                    models.Address.address.like(f'%{search_text}%'),
+                    models.Address.phone_more.like(f'%{search_text}%')
+                ))
+                .options(contains_eager(models.Delivery.addresses))
+                .limit(20)
+            )
+
+            # Bind parameters to prevent SQL injection
+            orders = orders.params(search_text=search_text)
+            return render_template('/manager/search.html', orders=orders, form=form, cur_date=cur_date, warehouse_sales=warehouse_sales)
+        
+        elif form.search_types.data == 'Хүргэлт' and form.search_mode.data == "1":
             connection = Connection()
             search_text = form.search_text.data
             orders = (
@@ -28,11 +49,6 @@ def search():
                 .join(models.Address)
                 .filter(or_(
                     models.Delivery.id.like(f'%{search_text}%'),
-                    models.Address.aimag.like(f'%{search_text}%'),
-                    models.Address.district.like(f'%{search_text}%'),
-                    models.Address.phone.like(f'%{search_text}%'),
-                    models.Address.address.like(f'%{search_text}%'),
-                    models.Address.phone_more.like(f'%{search_text}%')
                 ))
                 .options(contains_eager(models.Delivery.addresses))
                 .limit(20)

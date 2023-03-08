@@ -45,6 +45,8 @@
                                 <thead>
                                     <tr>
                                         <th scope="col" class="bg-grad">Захиалгын ID</th>
+                                        <th scope="col" class="bg-grad">Харилцагч</th>
+                                        <th scope="col" class="bg-grad">Төрөл</th>
                                         <th scope="col" class="bg-grad">Төлөв</th>
                                         <th scope="col" class="bg-grad">Огноо</th>
                                         <th scope="col" class="bg-grad">Хаяг/Утас</th>
@@ -60,6 +62,16 @@
                                                 <a class="text-dark" href="{{ url_for('manager_pickup.manager_pickup', pickup_id=order.pickup_task_id)}}"><p>Таталт: PT{{ order.pickup_task_id }}</p></a>
                                             {% elif order.return_task_id %}
                                                 <a class="text-dark" href="#"><p>Буцаалт: RT{{ order.return_task_id }}</p></a>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ order.supplier_name }}</td>
+                                        <td>
+                                            {% if order.type == "pickup" %}
+                                                <p>Таталт</p>
+                                            {% elif order.type == "delivery" %}
+                                                <p>Хүргэлт</p>
+                                            {% elif order.type == "return task" %}
+                                                <p>Буцаалт</p>
                                             {% endif %}
                                         </td>
                                         <td style="text-align: center;">
@@ -104,8 +116,6 @@
                                                     {% if order.delivery.addresses.city is not none %}, {{ order.delivery.addresses.city }}{% endif %}{% if order.delivery.addresses.district is not none %}{{ order.delivery.addresses.district }}{% endif %}{% if order.delivery.addresses.khoroo is not none %}, {{ order.delivery.addresses.khoroo }}-р хороо{% endif %}{% if order.delivery.addresses.aimag is not none %}{{ order.delivery.addresses.aimag }}{% endif %}{% if order.delivery.addresses.address is not none %}, {{ order.delivery.addresses.address }}{% endif %}{% if order.delivery.addresses.phone is not none %}, {{ order.delivery.addresses.phone }}{% endif %}{% if order.delivery.addresses.phone_more is not none %}, {{ order.delivery.addresses.phone_more }}{% endif %}
                                                 </p>
                                             {% elif order.type == "pickup" %}
-                                                <p>{{ order.pickup_task.supplier.company_name }}</p>
-                                                <p>
                                                     {% if order.pickup_task.supplier.has_role('supplier1')%}
                                                         {% for pickup_detail in order.pickup_task.pickup_task_details %}
                                                         <p>
@@ -125,7 +135,6 @@
                                                             {% endif %}
                                                         {% endfor %}
                                                     {% endif %}
-                                                </p>
                                             {% elif order.type == "return task" %}
                                                 <p>{{ order.return_task.supplier.company_name }}</p>
                                                 <p>

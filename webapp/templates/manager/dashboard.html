@@ -7,7 +7,17 @@
   <div class="container-fluid min-vh-100" style="width: 80%;">
     <h3 class="display-6 mb-4">Самбар</h3>
     <div class="row">
+      {% if pickup_tasks %}
+        <div class="col-sm-12 display-8">
+            <a class="btn btn-lg btn-outline-danger" href="{{ url_for('manager_pickup.manager_pickups') }}">Харилцагчийн жолооч хувиарлах {{ pickup_tasks }} таталт байна</a>
+        </div>
+      {% endif %}
 
+      {% if return_tasks %}
+        <div class="col-sm-12 display-8">
+            <a class="btn btn-lg btn-outline-danger" href="{{ url_for('manager_return_task.manager_return_tasks') }}">Харилцагчийн жолооч хувиарлах {{ return_tasks }} таталт байна</a>
+        </div>
+      {% endif %}
     </div>
   </div>
 </section>

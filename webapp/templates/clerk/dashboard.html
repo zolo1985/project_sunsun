@@ -13,13 +13,13 @@
         </div>
       {% endif %}
 
-      {% if driver_pickups > 0 %}
+      {% if driver_pickups %}
         <div class="col-sm-12 display-8">
             <a class="btn btn-lg btn-outline-danger" href="{{ url_for('clerk_receive.clerk_receive_pickup_inventories') }}">Жолоочоос авах {{ driver_pickups }} таталт байна</a>
         </div>
       {% endif %}
       
-      {% if supplier_dropoffs > 0 %}
+      {% if supplier_dropoffs %}
         <div class="col-sm-12">
             <a class="btn btn-lg btn-outline-danger" href="{{ url_for('clerk_receive.clerk_receive_dropoff_inventories') }}">Харилцагчаас авах бараанууд {{ supplier_dropoffs }} байна</a>
         </div>

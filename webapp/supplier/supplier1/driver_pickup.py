@@ -25,30 +25,29 @@ def supplier1_inventory_pickup_add():
         line_quantity = request.form.getlist("quantity")
         line_product = request.form.getlist("product")
 
+        pickup_task = connection.query(models.PickupTask).filter(models.PickupTask.supplier_id==current_user.id).filter(models.PickupTask.is_ready==True).filter(models.PickupTask.is_completed==False).first()
+
+        if pickup_task:
+            for i, quantity in enumerate(line_quantity):
+                pickup_task_detail = models.PickupTaskDetail()
+                pickup_task_detail.quantity = quantity
+                pickup_task_detail.product_id = line_product[i]
+
+                pickup_task.pickup_task_details.append(pickup_task_detail)
+        else:
+            pickup_task = models.PickupTask()
+            pickup_task.status = "waiting"
+            pickup_task.is_ready = True
+            current_user.pickup_tasks.append(pickup_task)
+
+            for i, quantity in enumerate(line_quantity):
+                pickup_task_detail = models.PickupTaskDetail()
+                pickup_task_detail.quantity = quantity
+                pickup_task_detail.product_id = int(line_product[i])
+                pickup_task.pickup_task_details.append(pickup_task_detail)
+
         try:
-            pickup_task = connection.query(models.PickupTask).filter(models.PickupTask.supplier_id==current_user.id).filter(models.PickupTask.is_ready==True).filter(models.PickupTask.is_completed==False).first()
-
-            if pickup_task:
-                for i, quantity in enumerate(line_quantity):
-                    pickup_task_detail = models.PickupTaskDetail()
-                    pickup_task_detail.quantity = quantity
-                    pickup_task_detail.product_id = line_product[i]
-
-                    pickup_task.pickup_task_details.append(pickup_task_detail)
-            else:
-                pickup_task = models.PickupTask()
-                pickup_task.status = "waiting"
-                pickup_task.is_ready = True
-                current_user.pickup_tasks.append(pickup_task)
-
-                for i, quantity in enumerate(line_quantity):
-                    pickup_task_detail = models.PickupTaskDetail()
-                    pickup_task_detail.quantity = quantity
-                    pickup_task_detail.product_id = int(line_product[i])
-                    pickup_task.pickup_task_details.append(pickup_task_detail)
-
             connection.commit()
-
         except Exception as e:
             flash('Алдаа гарлаа!', 'danger')
             connection.rollback()

@@ -99,21 +99,21 @@ def supplier1_inventory_add():
     return render_template('/supplier/supplier1/inventory_add.html', form=form)
 
 
-@supplier1_inventory_blueprint.route('/supplier1/inventories/pickups-and-dropoffs', methods=['GET','POST'])
+@supplier1_inventory_blueprint.route('/supplier1/inventories/pickups-and-dropoffs', methods=['GET'])
 @login_required
 @has_role('supplier1')
 def supplier1_inventory_pickups_and_dropoffs():
-    form = DriverPickupForm()
-    cur_date = datetime.now(pytz.timezone("Asia/Ulaanbaatar"))
+    # form = DriverPickupForm()
+    # cur_date = datetime.now(pytz.timezone("Asia/Ulaanbaatar"))
     connection = Connection()
-    pickups = connection.query(models.PickupTask).filter(models.PickupTask.supplier_id == current_user.id, func.date(models.PickupTask.created_date) == cur_date.date()).limit(20)
-    dropoffs = connection.query(models.SupplierDropoffTask).filter(models.SupplierDropoffTask.supplier_id == current_user.id, func.date(models.SupplierDropoffTask.created_date) == cur_date.date()).limit(20)
+    pickups = connection.query(models.PickupTask).filter(models.PickupTask.supplier_id == current_user.id, models.PickupTask.is_cancelled==False, models.PickupTask.is_completed==False).limit(20)
+    dropoffs = connection.query(models.SupplierDropoffTask).filter(models.SupplierDropoffTask.supplier_id == current_user.id, models.PickupTask.is_cancelled==False, models.PickupTask.is_completed==False).limit(20)
 
-    if form.validate_on_submit():
-        pickups = connection.query(models.PickupTask).filter(models.PickupTask.supplier_id == current_user.id, func.date(models.PickupTask.created_date) == form.date.data).limit(20)
-        dropoffs = connection.query(models.SupplierDropoffTask).filter(models.SupplierDropoffTask.supplier_id == current_user.id, func.date(models.SupplierDropoffTask.created_date) == form.date.data).limit(20)
-        return render_template('/supplier/supplier1/pickup_inventories.html', pickups=pickups, form=form, dropoffs=dropoffs)
-    return render_template('/supplier/supplier1/pickup_inventories.html', pickups=pickups, form=form, dropoffs=dropoffs)
+    # if form.validate_on_submit():
+    #     pickups = connection.query(models.PickupTask).filter(models.PickupTask.supplier_id == current_user.id, func.date(models.PickupTask.created_date) == form.date.data).limit(20)
+    #     dropoffs = connection.query(models.SupplierDropoffTask).filter(models.SupplierDropoffTask.supplier_id == current_user.id, func.date(models.SupplierDropoffTask.created_date) == form.date.data).limit(20)
+    #     return render_template('/supplier/supplier1/pickup_inventories.html', pickups=pickups, form=form, dropoffs=dropoffs)
+    return render_template('/supplier/supplier1/pickup_inventories.html', pickups=pickups, dropoffs=dropoffs)
 
 
 @supplier1_inventory_blueprint.route('/supplier1/inventories/pickups/confirmation/<int:pickup_task_id>', methods=['GET','POST'])

@@ -3,28 +3,8 @@
 <section>
   <div class="container-fluid min-vh-100" style="width: 80%;">
     <div class="row">
-      <form id="form" method="POST" action="">
-        {{ form.csrf_token }}
         <div class="col-sm-12 mb-5">
           <h3 class="display-6 mb-4">Бараа жолоочид хүлээлгэж өгөх</h3>
-          <div class="row g-3">
-              <div class="col-md-4 position-relative">
-                  {{ form.date.label(class="form-control-label") }}
-                  {% if form.date.errors %}
-                      {{ form.date(class="form-control is-invalid") }}
-                      <div class="invalid-feedback">
-                          {% for error in form.date.errors %}
-                              <span>{{ error }}</span>
-                          {% endfor %}
-                      </div>
-                  {% else %}
-                      {{ form.date(class="form-control") }}
-                  {% endif %}
-              </div>
-              <div class="col-md-4 d-flex align-items-center">
-                  {{ form.submit(class="btn btn-outline-success m-0") }}
-              </div>
-          </div>
           <div class="table-responsive-sm">
             <table id="inventory-table" class="table table-hover">
                 <thead>
@@ -93,7 +73,8 @@
                       {% endif %}
                       <div class="d-grid gap-2 d-md-flex">
                         {% if pickup.is_ready and pickup.assigned_driver_id is not none %}
-                          <a id="confirm-pickup" class="btn btn-success" href="{{ url_for('supplier1_inventory.supplier1_inventory_pickups_confirmation', pickup_task_id=pickup.id) }}" data-pickup-id="{{ pickup.id }}">Жолоочид өгөх</a>
+                          <a id="confirm-pickup" class="btn btn-success" href="{{ url_for('supplier1_inventory.supplier1_inventory_pickups_and_dropoffs_confirmation', pickup_task_id=pickup.id) }}" data-pickup-id="{{ pickup.id }}">Жолоочид өгөх</a>
+                          
                         {% endif %}
                         {% if pickup.is_ready %}
                           <a id="cancel-pickup" class="btn btn-danger" href="{{ url_for('supplier1_driver_pickup.supplier1_inventory_pickup_cancel', pickup_task_id=pickup.id) }}"><i class="bi bi-x-circle-fill"> Цуцлах</i></a>
@@ -157,7 +138,6 @@
             </table>
           </div>
         </div>
-      </form>
     </div>
   </div>
 </section>
