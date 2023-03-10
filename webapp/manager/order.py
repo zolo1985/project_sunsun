@@ -3,7 +3,7 @@ from webapp import has_role
 from flask_login import current_user, login_required
 from webapp.database import Connection
 from webapp import models
-from webapp.manager.forms import FilterOrderByDistrict, FiltersForm, OrderEditForm, AssignRegionAndDriverForm, DriversSelect, DriversHistoriesForm, FilterDateForm, EditCommentForm, EditAddressForm, EditTotalAmountForm, ShowCommentStatusForm, OrderAddForm, OrderDetailEditForm, SelectDriverForm, UnassignForm, EditOrderStateForm, DateFilterForm
+from webapp.manager.forms import OrderEditForm, AssignRegionAndDriverForm, DriversSelect, DriversHistoriesForm, FilterDateForm, ShowCommentStatusForm, OrderAddForm, SelectDriverForm, UnassignForm, DateFilterForm
 from datetime import datetime
 from sqlalchemy import func, or_
 from sqlalchemy.sql.expression import case
@@ -61,18 +61,9 @@ def manager_orders():
     
     connection = Connection()
     cur_date = datetime.now(pytz.timezone("Asia/Ulaanbaatar"))
-    # current_date = func.date(func.convert_tz(func.now(), '+00:00', '+08:00'))
     current_date = func.date(cur_date)
 
     orders = connection.query(models.Delivery).filter(or_(func.date(models.Delivery.delivery_date) == current_date, (func.date(models.Delivery.postphoned_date) == current_date), (func.date(models.Delivery.created_date) == current_date) & (models.Delivery.is_postphoned == True))).all()
-
-
-    # total_orders_count_by_driver = connection.query(func.count(models.Delivery.assigned_driver_id).label('total_count'), models.User.firstname.label('driver')) \
-    #     .join(models.User, models.Delivery.assigned_driver_id == models.User.id) \
-    #     .filter(func.date(models.Delivery.delivery_date) == current_date) \
-    #     .group_by(models.Delivery.assigned_driver_id, models.User.firstname) \
-    #     .having(func.count(models.Delivery.assigned_driver_id) > 0) \
-    #     .order_by(func.count(models.Delivery.assigned_driver_id).desc()).all()
 
     total_orders_count_by_driver = connection.query(func.sum(case([(models.Delivery.assigned_driver_id != None, 1), (models.Delivery.postphoned_driver_id != None, 1)], else_=0))\
         .label('total_count'), models.User.firstname.label('driver'))\
@@ -194,7 +185,6 @@ def manager_order_detail(order_id):
                     flash('Хувиарлагдаагүй хүргэлт хүргэсэн төлөвт шилжүүлэх боломжгүй. Заавал хувиарласан байх шаардлагатай!', 'info')
                     return redirect(url_for('manager_order.manager_order_detail', order_id=order.id))
                 elif order.status == "assigned":
-                    #create driver history and payment detail change to complete
                     order.status = "completed"
                     order.is_delivered = True
                     order.driver_comment = "Менежер өөрчилсөн"
@@ -219,9 +209,6 @@ def manager_order_detail(order_id):
                         connection.add(job_history)
 
                 elif order.status == "cancelled":
-                    #check if inventory returned
-                    #if not, delete the return, subtract from inventory and change driver order history and create payment detail
-                    #if returned return error saying product were returned and not able to complete the task
                     if order.assigned_driver_id is None:
                         flash('Жолооч хувиарлагдаагүй байна. Эхлээд жолоочид хувиарлана уу!', 'info')
                         return redirect(url_for('manager_order.manager_order_detail', order_id=order.id))
@@ -261,8 +248,6 @@ def manager_order_detail(order_id):
 
             elif switch_stat(form.status.data) == "cancelled":
                 if order.status == "unassigned":
-                    #cancel the order and add inventory back to inventory
-
                     if order.is_postphoned:
                         if order.postphoned_date.date() > cur_date.date():
                             order.postphoned_date = cur_date
@@ -283,7 +268,6 @@ def manager_order_detail(order_id):
                     order.driver_comment = "Менежер өөрчилсөн"
 
                 elif order.status == "assigned":
-                    #cancel the order and add inventory back to inventory and add driver order history
                     order.status = "completed"
                     order.is_delivered = True
                     order.driver_comment = "Менежер өөрчилсөн"
@@ -319,10 +303,6 @@ def manager_order_detail(order_id):
                         print("restore unstored inventory")
 
                 elif order.status == "completed":
-                    #check if order is processed by accountant
-                    #if not delete the payment detail and 
-                    #cancel the order and add inventory back to inventory and change driver order history
-                    # if payment made return error message
                     if order.is_processed_by_accountant:
                         flash('Хүргэлт өөрчлөх боломжгүй. Нягтлан тооцоо хийсэн байна!', 'info')
                         return redirect(url_for('manager_order.manager_order_detail', order_id=order.id))
@@ -355,7 +335,6 @@ def manager_order_detail(order_id):
         try:
             connection.commit()
         except Exception as ex:
-            flash(f'{ex}', 'danger')
             flash('Алдаа гарлаа', 'danger')
             connection.rollback()
             return redirect(url_for('manager_order.manager_order_detail', order_id=order.id))
@@ -386,7 +365,6 @@ def manager_order_detail(order_id):
 def manager_order_assign_region():
     connection = Connection()
 
-    # current_date = func.date(func.convert_tz(func.now(), '+00:00', '+08:00'))
     current_date = func.date(datetime.now(pytz.timezone("Asia/Ulaanbaatar")))
     
     drivers = connection.query(models.User).filter(models.User.roles.any(models.Role.name=="driver")).filter(models.User.is_authorized==True).all()

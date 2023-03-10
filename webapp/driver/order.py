@@ -262,7 +262,6 @@ def driver_order_postphoned(order_id):
 
             connection.commit()
         except Exception as ex:
-            flash(f'{ex}', 'danger')
             flash('Алдаа гарлаа', 'danger')
             connection.rollback()
             return redirect(url_for('driver_order.driver_orders'))

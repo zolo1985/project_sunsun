@@ -245,7 +245,6 @@ def supplier1_order_cancel(order_id):
             try:
                 connection.commit()
             except Exception as ex:
-                flash(f'{ex}', 'danger')
                 connection.rollback()
                 return redirect(url_for('supplier1_order.supplier1_orders'))
             else:

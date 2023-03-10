@@ -59,7 +59,6 @@ def clerk_accept_pickup_inventories(pickup_task_id):
 
             connection.commit()
         except Exception as ex:
-            flash(f'{ex}', 'danger')
             flash("Алдаа гарлаа!", 'danger')
             connection.rollback()
             return redirect(url_for('clerk_receive.clerk_receive_pickup_inventories'))
@@ -135,7 +134,6 @@ def clerk_accept_dropoff_inventories(supplier_dropoff_task_id):
 
             connection.commit()
         except Exception as ex:
-            flash(f'{ex}', 'danger')
             flash("Алдаа гарлаа!", 'danger')
             connection.rollback()
             return redirect(url_for('clerk_receive.clerk_receive_dropoff_inventories'))

@@ -54,7 +54,6 @@ def clerk_return_task_add(unstored_inventory_id):
 
         connection.commit()
     except Exception as ex:
-        flash(f'{ex}', 'danger')
         flash("Алдаа гарлаа!", 'danger')
         connection.rollback()
         return redirect(url_for('clerk_inventory.clerk_unstored_inventories'))
