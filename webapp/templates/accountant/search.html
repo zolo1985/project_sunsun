@@ -8,6 +8,7 @@
                     <form id="form" method="POST" action="">
                         {{ form.csrf_token }}
                         <div class="row g-2">
+                            {{ form.search_mode.value }}
                             <div class="col-md-3">
                                 {{ form.search_text.label(class="form-control-label") }}
                                 {% if form.search_text.errors %}
@@ -34,10 +35,14 @@
                                     {{ form.search_types(class="form-control") }}
                                 {% endif %}
                             </div>
+                                
                             <div class="col-md-3 align-self-center">
                                 {{ form.submit(class="btn btn-outline-success m-0") }}
                             </div>
                         </div>
+                        {% for subfield in form.search_mode %}
+                            <p class="ms-3">{{ subfield(class="form-check-input m-0") }} {{ subfield.label }}</p>
+                        {% endfor %}
                     </form>
     
                     {% if orders %}

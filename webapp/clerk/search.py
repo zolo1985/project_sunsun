@@ -20,14 +20,13 @@ def search():
     orders = []
     warehouse_sales = []
     if form.validate_on_submit():
-        if form.search_types.data == 'Хүргэлт':
+        if form.search_types.data == 'Хүргэлт' and form.search_mode.data == "0":
             connection = Connection()
             search_text = form.search_text.data
             orders = (
                 connection.query(models.Delivery)
                 .join(models.Address)
                 .filter(or_(
-                    models.Delivery.id.like(f'%{search_text}%'),
                     models.Address.aimag.like(f'%{search_text}%'),
                     models.Address.district.like(f'%{search_text}%'),
                     models.Address.phone.like(f'%{search_text}%'),
@@ -35,6 +34,18 @@ def search():
                     models.Address.phone_more.like(f'%{search_text}%')
                 ))
                 .options(contains_eager(models.Delivery.addresses))
+                .limit(20)
+            )
+
+            orders = orders.params(search_text=search_text)
+            return render_template('/clerk/search.html', orders=orders, form=form, cur_date=cur_date, warehouse_sales=warehouse_sales)
+        
+        elif form.search_types.data == 'Хүргэлт' and form.search_mode.data == "1":
+            connection = Connection()
+            search_text = form.search_text.data
+            orders = (
+                connection.query(models.Delivery)
+                .filter(models.Delivery.id==search_text)
                 .limit(20)
             )
 
@@ -47,7 +58,7 @@ def search():
             search_text = form.search_text.data
             warehouse_sales = (
                 connection.query(models.WarehouseSale)
-                .filter(or_(models.WarehouseSale.id.like(f'%{search_text}%')))
+                .filter(models.WarehouseSale.id.like(f'%{search_text}%'))
                 .limit(20)
             )
 

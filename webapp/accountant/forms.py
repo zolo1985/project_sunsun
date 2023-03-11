@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, HiddenField, SelectField, DateField, DateTimeField, IntegerField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField, HiddenField, SelectField, DateField, DateTimeField, IntegerField, TextAreaField, RadioField
 from wtforms.validators import Length, ValidationError, InputRequired, Optional, NumberRange, InputRequired
 import re
 
@@ -32,7 +32,8 @@ class SupplierDateSelect(FlaskForm):
     submit = SubmitField('Сонгох')
 
 class SearchForm(FlaskForm):
-    search_text = StringField('Хайх', validators=[InputRequired(), Length(min=1, max=50, message='Нэр 1-50 урттай')])
+    search_mode = RadioField(choices=[(0,'Текст'),(1,'ID')], validators=[Optional()], default=0)
+    search_text = StringField('Хайх', validators=[Optional(), Length(min=1, max=50, message='Нэр 1-50 урттай')])
     search_types = SelectField('Төрөл', choices=['Хүргэлт', 'Агуулах'], validators=[InputRequired()])
     submit = SubmitField('Хайх')
 

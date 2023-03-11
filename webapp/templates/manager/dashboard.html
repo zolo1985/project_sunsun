@@ -18,6 +18,12 @@
             <a class="btn btn-lg btn-outline-danger" href="{{ url_for('manager_return_task.manager_return_tasks') }}">Харилцагчид буцаах {{ return_tasks }} буцаалт байна</a>
         </div>
       {% endif %}
+
+      {% if not return_tasks and not pickup_tasks %}
+        <div class="col-sm-12 display-8">
+            <p class="display-8">Одоохондоо дата алга</p>
+        </div>
+      {% endif %}
     </div>
   </div>
 </section>

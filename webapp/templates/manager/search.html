@@ -8,6 +8,7 @@
                     <form id="form" method="POST" action="">
                         {{ form.csrf_token }}
                         <div class="row g-2">
+                            {{ form.search_mode.value }}
                             <div class="col-md-3">
                                 {{ form.search_text.label(class="form-control-label") }}
                                 {% if form.search_text.errors %}
@@ -40,7 +41,7 @@
                             </div>
                         </div>
                         {% for subfield in form.search_mode %}
-                            <p class="ms-3">{{ subfield(class="form-check-input m-0", onclick="checkType()") }} {{ subfield.label }}</p>
+                            <p class="ms-3">{{ subfield(class="form-check-input m-0") }} {{ subfield.label }}</p>
                         {% endfor %}
                     </form>
     

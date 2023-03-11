@@ -37,7 +37,6 @@ def search():
                 .limit(20)
             )
 
-            # Bind parameters to prevent SQL injection
             orders = orders.params(search_text=search_text)
             return render_template('/manager/search.html', orders=orders, form=form, cur_date=cur_date, warehouse_sales=warehouse_sales)
         
@@ -46,11 +45,7 @@ def search():
             search_text = form.search_text.data
             orders = (
                 connection.query(models.Delivery)
-                .join(models.Address)
-                .filter(or_(
-                    models.Delivery.id.like(f'%{search_text}%'),
-                ))
-                .options(contains_eager(models.Delivery.addresses))
+                .filter(models.Delivery.id==search_text)
                 .limit(20)
             )
 
@@ -63,7 +58,7 @@ def search():
             search_text = form.search_text.data
             warehouse_sales = (
                 connection.query(models.WarehouseSale)
-                .filter(or_(models.WarehouseSale.id.like(f'%{search_text}%')))
+                .filter(models.WarehouseSale.id.like(f'%{search_text}%'))
                 .limit(20)
             )
 

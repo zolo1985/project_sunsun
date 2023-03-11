@@ -30,7 +30,7 @@ def clerk_driver_orders():
 
     unassigned_orders = connection.execute("SELECT count(delivery.id) as total_count, CONCAT(driver.lastname, ' ', driver.firstname) as driver_name FROM sunsundatabase1.delivery as delivery join sunsundatabase1.user as driver on delivery.assigned_driver_id=driver.id WHERE DATE(delivery.delivery_date) =:cur_date and delivery.is_delivered=false and delivery.status='assigned' and delivery.is_received_from_clerk=false group by delivery.assigned_driver_id, driver.id;", {"cur_date": cur_date.date()}).all()
 
-    order_window = is_time_between(time(6,30), time(3,55))
+    order_window = is_time_between(time(6,30), time(16,55))
 
     if form.drivers.data is not None and form.validate():
         if form.drivers.data!="0":
